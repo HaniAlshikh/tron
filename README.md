@@ -56,15 +56,15 @@ If the player restarted or existed the game. The enemy wins.
 
 ### Business Context
 
-![Usecases](images/Usecases.drawio.svg)
-<!-- ![Business Context](images/BusinessContext.drawio.svg) -->
+![Usecases](docs/diagrams/Usecases.drawio.svg)
+<!-- ![Business Context](docs/diagrams/BusinessContext.drawio.svg) -->
 
 TODO: use cases table with ids
 
 Technical Context
 -----------------
 
-![TechnicalContext](images/TechnicalContext.drawio.svg)
+![TechnicalContext](docs/diagrams/TechnicalContext.drawio.svg)
 
 ## Solution Strategy
 
@@ -88,7 +88,7 @@ TODO: Error cases
 
 ### Whitebox Overall System
 
-![Component Diagram](images/ComponentDiagram.drawio.svg)
+![Component Diagram](docs/diagrams/ComponentDiagram.drawio.svg)
 
 | Component | Description |
 |------------|--------------|
@@ -139,6 +139,7 @@ TODO: view update state doesn't depend on model update state both run asynchrono
 TODO: stubs in the application components
 TODO: factory pattern
 TODO: updateDirection dosn't depend on setDirection
+TODO: Collision detection in parallel | collision dectection server
 
 \<Runtime Scenario 1\> {#__runtime_scenario_1}
 ----------------------
@@ -160,7 +161,7 @@ TODO: updateDirection dosn't depend on setDirection
 Deployment View {#section-deployment-view}
 ===============
 
-![DeploymentDiagram](images/DeploymentDiagram.svg)
+![DeploymentDiagram](docs/diagrams/DeploymentDiagram.svg)
 
 [comment]: <> (Infrastructure Level 1 {#_infrastructure_level_1})
 
