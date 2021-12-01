@@ -1,19 +1,22 @@
 package de.alshikh.haw.tron.client.models.data.entities;
 
+import de.alshikh.haw.tron.client.models.data.datatypes.SerializableColor;
 import de.alshikh.haw.tron.client.models.data.datatypes.BikeStartingPosition;
 import de.alshikh.haw.tron.client.models.data.datatypes.Direction;
 import de.alshikh.haw.tron.client.views.view_library.Coordinate;
-import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bike {
+public class Bike implements Serializable {
+    private static final long serialVersionUID = 623241517279433635L;
+
     Direction movingDirection;
     List<Coordinate> trail = new ArrayList<>();
-    Color color;
+    SerializableColor color;
 
-    public Bike(BikeStartingPosition startPosition, Color color) {
+    public Bike(BikeStartingPosition startPosition, SerializableColor color) {
         this.trail.add(startPosition.getCoordinate());
         this.color = color;
         this.movingDirection = startPosition.getMovingDirection();
@@ -41,7 +44,7 @@ public class Bike {
         return trail.get(trail.size() - 1);
     }
 
-    public Color getColor() {
+    public SerializableColor getColor() {
         return color;
     }
 

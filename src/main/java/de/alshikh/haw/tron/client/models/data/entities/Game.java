@@ -4,65 +4,46 @@ import de.alshikh.haw.tron.client.common.data.entites.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 public class Game {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private final Player player;
     private Player winner;
+    private boolean gameEnded;
 
-    private Set<Player> currentPlayers;
-    private Set<Player> players = new HashSet<>();
-
-    public Game(Player... players) {
-        this.players.addAll(Arrays.asList(players));
+    public Game(Player player) {
+        this.player = player;
     }
 
-    public void update() {
-        currentPlayers = new HashSet<>(players);
-        currentPlayers.forEach(p -> {
-            if (p.isDead()) {
-                players.remove(p);
-                return;
-            }
-
-            p.getBike().move();
-            checkForCollision(p);
-            if (playerEliminated()) {
-                if (players.size() == 1) {
-                    winner = players.iterator().next();
-                }
-            }
-        });
+    public void update(Player opponent) {
+        player.getBike().move();
+        opponent.getBike().move();
+        checkForCollision(opponent);
     }
 
-    private void checkForCollision(Player player) {
-        for (Player enemy : currentPlayers) {
-            if(!player.equals(enemy)) {
-                if (player.getBike().getPosition().equals(enemy.getBike().getPosition())) {
-                    log.info(player + " collided with " + enemy);
-                    players.remove(player);
-                    players.remove(enemy);
-                }
-                else if (enemy.getBike().getTrail().contains(player.getBike().getPosition())) {
-                    players.remove(player);
-                }
-            }
+    private void checkForCollision(Player opponent) {
+        if (player.getBike().getPosition().equals(opponent.getBike().getPosition())) {
+            log.info(player + " collided with " + opponent);
+            player.die();
+            opponent.die();
+            gameEnded = true;
+        }
+        else if (opponent.getBike().getTrail().contains(player.getBike().getPosition())) {
+            player.die();
+            winner = opponent;
+        }
+        else if (player.getBike().getTrail().contains(opponent.getBike().getPosition())) {
+            opponent.die();
+            winner = player;
         }
     }
-    
-    private boolean playerEliminated() {
-        return players.size() != currentPlayers.size();
+
+    public boolean gameEnded() {
+        return gameEnded;
     }
 
     public Player getWinner() {
         return winner;
-    }
-
-    public Set<Player> getPlayers() {
-        return players;
     }
 }

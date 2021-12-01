@@ -1,23 +1,18 @@
 package de.alshikh.haw.tron.client.models;
 
+import de.alshikh.haw.tron.client.common.data.entites.Player;
+import de.alshikh.haw.tron.client.models.data.datatypes.SerializableColor;
 import de.alshikh.haw.tron.client.models.InputHandler.IInputHandler;
-import de.alshikh.haw.tron.client.models.data.datatypes.BikeStartingPosition;
 import de.alshikh.haw.tron.client.models.InputHandler.InputHandler;
-import de.alshikh.haw.tron.client.models.data.datatypes.GameMode;
+import de.alshikh.haw.tron.client.models.data.datatypes.BikeStartingPosition;
 import de.alshikh.haw.tron.client.models.data.entities.Bike;
 import de.alshikh.haw.tron.client.models.data.entities.Game;
-import de.alshikh.haw.tron.client.common.data.entites.Player;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
-import java.util.Set;
-
 public class GameModel implements IGameModel {
-    GameMode gameMode;
-
-    Player p1;
-    Player p2;
+    Player player;
     Game game;
 
     IInputHandler inputHandler;
@@ -27,17 +22,25 @@ public class GameModel implements IGameModel {
     }
 
     @Override
-    public void createGame(GameMode gameMode) {
-        switch (gameMode) {
-            case VS: game = createVSGame(); break;
-            default: throw new EnumConstantNotPresentException(gameMode.getClass(), gameMode.name());
-        }
-        this.gameMode = gameMode;
+    public void createGame() {
+        this.player = new Player("P1", new Bike(BikeStartingPosition.LEFT, new SerializableColor(Color.RED)));
+        prepGame();
     }
 
     @Override
-    public void updateGame() {
-        game.update();
+    public void joinGame() {
+        this.player = new Player("P2", new Bike(BikeStartingPosition.RIGHT, new SerializableColor(Color.BLUE)));
+        prepGame();
+    }
+
+    private void prepGame() {
+        this.game = new Game(player);
+        inputHandler.setAWSDPlayer(player);
+    }
+
+    @Override
+    public void updateGame(Player opponent) {
+        game.update(opponent);
     }
 
     @Override
@@ -46,8 +49,8 @@ public class GameModel implements IGameModel {
     }
 
     @Override
-    public Set<Player> getPlayers() {
-        return game.getPlayers();
+    public Player getPlayer() {
+        return player;
     }
 
     @Override
@@ -55,11 +58,8 @@ public class GameModel implements IGameModel {
         return game.getWinner();
     }
 
-    private Game createVSGame() {
-        this.p1 = new Player("P1", new Bike(BikeStartingPosition.LEFT, Color.RED));
-        this.p2 = new Player("P2", new Bike(BikeStartingPosition.RIGHT, Color.BLUE));
-        inputHandler.setAWSDPlayer(p1);
-        inputHandler.setJIKLPlayer(p2);
-        return new Game(p1, p2);
+    @Override
+    public boolean gameEnded() {
+        return game.gameEnded();
     }
 }

@@ -7,33 +7,25 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class StartMenu extends VBox {
-    // TODO: use startMenu as winnerMenu with dynamic label
+public class WatingMenu extends VBox {
     private final Label labelReady;
-    private final Button btnStart;
-    private final Button btnJoin;
+    private final Button btnCancel;
 
-    public StartMenu(String stylesheet) {
+    public WatingMenu(String stylesheet) {
         super(20.0);
         this.getStylesheets().add(stylesheet);
         this.setAlignment(Pos.CENTER);
 
-        labelReady = new Label("Ready?");
+        labelReady = new Label("Please wait until someone joins!");
         labelReady.setStyle("-fx-text-fill: " + ViewUtility.getHexTriplet(Color.PAPAYAWHIP.brighter()) + ";");
 
-        btnStart = new Button("Start Game");
-        btnJoin = new Button("Join Game");
+        btnCancel = new Button("Cancel Game");
 
         this.getChildren().add(labelReady);
-        this.getChildren().add(btnStart);
-        this.getChildren().add(btnJoin);
+        this.getChildren().add(btnCancel);
     }
 
-    public Button getBtnStart() {
-        return btnStart;
-    }
-
-    public Button getBtnJoin() {
-        return btnJoin;
+    public Button getBtnCancel() {
+        return btnCancel;
     }
 }

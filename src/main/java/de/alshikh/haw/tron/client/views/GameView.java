@@ -2,6 +2,7 @@ package de.alshikh.haw.tron.client.views;
 
 import de.alshikh.haw.tron.client.common.data.entites.Player;
 import de.alshikh.haw.tron.client.views.overlayes.StartMenu;
+import de.alshikh.haw.tron.client.views.overlayes.WatingMenu;
 import de.alshikh.haw.tron.client.views.overlayes.WinnerMenu;
 import de.alshikh.haw.tron.client.views.view_library.ITronView;
 import de.alshikh.haw.tron.client.views.view_library.TronView;
@@ -10,7 +11,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class GameView implements IGameView {
 
@@ -23,10 +23,10 @@ public class GameView implements IGameView {
     }
 
     @Override
-    public void showGame(Set<Player> players) {
+    public void showGame(Player... players) {
         for (Player p : players) {
             try {
-                view.draw(p.getBike().getTrail(), p.getBike().getColor());
+                view.draw(p.getBike().getTrail(), p.getBike().getColor().getFXColor());
             } catch (IllegalArgumentException e) { // went out of boundary
                 p.die();
             }
@@ -34,12 +34,20 @@ public class GameView implements IGameView {
     }
 
     @Override
-    public void showStartMenu(EventHandler<ActionEvent> startBtnHandler) {
+    public void showStartMenu(EventHandler<ActionEvent> startBtnHandler, EventHandler<ActionEvent> joinBtnHandler) {
         StartMenu startMenu = new StartMenu("menu.css");
         startMenu.getBtnStart().setOnAction(startBtnHandler);
+        startMenu.getBtnJoin().setOnAction(joinBtnHandler);
         view.registerOverlay("start", startMenu);
         view.init();
         view.showOverlay("start");
+    }
+
+    @Override
+    public void showWaitingMenu() {
+        WatingMenu watingMenu = new WatingMenu("menu.css");
+        view.registerOverlay("wait", watingMenu);
+        view.showOverlay("wait");
     }
 
     @Override

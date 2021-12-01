@@ -2,7 +2,11 @@ package de.alshikh.haw.tron.client.common.data.entites;
 
 import de.alshikh.haw.tron.client.models.data.entities.Bike;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
+    private static final long serialVersionUID = 623286517279433635L;
+
     String name;
     Bike bike;
     boolean dead = false;

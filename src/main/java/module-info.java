@@ -2,6 +2,7 @@ module de.alshikh.haw.tron {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.slf4j;
+    requires org.junit.jupiter.api;
 
     opens de.alshikh.haw.tron.client to javafx.fxml;
     opens de.alshikh.haw.tron.client.views.overlayes to javafx.fxml;

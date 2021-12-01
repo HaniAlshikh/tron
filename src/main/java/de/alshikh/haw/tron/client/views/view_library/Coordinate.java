@@ -1,8 +1,12 @@
 package de.alshikh.haw.tron.client.views.view_library;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Coordinate {
+// TODO: write a wrapper to keep this virgin
+public class Coordinate implements Serializable {
+    private static final long serialVersionUID = 6232415172729433635L;
+
     public final int x;
     public final int y;
 

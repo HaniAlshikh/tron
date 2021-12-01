@@ -15,7 +15,9 @@ public class TronGame extends Application {
     public void start(Stage stage) throws Exception {
         IGameModel gameModel = new GameModel();
         IGameView gameView = new GameView();
-        IGameController gameController = new GameController(gameModel, gameView);
+        IGameController gameController = GameController.getInstance();
+        gameController.setGameModel(gameModel);
+        gameController.setGameView(gameView);
         gameController.showStartMenu();
 
         // configure and show stage
