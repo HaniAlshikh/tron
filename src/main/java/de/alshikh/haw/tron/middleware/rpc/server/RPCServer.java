@@ -23,8 +23,7 @@ public class RPCServer implements IRPCServer {
 
     @Override
     public void start() throws IOException {
-        ServerSocket server = new ServerSocket();
-        try (server) {
+        try (ServerSocket server = new ServerSocket()) {
             server.bind(new InetSocketAddress(port));
             System.out.println("start server");
             while (true) {
@@ -37,7 +36,7 @@ public class RPCServer implements IRPCServer {
     }
 
     private Runnable send(Socket client) {
-        return new RPCSender(this, client);
+        return new ServerStub(serviceRegistry, client);
     }
 
     @Override

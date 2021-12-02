@@ -59,7 +59,7 @@ public final class GameController implements IGameController {
                 e.printStackTrace();
             }
         }).start();
-        this.enemyController = IRPCClient.getRemoteProxyObj(IGameController.class,
+        this.enemyController = IRPCClient.getServiceStub(IGameController.class,
                 new InetSocketAddress("localhost", 8099));
 
         gameModel.createGame();
@@ -77,7 +77,7 @@ public final class GameController implements IGameController {
                 e.printStackTrace();
             }
         }).start();
-        this.enemyController = IRPCClient.getRemoteProxyObj(IGameController.class,
+        this.enemyController = IRPCClient.getServiceStub(IGameController.class,
                 new InetSocketAddress("localhost", 8088));
 
         gameModel.joinGame();

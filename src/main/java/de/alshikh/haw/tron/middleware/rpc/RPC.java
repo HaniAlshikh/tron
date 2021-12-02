@@ -21,7 +21,7 @@ class RPC {
             }
         }).start();
 
-        IGameController gameController = IRPCClient.getRemoteProxyObj(
+        IGameController gameController = IRPCClient.getServiceStub(
                 IGameController.class,
                 new InetSocketAddress("localhost", 8088)
         );

@@ -5,11 +5,11 @@ import java.net.InetSocketAddress;
 
 public interface IRPCClient {
     @SuppressWarnings("unchecked")
-    static <T> T getRemoteProxyObj(final Class<?> serviceInterface, final InetSocketAddress calleeAddress) {
+    static <T> T getServiceStub(final Class<?> serviceInterface, final InetSocketAddress serverAddress) {
         return (T) Proxy.newProxyInstance(
                 serviceInterface.getClassLoader(),
                 new Class<?>[]{serviceInterface},
-                new RPCInvoker(calleeAddress, serviceInterface)
+                new ClientStub(serviceInterface, serverAddress)
         );
     }
 }

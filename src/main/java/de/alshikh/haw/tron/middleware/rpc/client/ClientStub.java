@@ -7,39 +7,41 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class RPCInvoker implements InvocationHandler {
+public class ClientStub implements InvocationHandler {
 
     private Socket socket;
     private ObjectOutputStream output;
     private ObjectInputStream input;
 
-    private final InetSocketAddress calleeAddress;
     private final Class<?> serviceInterface;
+    private final InetSocketAddress serverAddress;
 
-    public RPCInvoker(InetSocketAddress calleeAddress, Class<?> serviceInterface) {
-        this.calleeAddress = calleeAddress;
+    public ClientStub(Class<?> serviceInterface, InetSocketAddress serverAddress) {
         this.serviceInterface = serviceInterface;
+        this.serverAddress = serverAddress;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
             socket = new Socket();
-            socket.connect(calleeAddress);
+            socket.connect(serverAddress);
 
+            // marshal and send
             output = new ObjectOutputStream(socket.getOutputStream());
             output.writeUTF(serviceInterface.getName());
             output.writeUTF(method.getName());
             output.writeObject(method.getParameterTypes());
             output.writeObject(args);
 
-            // block and wait for server
+            // receive (block and wait for server)
+            // TODO: bad idea? (async all methods return void -> doesn't matter?)
             input = new ObjectInputStream(socket.getInputStream());
             return input.readObject();
         } finally {
-            if (socket != null) socket.close();
-            if (output != null) output.close();
             if (input != null) input.close();
+            if (output != null) output.close();
+            if (socket != null) socket.close();
         }
     }
 }
