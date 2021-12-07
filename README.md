@@ -140,6 +140,13 @@ TODO: stubs in the application components
 TODO: factory pattern
 TODO: updateDirection dosn't depend on setDirection
 TODO: Collision detection in parallel | collision dectection server
+TODO: central tact provider (02.12.2021)
+        updates musst match (id or counter)
+TODO: Naming protocol Table
+TODO: messaging queue Thread manager (publisher subscriber)
+TODO: no references when serializing build a DTO of the object and references to be serialized with preemptive types (example player and coordinates) | because this make us depends on java
+    Using java serialization and marshaling is not permitted
+    UUID can be used to identify the calling class
 
 \<Runtime Scenario 1\> {#__runtime_scenario_1}
 ----------------------
