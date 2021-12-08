@@ -5,7 +5,6 @@ import de.alshikh.haw.tron.client.views.game.overlayes.StartMenu;
 import de.alshikh.haw.tron.client.views.game.overlayes.WatingMenu;
 import de.alshikh.haw.tron.client.views.game.overlayes.WinnerMenu;
 import de.alshikh.haw.tron.client.views.view_library.ITronView;
-import de.alshikh.haw.tron.client.views.view_library.TronView;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -14,12 +13,11 @@ import java.io.IOException;
 
 public class GameView implements IGameView {
 
-    public final static String VIEW_CONFIG_FILE = "view.properties";
 
     private final ITronView view;
 
-    public GameView() throws IOException {
-        this.view = new TronView(VIEW_CONFIG_FILE);
+    public GameView(ITronView view) throws IOException {
+        this.view = view;
     }
 
     @Override

@@ -1,56 +1,31 @@
 package de.alshikh.haw.tron.client.models.lobby;
 
+import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class LobbyModel implements ILobbyModel {
 
-    //Player player;
-    //Game game;
-    //
-    //IInputHandler inputHandler;
-    //
-    //public GameModel() {
-    //    this.inputHandler = new InputHandler();
-    //}
-    //
-    //@Override
-    //public void createGame() {
-    //    this.player = new Player("P1", new Bike(BikeStartingPosition.LEFT, Color.RED)));
-    //    prepGame();
-    //}
-    //
-    //@Override
-    //public void joinGame() {
-    //    this.player = new Player("P2", new Bike(BikeStartingPosition.RIGHT, new SerializableColor(Color.BLUE)));
-    //    prepGame();
-    //}
-    //
-    //private void prepGame() {
-    //    this.game = new Game(player);
-    //    inputHandler.setAWSDPlayer(player);
-    //}
-    //
-    //@Override
-    //public void updateGame(Player opponent) {
-    //    game.update(opponent);
-    //}
-    //
-    //@Override
-    //public EventHandler<KeyEvent> getKeyInputHandler() {
-    //    return inputHandler.getHandler();
-    //}
-    //
-    //@Override
-    //public Player getPlayer() {
-    //    return player;
-    //}
-    //
-    //@Override
-    //public Player getWinner() {
-    //    return game.getWinner();
-    //}
-    //
-    //@Override
-    //public boolean gameEnded() {
-    //    return game.gameEnded();
-    //}
+    ObservableList<Room> rooms = FXCollections.observableArrayList();
 
+    private static final LobbyModel instance = new LobbyModel();
+    public static LobbyModel getInstance() {
+        return instance;
+    }
+    private LobbyModel() {}
+
+    @Override
+    public void addRoom(Room room) {
+        rooms.add(room);
+    }
+
+    @Override
+    public void removeRoom(Room room) {
+        rooms.remove(room);
+    }
+
+    @Override
+    public ObservableList<Room> getRooms() {
+        return rooms;
+    }
 }

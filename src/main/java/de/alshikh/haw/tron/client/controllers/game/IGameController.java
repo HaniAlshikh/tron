@@ -8,15 +8,15 @@ public interface IGameController {
 
     void showStartMenu();
 
-    void playGame();
+    void admit(IGameController opponentController);
+
+    void joinGame(IGameController opponentController);
+
+    void startGame();
 
     Player getUpdate();
 
     IGameModel getGameModel();
 
-    void setGameModel(IGameModel gameModel);
-
     IGameView getGameView();
-
-    void setGameView(IGameView gameView);
 }
