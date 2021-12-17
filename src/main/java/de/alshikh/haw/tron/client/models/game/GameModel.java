@@ -1,18 +1,23 @@
 package de.alshikh.haw.tron.client.models.game;
 
 import de.alshikh.haw.tron.client.common.data.entites.Player;
-import de.alshikh.haw.tron.client.models.game.InputHandler.IInputHandler;
-import de.alshikh.haw.tron.client.models.game.InputHandler.InputHandler;
 import de.alshikh.haw.tron.client.models.game.data.datatypes.BikeStartingPosition;
 import de.alshikh.haw.tron.client.models.game.data.entities.Bike;
 import de.alshikh.haw.tron.client.models.game.data.entities.Game;
+import de.alshikh.haw.tron.client.models.game.inputhandler.IInputHandler;
+import de.alshikh.haw.tron.client.models.game.inputhandler.InputHandler;
+import javafx.beans.InvalidationListener;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameModel implements IGameModel {
-    Player player;
-    Game game;
+    private final List<InvalidationListener> listeners = new ArrayList<>();
+
+    private Game game;
 
     IInputHandler inputHandler;
 
@@ -22,24 +27,18 @@ public class GameModel implements IGameModel {
 
     @Override
     public void createGame() {
-        this.player = new Player("P1", new Bike(BikeStartingPosition.LEFT, Color.RED));
-        prepGame();
+        prepGame("P1", new Bike(BikeStartingPosition.LEFT, Color.RED));
     }
 
     @Override
     public void joinGame() {
-        this.player = new Player("P2", new Bike(BikeStartingPosition.RIGHT, Color.BLUE));
-        prepGame();
-    }
-
-    private void prepGame() {
-        this.game = new Game(player);
-        inputHandler.setAWSDPlayer(player);
+        prepGame("P2", new Bike(BikeStartingPosition.RIGHT, Color.BLUE));
     }
 
     @Override
-    public void updateGame(Player opponent) {
-        game.update(opponent);
+    public void updateGame() {
+        game.update();
+        listeners.forEach(l -> l.invalidated(this));
     }
 
     @Override
@@ -48,17 +47,24 @@ public class GameModel implements IGameModel {
     }
 
     @Override
-    public Player getPlayer() {
-        return player;
+    public void addListener(InvalidationListener listener) {
+        listeners.add(listener);
     }
 
     @Override
-    public Player getWinner() {
-        return game.getWinner();
+    public void removeListener(InvalidationListener listener) {
+        listeners.remove(listener);
     }
 
     @Override
-    public boolean gameEnded() {
-        return game.gameEnded();
+    public Game getGame() {
+        return game;
+    }
+
+    private void prepGame(String name, Bike bike) {
+        Player player = new Player(name, bike);
+        this.game = new Game();
+        this.game.setPlayer(player);
+        inputHandler.setAWSDPlayer(player);
     }
 }

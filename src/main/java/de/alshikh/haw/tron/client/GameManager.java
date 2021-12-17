@@ -4,6 +4,7 @@ import de.alshikh.haw.tron.client.views.manager.overlays.ManagerMenu;
 import de.alshikh.haw.tron.client.views.view_library.ITronView;
 import de.alshikh.haw.tron.client.views.view_library.TronView;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class GameManager extends Application {
@@ -19,7 +20,7 @@ public class GameManager extends Application {
         ITronView managerView = new TronView(MANAGER_CONFIG_FILE);
 
         ManagerMenu managerMenu = new ManagerMenu("menu.css");
-        managerMenu.getBtnNew().setOnAction(e -> new TronGame());
+        managerMenu.getBtnNew().setOnAction(e -> Platform.runLater(new TronGame()));
         managerView.registerOverlay("new", managerMenu);
 
         managerView.init();

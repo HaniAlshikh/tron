@@ -14,7 +14,7 @@ public interface IGameController {
 
     void startGame();
 
-    Player getUpdate();
+    Player getGameUpdate();
 
     IGameModel getGameModel();
 

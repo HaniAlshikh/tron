@@ -8,27 +8,25 @@ import org.slf4j.LoggerFactory;
 public class Game {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    private final Player player;
     private Player winner;
-    private boolean gameEnded;
+    private boolean ended;
+    private boolean paused;
 
-    public Game(Player player) {
-        this.player = player;
+    // TODO: maybe generalise to support more than two players
+    private Player player;
+    private Player opponent;
+
+    public void update() {
+        checkForCollision();
+        checkForBreak();
     }
 
-    public void update(Player opponent) {
-        player.getBike().move();
-        opponent.getBike().move();
-        checkForCollision(opponent);
-    }
-
-    private void checkForCollision(Player opponent) {
+    private void checkForCollision() {
+        ended = true;
         if (player.getBike().getPosition().equals(opponent.getBike().getPosition())) {
             log.info(player + " collided with " + opponent);
             player.die();
             opponent.die();
-            gameEnded = true;
         }
         else if (opponent.getBike().getTrail().contains(player.getBike().getPosition())) {
             player.die();
@@ -37,14 +35,40 @@ public class Game {
         else if (player.getBike().getTrail().contains(opponent.getBike().getPosition())) {
             opponent.die();
             winner = player;
+        } else {
+            ended = false;
         }
     }
 
-    public boolean gameEnded() {
-        return gameEnded;
+    private void checkForBreak() {
+        paused = player.pausedGame() || opponent.pausedGame();
+    }
+
+    public boolean ended() {
+        return ended;
+    }
+
+    public boolean paused() {
+        return paused;
     }
 
     public Player getWinner() {
         return winner;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public Player getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(Player opponent) {
+        this.opponent = opponent;
     }
 }

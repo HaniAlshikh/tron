@@ -16,29 +16,31 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class TronGame {
+public class TronGame implements Runnable {
 
     public final static String VIEW_CONFIG_FILE = "view.properties";
 
-    public TronGame() {
+    @Override
+    public void run() {
         try {
-            ITronView view = new TronView(VIEW_CONFIG_FILE);
+            ITronView baseView = new TronView(VIEW_CONFIG_FILE);
 
-            ILobbyView lobbyView = new LobbyView(view);
+            ILobbyView lobbyView = new LobbyView(baseView);
             ILobbyController lobbyController = new LobbyController(lobbyView);
 
             IGameModel gameModel = new GameModel();
-            IGameView gameView = new GameView(view);
+            IGameView gameView = new GameView(baseView);
             IGameController gameController = new GameController(gameModel, gameView, lobbyController);
 
-
             gameController.showStartMenu();
+
 
             // configure and show stage
             Stage stage = new Stage();
             stage.setTitle("TRON - Light Cycles");
             stage.setScene(gameView.getScene());
             stage.show();
+            System.out.println("Number of active threads from the given thread: " + Thread.activeCount());
         } catch (IOException e) {
             e.printStackTrace();
         }

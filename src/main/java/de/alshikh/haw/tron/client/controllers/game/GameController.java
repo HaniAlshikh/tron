@@ -6,11 +6,13 @@ import de.alshikh.haw.tron.client.models.game.IGameModel;
 import de.alshikh.haw.tron.client.views.game.IGameView;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class GameController implements IGameController {
+public final class GameController implements IGameController, InvalidationListener {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -24,9 +26,10 @@ public final class GameController implements IGameController {
 
     public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController) {
         this.gameModel = gameModel;
+        this.gameModel.addListener(this);
         this.gameView = gameView;
         this.lobbyController = lobbyController;
-        this.gameLoop = new Timeline(new KeyFrame(Duration.seconds(0.2), e -> updateGame()));
+        this.gameLoop = new Timeline(new KeyFrame(Duration.seconds(0.1), e -> updateGame()));
     }
 
     @Override
@@ -40,9 +43,14 @@ public final class GameController implements IGameController {
     private void setupGame() {
         logger.info("Starting a new Game");
         gameModel.createGame();
-        lobbyController.createRoom(gameModel.getPlayer().getName(), this);
+        lobbyController.createRoom(gameModel.getGame().getPlayer().getName(), this);
         gameView.reset();
         gameView.showWaitingMenu();
+    }
+
+    @Override
+    public void invalidated(Observable observable) {
+        gameView.showGame(gameModel.getGame().getPlayer(), gameModel.getGame().getOpponent()); // TODO: bind game view to game
     }
 
     @Override
@@ -59,27 +67,48 @@ public final class GameController implements IGameController {
     @Override
     public void startGame() {
         gameView.reset();
+        // TODO: Input handling should be done in Controller
         gameView.getScene().setOnKeyPressed(gameModel.getKeyInputHandler());
         gameLoop.setCycleCount(Timeline.INDEFINITE);
         gameLoop.play();
     }
 
+    // TODO: game update should be easy to serialize object (PlayerDTO)
     @Override
-    public Player getUpdate() {
-        return gameModel.getPlayer();
+    public Player getGameUpdate() {
+        return gameModel.getGame().getPlayer();
     }
 
     private void updateGame() {
-        Player opponent = opponentController.getUpdate();
-        gameModel.updateGame(opponent);
-        gameView.showGame(gameModel.getPlayer(), opponent);
-        if (gameModel.getWinner() != null || gameModel.gameEnded())
+        gameModel.getGame().getPlayer().move();
+        gameModel.getGame().setOpponent(opponentController.getGameUpdate()); // or updates if more than two players
+
+        gameModel.updateGame(); // ensure fairness
+        if (gameModel.getGame().ended()) {
             endGame();
+            //return;
+        }
+
+        //gameView.showGame(gameModel.getGame().getPlayer(), gameModel.getGame().getOpponent()); // TODO: bind game view to game
     }
+
+    //// TODO: publisher subscriber pushes the update and waits for an update
+    //private void pushUpdate() {
+    //
+    //}
+    //
+    //// ensure we receives the correct update to ensure fairness
+    //private GameUpdate getOpponentUpdate() {
+    //    GameUpdate opponentGameUpdate;
+    //    do {
+    //        opponentGameUpdate = opponentController.getGameUpdate();
+    //    } while (opponentGameUpdate == null);
+    //    return opponentGameUpdate;
+    //}
 
     private void endGame() {
         gameLoop.stop();
-        gameView.showWinnerMenu(gameModel.getWinner(), e -> setupGame());
+        gameView.showWinnerMenu(gameModel.getGame().getWinner(), e -> setupGame());
     }
 
     @Override

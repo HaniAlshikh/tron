@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.client.models.game.InputHandler.data.datatypes;
+package de.alshikh.haw.tron.client.models.game.inputhandler.data.datatypes;
 
 import de.alshikh.haw.tron.client.common.data.entites.Player;
 

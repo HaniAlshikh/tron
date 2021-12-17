@@ -1,22 +1,19 @@
 package de.alshikh.haw.tron.client.models.game;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
+import de.alshikh.haw.tron.client.models.game.data.entities.Game;
+import javafx.beans.Observable;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 
-public interface IGameModel {
+public interface IGameModel extends Observable {
 
     void createGame();
 
     void joinGame();
 
-    void updateGame(Player opponent);
+    void updateGame();
 
     EventHandler<KeyEvent> getKeyInputHandler();
 
-    Player getPlayer();
-
-    Player getWinner();
-
-    boolean gameEnded();
+    Game getGame();
 }

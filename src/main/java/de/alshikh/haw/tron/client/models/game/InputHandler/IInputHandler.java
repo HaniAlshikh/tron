@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.client.models.game.InputHandler;
+package de.alshikh.haw.tron.client.models.game.inputhandler;
 
 import de.alshikh.haw.tron.client.common.data.entites.Player;
 import javafx.event.EventHandler;
