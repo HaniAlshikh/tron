@@ -49,8 +49,8 @@ public class GameView implements IGameView {
     }
 
     @Override
-    public void showWinnerMenu(Player winner, EventHandler<ActionEvent> startBtnHandler) {
-        WinnerMenu winnerMenu = new WinnerMenu("menu.css", winner);
+    public void showWinnerMenu(String message, EventHandler<ActionEvent> startBtnHandler) {
+        WinnerMenu winnerMenu = new WinnerMenu("menu.css", message);
         winnerMenu.getBtnStart().setOnAction(startBtnHandler);
         view.registerOverlay("winner", winnerMenu);
         view.showOverlay("winner");

@@ -12,7 +12,7 @@ public class Game {
     private boolean ended;
     private boolean paused;
 
-    // TODO: maybe generalise to support more than two players
+    // TODO: generalise to support more than two players
     private Player player;
     private Player opponent;
 

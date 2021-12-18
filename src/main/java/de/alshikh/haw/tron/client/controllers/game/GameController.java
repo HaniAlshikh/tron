@@ -1,9 +1,9 @@
 package de.alshikh.haw.tron.client.controllers.game;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
 import de.alshikh.haw.tron.client.controllers.game.inputhandlers.GameInputHandler;
 import de.alshikh.haw.tron.client.controllers.lobby.ILobbyController;
 import de.alshikh.haw.tron.client.models.game.IGameModel;
+import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
 import de.alshikh.haw.tron.client.views.game.IGameView;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -75,23 +75,26 @@ public final class GameController implements IGameController, InvalidationListen
         gameLoop.play();
     }
 
-    // TODO: game update should be easy to serialize object (PlayerDTO)
     @Override
-    public Player getGameUpdate() {
-        return gameModel.getGame().getPlayer();
+    public PlayerUpdate getPlayerUpdate() {
+        return gameModel.getGame().getPlayer().getUpdate();
     }
 
     private void updateGame() {
-        gameModel.getGame().getPlayer().move();
-        gameModel.getGame().setOpponent(opponentController.getGameUpdate()); // or updates if more than two players
-
-        gameModel.updateGame(); // ensure fairness
+        gameModel.applyOpponentUpdate(opponentController.getPlayerUpdate());
+        if (!fairPlayEnsured()) {
+            endGame("Game ended because of a network error");
+        }
+        gameModel.updateGame();
         if (gameModel.getGame().ended()) {
             endGame();
-            //return;
         }
 
-        //gameView.showGame(gameModel.getGame().getPlayer(), gameModel.getGame().getOpponent()); // TODO: bind game view to game
+        gameModel.getGame().getPlayer().move();
+    }
+
+    private boolean fairPlayEnsured() {
+        return gameModel.comparePlayerVersions() == 0;
     }
 
     //// TODO: publisher subscriber pushes the update and waits for an update
@@ -109,8 +112,12 @@ public final class GameController implements IGameController, InvalidationListen
     //}
 
     private void endGame() {
+        endGame(gameModel.getGame().getWinner() == null ? "It's a tie" : gameModel.getGame().getWinner() + " won");
+    }
+
+    private void endGame(String message) {
         gameLoop.stop();
-        gameView.showWinnerMenu(gameModel.getGame().getWinner(), e -> setupGame());
+        gameView.showWinnerMenu(message, e -> setupGame());
     }
 
     @Override

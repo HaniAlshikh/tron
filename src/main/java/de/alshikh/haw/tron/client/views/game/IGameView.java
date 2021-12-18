@@ -13,7 +13,7 @@ public interface IGameView {
 
     void showWaitingMenu();
 
-    void showWinnerMenu(Player winner, EventHandler<ActionEvent> startBtnHandler);
+    void showWinnerMenu(String message, EventHandler<ActionEvent> startBtnHandler);
 
     void reset();
 

@@ -1,6 +1,5 @@
 package de.alshikh.haw.tron.client.views.game.overlayes;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
 import de.alshikh.haw.tron.client.views.view_library.ViewUtility;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
@@ -15,12 +14,12 @@ public class WinnerMenu extends VBox {
     private final Button btnStart;
     private final Button btnExit;
 
-    public WinnerMenu(String stylesheet, Player winner) {
+    public WinnerMenu(String stylesheet, String message) {
         super(20.0);
         this.getStylesheets().add(stylesheet);
         this.setAlignment(Pos.CENTER);
 
-        labelWinner = new Label(winner == null ? "It's a tie" : winner + " won");
+        labelWinner = new Label(message);
         labelWinner.setStyle("-fx-text-fill: " + ViewUtility.getHexTriplet(Color.PAPAYAWHIP.brighter()) + ";");
 
         btnStart = new Button("Play again");

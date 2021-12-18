@@ -1,7 +1,7 @@
 package de.alshikh.haw.tron.client.controllers.game;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
 import de.alshikh.haw.tron.client.models.game.IGameModel;
+import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
 import de.alshikh.haw.tron.client.views.game.IGameView;
 
 public interface IGameController {
@@ -14,7 +14,7 @@ public interface IGameController {
 
     void startGame();
 
-    Player getGameUpdate();
+    PlayerUpdate getPlayerUpdate();
 
     IGameModel getGameModel();
 

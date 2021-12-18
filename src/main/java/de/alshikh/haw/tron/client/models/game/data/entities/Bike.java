@@ -31,6 +31,10 @@ public class Bike {
         trail.add(movingDirection.calculateNewPosition(getPosition()));
     }
 
+    public void move(int x, int y) {
+        trail.add(new Coordinate(x, y));
+    }
+
     public Direction getMovingDirection() {
         return movingDirection;
     }
