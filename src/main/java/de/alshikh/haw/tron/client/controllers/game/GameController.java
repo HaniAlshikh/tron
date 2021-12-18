@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.client.controllers.game;
 
 import de.alshikh.haw.tron.client.common.data.entites.Player;
+import de.alshikh.haw.tron.client.controllers.game.inputhandlers.GameInputHandler;
 import de.alshikh.haw.tron.client.controllers.lobby.ILobbyController;
 import de.alshikh.haw.tron.client.models.game.IGameModel;
 import de.alshikh.haw.tron.client.views.game.IGameView;
@@ -26,9 +27,11 @@ public final class GameController implements IGameController, InvalidationListen
 
     public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController) {
         this.gameModel = gameModel;
-        this.gameModel.addListener(this);
         this.gameView = gameView;
         this.lobbyController = lobbyController;
+
+
+        this.gameModel.addListener(this);
         this.gameLoop = new Timeline(new KeyFrame(Duration.seconds(0.1), e -> updateGame()));
     }
 
@@ -67,8 +70,7 @@ public final class GameController implements IGameController, InvalidationListen
     @Override
     public void startGame() {
         gameView.reset();
-        // TODO: Input handling should be done in Controller
-        gameView.getScene().setOnKeyPressed(gameModel.getKeyInputHandler());
+        gameView.getScene().setOnKeyPressed(new GameInputHandler(gameModel.getGame().getPlayer()));
         gameLoop.setCycleCount(Timeline.INDEFINITE);
         gameLoop.play();
     }

@@ -4,11 +4,7 @@ import de.alshikh.haw.tron.client.common.data.entites.Player;
 import de.alshikh.haw.tron.client.models.game.data.datatypes.BikeStartingPosition;
 import de.alshikh.haw.tron.client.models.game.data.entities.Bike;
 import de.alshikh.haw.tron.client.models.game.data.entities.Game;
-import de.alshikh.haw.tron.client.models.game.inputhandler.IInputHandler;
-import de.alshikh.haw.tron.client.models.game.inputhandler.InputHandler;
 import javafx.beans.InvalidationListener;
-import javafx.event.EventHandler;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -19,11 +15,7 @@ public class GameModel implements IGameModel {
 
     private Game game;
 
-    IInputHandler inputHandler;
-
-    public GameModel() {
-        this.inputHandler = new InputHandler();
-    }
+    public GameModel() {}
 
     @Override
     public void createGame() {
@@ -39,11 +31,6 @@ public class GameModel implements IGameModel {
     public void updateGame() {
         game.update();
         listeners.forEach(l -> l.invalidated(this));
-    }
-
-    @Override
-    public EventHandler<KeyEvent> getKeyInputHandler() {
-        return inputHandler.getHandler();
     }
 
     @Override
@@ -65,6 +52,5 @@ public class GameModel implements IGameModel {
         Player player = new Player(name, bike);
         this.game = new Game();
         this.game.setPlayer(player);
-        inputHandler.setAWSDPlayer(player);
     }
 }

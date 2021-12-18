@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.client.controllers.lobby;
 
 import de.alshikh.haw.tron.client.controllers.game.IGameController;
+import de.alshikh.haw.tron.client.controllers.lobby.inputhandlers.RoomsMenuInputHandler;
 import de.alshikh.haw.tron.client.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.client.models.lobby.LobbyModel;
 import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
@@ -21,10 +22,9 @@ public final class LobbyController implements ILobbyController {
 
     @Override
     public void showRoomsMenu(IGameController playerController) {
-        lobbyView.showRoomsMenu(
-                lobbyModel.getRooms(),
-                room -> startGame(playerController, room.getHostController())
-        );
+        RoomsMenuInputHandler roomsMenuInputHandler = new RoomsMenuInputHandler();
+        roomsMenuInputHandler.setListItemConsumer(room -> startGame(playerController, room.getHostController()));
+        lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRooms());
     }
 
     @Override

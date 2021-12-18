@@ -1,7 +1,6 @@
 package de.alshikh.haw.tron.client.views.lobby.overlayes;
 
 import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
-import de.alshikh.haw.tron.client.views.lobby.handlers.RoomsMenuInputHandler;
 import de.alshikh.haw.tron.client.views.view_library.ViewUtility;
 import javafx.geometry.Pos;
 import javafx.scene.control.Control;
@@ -9,8 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
-import java.util.function.Consumer;
 
 public class RoomsMenu extends VBox {
 
@@ -40,9 +37,5 @@ public class RoomsMenu extends VBox {
 
     public ListView<Room> getRoomListView() {
         return roomsListView;
-    }
-
-    public void setRoomConsumer(Consumer<Room> roomConsumer) {
-        roomsListView.setOnMouseClicked(new RoomsMenuInputHandler(roomsListView, roomConsumer));
     }
 }

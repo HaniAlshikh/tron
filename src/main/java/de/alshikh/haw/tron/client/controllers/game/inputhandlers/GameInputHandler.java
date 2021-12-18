@@ -1,6 +1,6 @@
-package de.alshikh.haw.tron.client.models.game.inputhandler;
+package de.alshikh.haw.tron.client.controllers.game.inputhandlers;
 
-import de.alshikh.haw.tron.client.models.game.inputhandler.data.datatypes.Controllers;
+import de.alshikh.haw.tron.client.controllers.game.inputhandlers.data.datatypes.GameControllers;
 import de.alshikh.haw.tron.client.models.game.data.datatypes.Direction;
 import de.alshikh.haw.tron.client.common.data.entites.Player;
 import javafx.event.EventHandler;
@@ -9,28 +9,28 @@ import javafx.scene.input.KeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InputHandler implements IInputHandler, EventHandler<KeyEvent> {
+public class GameInputHandler implements IGameInputHandler, EventHandler<KeyEvent> {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     Player AWSDPlayer;
     Player JIKLPlayer;
 
-    public InputHandler() {}
+    public GameInputHandler() {}
 
-    public InputHandler(Player... players) {
+    public GameInputHandler(Player... players) {
         try {
             for (int i = 0; i < players.length; i++) {
-                Controllers.values()[i].setPlayer(players[i]);
+                GameControllers.values()[i].setPlayer(players[i]);
             }
         } catch (IndexOutOfBoundsException e) {
             throw new IllegalArgumentException("too many players: "
-                    + "available controllers: " +  Controllers.values().length
+                    + "available controllers: " +  GameControllers.values().length
                     + "Number of players: " + players.length);
         }
 
-        AWSDPlayer = Controllers.AWSD.getPlayer();
-        JIKLPlayer = Controllers.AWSD.getPlayer();
+        AWSDPlayer = GameControllers.AWSD.getPlayer();
+        JIKLPlayer = GameControllers.AWSD.getPlayer();
     }
 
     @Override

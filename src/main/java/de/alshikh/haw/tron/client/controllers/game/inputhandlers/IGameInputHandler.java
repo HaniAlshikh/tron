@@ -1,10 +1,10 @@
-package de.alshikh.haw.tron.client.models.game.inputhandler;
+package de.alshikh.haw.tron.client.controllers.game.inputhandlers;
 
 import de.alshikh.haw.tron.client.common.data.entites.Player;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
 
-public interface IInputHandler {
+public interface IGameInputHandler {
     Player getAWSDPlayer();
 
     void setAWSDPlayer(Player AWSDPlayer);
