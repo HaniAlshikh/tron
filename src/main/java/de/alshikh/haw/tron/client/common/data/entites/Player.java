@@ -6,26 +6,27 @@ import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
 //
 public class Player {
 
-    private final String name;
-    private final Bike bike;
+    private int version;
     private boolean dead = false;
     private boolean pauseGame = false;
-    private PlayerUpdate update;
-    int version;
+    private final PlayerUpdate update = new PlayerUpdate();
+
+    private final String name;
+    private final Bike bike;
 
     public Player(String name, Bike bike) {
         this.name = name;
         this.bike = bike;
-        createUpdate(); // start position
+        resetUpdate(); // start position
     }
 
     public void move() {
         bike.move();
-        createUpdate();
+        resetUpdate();
     }
 
-    private void createUpdate() {
-        this.update = new PlayerUpdate(bike.getPosition().x, bike.getPosition().y, pauseGame, ++version);
+    private void resetUpdate() {
+        this.update.setValues(bike.getPosition().x, bike.getPosition().y, pauseGame, ++version);
     }
 
     public void applyUpdate(PlayerUpdate update) {

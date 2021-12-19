@@ -16,7 +16,8 @@ public class Game {
     private Player player;
     private Player opponent;
 
-    public void update() {
+    public void updateState(PlayerUpdate opponentUpdate) {
+        opponent.applyUpdate(opponentUpdate);
         checkForCollision();
         checkForBreak();
     }

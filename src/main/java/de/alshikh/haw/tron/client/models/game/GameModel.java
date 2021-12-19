@@ -36,25 +36,9 @@ public class GameModel implements IGameModel {
     }
 
     @Override
-    public void applyOpponentUpdate(PlayerUpdate opponentPlayerUpdate) {
-        game.getOpponent().applyUpdate(opponentPlayerUpdate);
-    }
-
-    @Override
-    public int comparePlayerVersions() {
-        // TODO: maybe allow version catch up
-        logger.debug("Player version: " + game.getPlayer().getVersion() + " " + game.getOpponent().getVersion() + " :Opponent version");
-        // TODO: a version mismatch of 1 point is expected as one of the players will call the updateGame method first
-        //  this should be solved by threading
-        return game.getPlayer().getVersion() == game.getOpponent().getVersion() ||
-                game.getPlayer().getVersion() - 1 == game.getOpponent().getVersion() ||
-                game.getPlayer().getVersion() == game.getOpponent().getVersion() - 1 ? 0 : -1;
-    }
-
-    @Override
-    public void updateGame() {
-        game.update();
-        listeners.forEach(l -> l.invalidated(this));
+    public void updateGameState(PlayerUpdate opponentUpdate) {
+        game.updateState(opponentUpdate);
+        publishUpdate();
     }
 
     @Override
@@ -65,6 +49,11 @@ public class GameModel implements IGameModel {
     @Override
     public void removeListener(InvalidationListener listener) {
         listeners.remove(listener);
+    }
+
+    @Override
+    public void publishUpdate() {
+        listeners.forEach(l -> l.invalidated(this));
     }
 
     @Override
