@@ -5,6 +5,8 @@ import de.alshikh.haw.tron.client.views.view_library.ITronView;
 import de.alshikh.haw.tron.client.views.view_library.TronView;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.concurrent.ExecutorService;
@@ -37,7 +39,12 @@ public class GameManager extends Application {
 
         stage.setTitle("TRON Game Manager");
         stage.setScene(managerView.getScene());
+        stage.setAlwaysOnTop(true);
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         stage.show();
+        stage.setX((screenBounds.getWidth() - managerView.getScene().getWidth()) / 2);
+        stage.setY(0);
+        stage.setOnCloseRequest(e -> { Platform.exit(); System.exit(0); });
     }
 
     @Override
