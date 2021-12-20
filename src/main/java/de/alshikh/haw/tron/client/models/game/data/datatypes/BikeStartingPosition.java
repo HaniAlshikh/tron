@@ -16,6 +16,11 @@ public enum BikeStartingPosition {
     int COLUMNS;
     Direction movingDirection;
 
+
+    BikeStartingPosition(Direction movingDirection) {
+        this("view.properties", movingDirection);
+    }
+
     BikeStartingPosition(String configFile, Direction movingDirection) {
         Properties prop = new Properties();
         try {
@@ -27,10 +32,6 @@ public enum BikeStartingPosition {
         this.ROWS = Integer.parseInt(prop.getProperty("rows"));
         this.COLUMNS = Integer.parseInt(prop.getProperty("columns"));
         this.movingDirection = movingDirection;
-    }
-
-    BikeStartingPosition(Direction movingDirection) {
-        this("view.properties", movingDirection);
     }
 
     public static BikeStartingPosition random() {

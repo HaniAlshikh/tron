@@ -25,13 +25,6 @@ public class GameUpdater implements InvalidationListener {
         this.UILock = UILock;
     }
 
-    @Override
-    public void invalidated(Observable observable) {
-        if (observable instanceof PlayerUpdate)
-            playerUpdateObserved((PlayerUpdate) observable);
-    }
-
-
     public void updateGame() {
         synchronized (gameStateLock) {
             logger.debug("lock: consume opponent update");
@@ -59,11 +52,11 @@ public class GameUpdater implements InvalidationListener {
     }
 
     private boolean fairPlayEnsured() {
-        logger.debug("Player version: " + gameModel.getGame().getPlayer().getVersion() + " " + this.receivedOpponentUpdate.getVersion() + " :Opponent version");
-        if (gameModel.getGame().getPlayer().getVersion() == this.receivedOpponentUpdate.getVersion() ||
+        logger.debug("Player version: " + gameModel.getGame().getPlayer().getUpdateVersion() + " " + this.receivedOpponentUpdate.getVersion() + " :Opponent version");
+        if (gameModel.getGame().getPlayer().getUpdateVersion() == this.receivedOpponentUpdate.getVersion() ||
                 // Player is lacking behind and should have the opportunity to continue moving
                 // the opponent will wait as he has a grater version
-                gameModel.getGame().getPlayer().getVersion() < this.receivedOpponentUpdate.getVersion()) {
+                gameModel.getGame().getPlayer().getUpdateVersion() < this.receivedOpponentUpdate.getVersion()) {
             return true;
         }
 
@@ -71,10 +64,16 @@ public class GameUpdater implements InvalidationListener {
         return false;
     }
 
-    private void playerUpdateObserved(PlayerUpdate observable) {
+    @Override
+    public void invalidated(Observable observable) {
+        if (observable instanceof PlayerUpdate)
+            playerUpdateObserved((PlayerUpdate) observable);
+    }
+
+    private void playerUpdateObserved(PlayerUpdate playerUpdate) {
         synchronized (gameStateLock) {
             logger.debug("lock: receive opponent update");
-            this.receivedOpponentUpdate = observable;
+            this.receivedOpponentUpdate = playerUpdate;
             logger.debug("unlock: receive opponent update");
         }
     }

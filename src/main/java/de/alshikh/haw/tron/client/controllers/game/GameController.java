@@ -24,10 +24,7 @@ public final class GameController implements IGameController, InvalidationListen
     private final IGameView gameView;
     private final ILobbyController lobbyController;
 
-    private IGameController opponentController;
     private final Object UILock = new Object();
-
-    private final ExecutorService es;
     private final GameUpdater gameUpdater;
     private final Timeline gameLoop;
 
@@ -35,7 +32,6 @@ public final class GameController implements IGameController, InvalidationListen
         this.gameModel = gameModel;
         this.gameView = gameView;
         this.lobbyController = lobbyController;
-        this.es = es;
 
         this.gameUpdater = new GameUpdater(gameModel, es, UILock);
         this.gameLoop = new Timeline(
@@ -72,8 +68,7 @@ public final class GameController implements IGameController, InvalidationListen
 
     @Override
     public void admit(IGameController opponentController) {
-        this.opponentController = opponentController;
-        this.opponentController.getPlayerUpdate().addListener(gameUpdater);
+        opponentController.getPlayerUpdate().addListener(gameUpdater);
     }
 
     @Override

@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bike {
-    private static final long serialVersionUID = 623241517279433635L;
-
     Direction movingDirection;
     List<Coordinate> trail = new ArrayList<>();
     Color color;

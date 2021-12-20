@@ -2,10 +2,10 @@ package de.alshikh.haw.tron.client.models.game.data.entities;
 
 public class Player {
 
-    private int version;
+    private final PlayerUpdate update = new PlayerUpdate();
+    private int updateVersion;
     private boolean dead = false;
     private boolean pauseGame = false;
-    private final PlayerUpdate update = new PlayerUpdate();
 
     private final String name;
     private final Bike bike;
@@ -22,13 +22,13 @@ public class Player {
     }
 
     private void resetUpdate() {
-        this.update.setValues(bike.getPosition().x, bike.getPosition().y, pauseGame, ++version);
+        this.update.setValues(bike.getPosition().x, bike.getPosition().y, pauseGame, ++updateVersion);
     }
 
     public void applyUpdate(PlayerUpdate update) {
         bike.move(update.getX(), update.getY());
         pauseGame = update.pauseGame();
-        version = update.getVersion();
+        updateVersion = update.getVersion();
     }
 
     public PlayerUpdate getUpdate() {
@@ -59,8 +59,8 @@ public class Player {
         this.pauseGame = !this.pauseGame;
     }
 
-    public int getVersion() {
-        return version;
+    public int getUpdateVersion() {
+        return updateVersion;
     }
 
     @Override

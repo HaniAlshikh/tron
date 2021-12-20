@@ -7,10 +7,8 @@ public enum Direction {
 
 	public boolean isAllowed(Direction currentDirection) {
 		switch (currentDirection) {
-			case UP: case DOWN:
-				return (this.equals(Direction.LEFT) || this.equals(Direction.RIGHT));
-			case LEFT: case RIGHT:
-				return (this.equals(Direction.UP) || this.equals(Direction.DOWN));
+			case UP: case DOWN: return (this.equals(Direction.LEFT) || this.equals(Direction.RIGHT));
+			case LEFT: case RIGHT: return (this.equals(Direction.UP) || this.equals(Direction.DOWN));
 			default: throw new EnumConstantNotPresentException(this.getClass(), this.name());
 		}
 	}
