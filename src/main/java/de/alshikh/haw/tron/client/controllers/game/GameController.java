@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public final class GameController implements IGameController, InvalidationListener {
 
@@ -26,28 +25,28 @@ public final class GameController implements IGameController, InvalidationListen
     private final ILobbyController lobbyController;
 
     private IGameController opponentController;
-    private PlayerUpdate opponentUpdate;
-    private final Object lock = new Object();
+    private PlayerUpdate receivedOpponentUpdate;
+    private final Object gameStateLock = new Object();
     // TODO: reason of this was to solve update redering skip if we received
     //  a new update that changes the game state before it's even rendered
     //  which causes missing trail point of the update
     //  yet it's still not working
     private final Object UILock = new Object();
 
+    private final ExecutorService es;
     private final Timeline gameLoop;
 
-    ExecutorService exec = Executors.newFixedThreadPool(10);
-
-    public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController) {
+    public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController, ExecutorService es) {
         this.gameModel = gameModel;
         this.gameView = gameView;
         this.lobbyController = lobbyController;
+        this.es = es;
 
 
         this.gameModel.addListener(this); // on model update update the view
         this.gameLoop = new Timeline(
                 new KeyFrame(Duration.seconds(0.1),
-                e -> exec.execute(this::updateGame))
+                e -> es.execute(this::updateGame))
         );
     }
 
@@ -70,9 +69,9 @@ public final class GameController implements IGameController, InvalidationListen
     @Override
     public void invalidated(Observable observable) {
         if (observable instanceof PlayerUpdate) {
-            synchronized (lock) {
+            synchronized (gameStateLock) {
                 logger.debug("lock: receive opponent update");
-                this.opponentUpdate = (PlayerUpdate) observable;
+                this.receivedOpponentUpdate = (PlayerUpdate) observable;
                 logger.debug("unlock: receive opponent update");
                 return;
             }
@@ -97,7 +96,7 @@ public final class GameController implements IGameController, InvalidationListen
         this.logger = LoggerFactory.getLogger("Server " + this.getClass().getSimpleName());
         this.opponentController = opponentController;
         // TODO: update lister should be added before the initial position update is created
-        this.opponentUpdate = this.opponentController.getPlayerUpdate();
+        this.receivedOpponentUpdate = this.opponentController.getPlayerUpdate();
         this.opponentController.getPlayerUpdate().addListener(this);
     }
 
@@ -107,7 +106,7 @@ public final class GameController implements IGameController, InvalidationListen
         this.logger = LoggerFactory.getLogger("Client " + this.getClass().getSimpleName());
         this.opponentController = opponentController;
         // TODO: update lister should be added before the initial position update is created
-        this.opponentUpdate = this.opponentController.getPlayerUpdate();
+        this.receivedOpponentUpdate = this.opponentController.getPlayerUpdate();
         this.opponentController.getPlayerUpdate().addListener(this);
         gameModel.joinGame();
     }
@@ -126,9 +125,9 @@ public final class GameController implements IGameController, InvalidationListen
     }
 
     private void updateGame() {
-        synchronized (lock) {
+        synchronized (gameStateLock) {
             logger.debug("lock: consume opponent update");
-            if (this.opponentUpdate == null) return; // we received no updates yet
+            if (this.receivedOpponentUpdate == null) return; // we received no updates yet
             if (!fairPlayEnsured()) {
                 // TODO: after x attempts end the game?
                 //  player version < opponent -> player lost
@@ -141,26 +140,26 @@ public final class GameController implements IGameController, InvalidationListen
             // before consuming the next update
             synchronized (UILock) {
                 logger.debug("lock: update game state");
-                gameModel.updateGameState(this.opponentUpdate);
+                gameModel.updateGameState(this.receivedOpponentUpdate);
                 logger.debug("unlock: update game state");
             }
 
-            this.opponentUpdate = null; // consume the update (no need to keep processing the same update if no new one is received)
+            this.receivedOpponentUpdate = null; // consume the update (no need to keep processing the same update if no new one is received)
             logger.debug("unlock: consume opponent update");
         }
         gameModel.getGame().getPlayer().move();
     }
 
     private boolean fairPlayEnsured() {
-        logger.debug("Player version: " + gameModel.getGame().getPlayer().getVersion() + " " + this.opponentUpdate.getVersion() + " :Opponent version");
-        if (gameModel.getGame().getPlayer().getVersion() == this.opponentUpdate.getVersion() ||
+        logger.debug("Player version: " + gameModel.getGame().getPlayer().getVersion() + " " + this.receivedOpponentUpdate.getVersion() + " :Opponent version");
+        if (gameModel.getGame().getPlayer().getVersion() == this.receivedOpponentUpdate.getVersion() ||
                 // Player is lacking behind and should have the opportunity to continue moving
                 // the opponent will wait as he has a grater version
-                gameModel.getGame().getPlayer().getVersion() < this.opponentUpdate.getVersion()) {
+                gameModel.getGame().getPlayer().getVersion() < this.receivedOpponentUpdate.getVersion()) {
             return true;
         }
 
-        exec.execute(() -> gameModel.getGame().getPlayer().getUpdate().publishUpdate());
+        es.execute(() -> gameModel.getGame().getPlayer().getUpdate().publishUpdate());
         return false;
     }
 

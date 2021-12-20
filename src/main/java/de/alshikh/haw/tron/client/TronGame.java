@@ -15,10 +15,17 @@ import de.alshikh.haw.tron.client.views.view_library.TronView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
 public class TronGame implements Runnable {
 
     public final static String VIEW_CONFIG_FILE = "view.properties";
+
+    private final ExecutorService es;
+
+    public TronGame(ExecutorService es) {
+        this.es = es;
+    }
 
     @Override
     public void run() {
@@ -30,8 +37,8 @@ public class TronGame implements Runnable {
 
             IGameModel gameModel = new GameModel();
             IGameView gameView = new GameView(baseView);
-            IGameController gameController = new GameController(gameModel, gameView, lobbyController);
 
+            IGameController gameController = new GameController(gameModel, gameView, lobbyController, es);
             gameController.showStartMenu();
 
 
@@ -40,7 +47,6 @@ public class TronGame implements Runnable {
             stage.setTitle("TRON - Light Cycles");
             stage.setScene(gameView.getScene());
             stage.show();
-            System.out.println("Number of active threads from the given thread: " + Thread.activeCount());
         } catch (IOException e) {
             e.printStackTrace();
         }
