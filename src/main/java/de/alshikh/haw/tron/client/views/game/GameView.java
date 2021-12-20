@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.client.views.game;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
+import de.alshikh.haw.tron.client.models.game.data.entities.Player;
+import de.alshikh.haw.tron.client.models.game.data.entities.Game;
 import de.alshikh.haw.tron.client.views.game.overlayes.StartMenu;
 import de.alshikh.haw.tron.client.views.game.overlayes.WatingMenu;
 import de.alshikh.haw.tron.client.views.game.overlayes.WinnerMenu;
@@ -10,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class GameView implements IGameView {
 
@@ -21,8 +23,8 @@ public class GameView implements IGameView {
     }
 
     @Override
-    public void showGame(Player... players) {
-        for (Player p : players) {
+    public void showGame(Game game) {
+        for (Player p : Arrays.asList(game.getPlayer(), game.getOpponent())) {
             try {
                 view.draw(p.getBike().getTrail(), p.getBike().getColor());
             } catch (IllegalArgumentException e) { // went out of boundary

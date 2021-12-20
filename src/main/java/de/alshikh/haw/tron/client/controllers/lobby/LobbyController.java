@@ -33,8 +33,8 @@ public final class LobbyController implements ILobbyController {
     }
 
     private void startGame(IGameController playerController, IGameController hostController) {
-        playerController.joinGame(hostController);
         hostController.admit(playerController);
+        playerController.admit(hostController);
 
         playerController.startGame();
         hostController.startGame();

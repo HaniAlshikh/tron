@@ -1,9 +1,5 @@
-package de.alshikh.haw.tron.client.common.data.entites;
+package de.alshikh.haw.tron.client.models.game.data.entities;
 
-import de.alshikh.haw.tron.client.models.game.data.entities.Bike;
-import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
-
-//
 public class Player {
 
     private int version;

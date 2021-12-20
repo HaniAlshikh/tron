@@ -2,7 +2,7 @@ package de.alshikh.haw.tron.client.controllers.game.inputhandlers;
 
 import de.alshikh.haw.tron.client.controllers.game.inputhandlers.data.datatypes.GameControllers;
 import de.alshikh.haw.tron.client.models.game.data.datatypes.Direction;
-import de.alshikh.haw.tron.client.common.data.entites.Player;
+import de.alshikh.haw.tron.client.models.game.data.entities.Player;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

@@ -31,6 +31,7 @@ public class PlayerUpdate implements Observable {
     @Override
     public void addListener(InvalidationListener listener) {
         listeners.add(listener);
+        publishUpdate();
     }
 
     @Override

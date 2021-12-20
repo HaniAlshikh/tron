@@ -1,6 +1,5 @@
 package de.alshikh.haw.tron.client.models.game.data.entities;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

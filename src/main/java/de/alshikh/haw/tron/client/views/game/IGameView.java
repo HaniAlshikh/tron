@@ -1,13 +1,13 @@
 package de.alshikh.haw.tron.client.views.game;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
+import de.alshikh.haw.tron.client.models.game.data.entities.Game;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 
 public interface IGameView {
 
-    void showGame(Player... players);
+    void showGame(Game game);
 
     void showStartMenu(EventHandler<ActionEvent> startBtnHandler, EventHandler<ActionEvent> joinBtnHandler);
 

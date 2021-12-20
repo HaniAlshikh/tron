@@ -8,9 +8,9 @@ public interface IGameController {
 
     void showStartMenu();
 
-    void admit(IGameController opponentController);
+    void joinGame();
 
-    void joinGame(IGameController opponentController);
+    void admit(IGameController opponentController);
 
     void startGame();
 

@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.client.controllers.game;
 
 import de.alshikh.haw.tron.client.controllers.game.inputhandlers.GameInputHandler;
+import de.alshikh.haw.tron.client.controllers.game.services.GameUpdater;
 import de.alshikh.haw.tron.client.controllers.lobby.ILobbyController;
 import de.alshikh.haw.tron.client.models.game.IGameModel;
 import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
@@ -17,23 +18,17 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ExecutorService;
 
 public final class GameController implements IGameController, InvalidationListener {
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final IGameModel gameModel;
     private final IGameView gameView;
     private final ILobbyController lobbyController;
 
     private IGameController opponentController;
-    private PlayerUpdate receivedOpponentUpdate;
-    private final Object gameStateLock = new Object();
-    // TODO: reason of this was to solve update redering skip if we received
-    //  a new update that changes the game state before it's even rendered
-    //  which causes missing trail point of the update
-    //  yet it's still not working
     private final Object UILock = new Object();
 
     private final ExecutorService es;
+    private final GameUpdater gameUpdater;
     private final Timeline gameLoop;
 
     public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController, ExecutorService es) {
@@ -42,24 +37,26 @@ public final class GameController implements IGameController, InvalidationListen
         this.lobbyController = lobbyController;
         this.es = es;
 
-
-        this.gameModel.addListener(this); // on model update update the view
+        this.gameUpdater = new GameUpdater(gameModel, es, UILock);
         this.gameLoop = new Timeline(
                 new KeyFrame(Duration.seconds(0.1),
-                e -> es.execute(this::updateGame))
+                e -> es.execute(gameUpdater::updateGame))
         );
+
+        this.gameModel.addListener(this); // on model update update the view
+        this.gameLoop.setCycleCount(Timeline.INDEFINITE);
     }
 
     @Override
     public void showStartMenu() {
         gameView.showStartMenu(
-                e -> setupGame(),
-                e -> lobbyController.showRoomsMenu(this)
+                e -> createGame(),
+                e -> joinGame()
         );
     }
 
-    private void setupGame() {
-        logger.info("Starting a new Game");
+    private void createGame() {
+        logger.info("Starting a new Game as host");
         gameModel.createGame();
         lobbyController.createRoom(gameModel.getGame().getPlayer().getName(), this);
         gameView.reset();
@@ -67,55 +64,22 @@ public final class GameController implements IGameController, InvalidationListen
     }
 
     @Override
-    public void invalidated(Observable observable) {
-        if (observable instanceof PlayerUpdate) {
-            synchronized (gameStateLock) {
-                logger.debug("lock: receive opponent update");
-                this.receivedOpponentUpdate = (PlayerUpdate) observable;
-                logger.debug("unlock: receive opponent update");
-                return;
-            }
-        }
-
-
-        // TODO: maybe publisher subscriber pattern?
-        synchronized (UILock) {
-            logger.debug("lock: rendering game state");
-            if (gameModel.getGame().ended()) {
-                Platform.runLater(this::endGame);
-                return;
-            }
-            gameView.showGame(gameModel.getGame().getPlayer(), gameModel.getGame().getOpponent()); // TODO: bind game view to game
-            logger.debug("unlock: rendering game state");
-        }
+    public void joinGame() {
+        logger.info("Starting a new Game as player");
+        gameModel.joinGame();
+        lobbyController.showRoomsMenu(this);
     }
 
     @Override
     public void admit(IGameController opponentController) {
-        // server
-        this.logger = LoggerFactory.getLogger("Server " + this.getClass().getSimpleName());
         this.opponentController = opponentController;
-        // TODO: update lister should be added before the initial position update is created
-        this.receivedOpponentUpdate = this.opponentController.getPlayerUpdate();
-        this.opponentController.getPlayerUpdate().addListener(this);
-    }
-
-    @Override
-    public void joinGame(IGameController opponentController) {
-        // client
-        this.logger = LoggerFactory.getLogger("Client " + this.getClass().getSimpleName());
-        this.opponentController = opponentController;
-        // TODO: update lister should be added before the initial position update is created
-        this.receivedOpponentUpdate = this.opponentController.getPlayerUpdate();
-        this.opponentController.getPlayerUpdate().addListener(this);
-        gameModel.joinGame();
+        this.opponentController.getPlayerUpdate().addListener(gameUpdater);
     }
 
     @Override
     public void startGame() {
         gameView.reset();
         gameView.getScene().setOnKeyPressed(new GameInputHandler(gameModel.getGame().getPlayer()));
-        gameLoop.setCycleCount(Timeline.INDEFINITE);
         gameLoop.play();
     }
 
@@ -124,43 +88,22 @@ public final class GameController implements IGameController, InvalidationListen
         return gameModel.getGame().getPlayer().getUpdate();
     }
 
-    private void updateGame() {
-        synchronized (gameStateLock) {
-            logger.debug("lock: consume opponent update");
-            if (this.receivedOpponentUpdate == null) return; // we received no updates yet
-            if (!fairPlayEnsured()) {
-                // TODO: after x attempts end the game?
-                //  player version < opponent -> player lost
-                //Platform.runLater(() -> endGame("Game ended because of a network error"));
-                return; // wait for resend or correct upddate version
-            }
-            // no need to run this asynchronously as the opponent will keep pushing it's update
-            // on each tick and wait for us to send our update
-            // we will have to wait for the game state update to give the player the chance to react
-            // before consuming the next update
-            synchronized (UILock) {
-                logger.debug("lock: update game state");
-                gameModel.updateGameState(this.receivedOpponentUpdate);
-                logger.debug("unlock: update game state");
-            }
-
-            this.receivedOpponentUpdate = null; // consume the update (no need to keep processing the same update if no new one is received)
-            logger.debug("unlock: consume opponent update");
-        }
-        gameModel.getGame().getPlayer().move();
+    @Override
+    public void invalidated(Observable observable) {
+        if (observable instanceof IGameModel)
+            gameStateChangeObserved((IGameModel) observable);
     }
 
-    private boolean fairPlayEnsured() {
-        logger.debug("Player version: " + gameModel.getGame().getPlayer().getVersion() + " " + this.receivedOpponentUpdate.getVersion() + " :Opponent version");
-        if (gameModel.getGame().getPlayer().getVersion() == this.receivedOpponentUpdate.getVersion() ||
-                // Player is lacking behind and should have the opportunity to continue moving
-                // the opponent will wait as he has a grater version
-                gameModel.getGame().getPlayer().getVersion() < this.receivedOpponentUpdate.getVersion()) {
-            return true;
+    private void gameStateChangeObserved(IGameModel gameModel) {
+        synchronized (UILock) {
+            logger.debug("lock: rendering game state");
+            if (gameModel.getGame().ended()) {
+                Platform.runLater(this::endGame);
+                return;
+            }
+            gameView.showGame(gameModel.getGame());
+            logger.debug("unlock: rendering game state");
         }
-
-        es.execute(() -> gameModel.getGame().getPlayer().getUpdate().publishUpdate());
-        return false;
     }
 
     private void endGame() {
@@ -169,7 +112,7 @@ public final class GameController implements IGameController, InvalidationListen
 
     private void endGame(String message) {
         gameLoop.stop();
-        gameView.showWinnerMenu(message, e -> setupGame());
+        gameView.showWinnerMenu(message, e -> createGame());
     }
 
     @Override

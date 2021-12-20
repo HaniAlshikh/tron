@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.client.controllers.game.inputhandlers.data.datatypes;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
+import de.alshikh.haw.tron.client.models.game.data.entities.Player;
 
 public enum GameControllers {
     AWSD, JIKL;

@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.client.models.game;
 
-import de.alshikh.haw.tron.client.common.data.entites.Player;
+import de.alshikh.haw.tron.client.models.game.data.entities.Player;
 import de.alshikh.haw.tron.client.models.game.data.datatypes.BikeStartingPosition;
 import de.alshikh.haw.tron.client.models.game.data.entities.Bike;
 import de.alshikh.haw.tron.client.models.game.data.entities.Game;
@@ -18,9 +18,11 @@ public class GameModel implements IGameModel {
 
     private final List<InvalidationListener> listeners = new ArrayList<>();
 
-    private Game game;
+    private final Game game;
 
-    public GameModel() {}
+    public GameModel() {
+        this.game = new Game();
+    }
 
     // TODO: find a better way (player factory?)
     @Override
@@ -44,6 +46,7 @@ public class GameModel implements IGameModel {
     @Override
     public void addListener(InvalidationListener listener) {
         listeners.add(listener);
+        //publishUpdate();
     }
 
     @Override
@@ -62,7 +65,6 @@ public class GameModel implements IGameModel {
     }
 
     private void prepGame(Player player, Player opponent) {
-        this.game = new Game();
         this.game.setPlayer(player);
         this.game.setOpponent(opponent);
     }
