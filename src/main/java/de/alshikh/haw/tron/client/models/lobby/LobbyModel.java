@@ -2,30 +2,48 @@ package de.alshikh.haw.tron.client.models.lobby;
 
 import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+
+import java.util.UUID;
 
 public class LobbyModel implements ILobbyModel {
 
-    ObservableList<Room> rooms = FXCollections.observableArrayList();
+    ObservableMap<UUID, Room> rooms = FXCollections.observableHashMap();
+    ObservableList<Room> roomsList = FXCollections.observableArrayList();
+
 
     private static final LobbyModel instance = new LobbyModel();
     public static LobbyModel getInstance() {
         return instance;
     }
-    private LobbyModel() {}
-
-    @Override
-    public void addRoom(Room room) {
-        rooms.add(room);
+    private LobbyModel() {
+        rooms.addListener((MapChangeListener<UUID, Room>) change -> {
+            roomsList.remove(change.getValueRemoved());
+            if (change.wasAdded()) {
+                roomsList.add(change.getValueAdded());
+            }
+        });
     }
 
     @Override
-    public void removeRoom(Room room) {
-        rooms.remove(room);
+    public void addRoom(UUID uuid, Room room) {
+        rooms.put(uuid, room);
     }
 
     @Override
-    public ObservableList<Room> getRooms() {
+    public void removeRoom(UUID uuid) {
+        rooms.remove(uuid);
+    }
+
+    @Override
+    public ObservableMap<UUID, Room> getRooms() {
         return rooms;
+    }
+
+    @Override
+    public ObservableList<Room> getRoomsList() {
+        return roomsList;
     }
 }

@@ -47,8 +47,9 @@ public class GameView implements IGameView {
     }
 
     @Override
-    public void showWaitingMenu() {
+    public void showWaitingMenu(EventHandler<ActionEvent> cancelBtnHandler) {
         WatingMenu watingMenu = new WatingMenu("menu.css");
+        watingMenu.getBtnCancel().setOnAction(cancelBtnHandler);
         view.registerOverlay("wait", watingMenu);
         view.showOverlay("wait");
     }

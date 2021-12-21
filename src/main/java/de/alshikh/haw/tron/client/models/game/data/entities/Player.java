@@ -2,8 +2,11 @@ package de.alshikh.haw.tron.client.models.game.data.entities;
 
 import javafx.beans.property.StringProperty;
 
+import java.util.UUID;
+
 public class Player {
 
+    private final UUID uuid = UUID.randomUUID();
     private final PlayerUpdate update = new PlayerUpdate();
     private int updateVersion;
     private boolean dead = false;
@@ -67,6 +70,10 @@ public class Player {
 
     public int getUpdateVersion() {
         return updateVersion;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     @Override

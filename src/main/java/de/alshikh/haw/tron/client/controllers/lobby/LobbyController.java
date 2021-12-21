@@ -9,6 +9,8 @@ import de.alshikh.haw.tron.client.views.lobby.ILobbyView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 public final class LobbyController implements ILobbyController {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -24,12 +26,17 @@ public final class LobbyController implements ILobbyController {
     public void showRoomsMenu(IGameController playerController) {
         RoomsMenuInputHandler roomsMenuInputHandler = new RoomsMenuInputHandler();
         roomsMenuInputHandler.setListItemConsumer(room -> startGame(playerController, room.getHostController()));
-        lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRooms());
+        lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRoomsList());
     }
 
     @Override
-    public void createRoom(String label, IGameController hostController) {
-        lobbyModel.addRoom(new Room(label, hostController));
+    public void createRoom(UUID uuid, String label, IGameController hostController) {
+        lobbyModel.addRoom(uuid, new Room(label, hostController));
+    }
+
+    @Override
+    public void removeRoom(UUID uuid) {
+        lobbyModel.removeRoom(uuid);
     }
 
     private void startGame(IGameController playerController, IGameController hostController) {

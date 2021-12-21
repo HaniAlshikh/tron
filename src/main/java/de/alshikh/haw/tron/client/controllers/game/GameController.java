@@ -62,9 +62,14 @@ public final class GameController implements IGameController, InvalidationListen
     private void createGame() {
         logger.info("Starting a new Game as host");
         gameModel.createGame(playerName);
-        lobbyController.createRoom(gameModel.getGame().getPlayer().getName(), this);
+        lobbyController.createRoom(gameModel.getGame().getPlayer().getUuid(), gameModel.getGame().getPlayer().getName(), this);
         gameView.reset();
-        gameView.showWaitingMenu();
+        gameView.showWaitingMenu(e -> cancelGame());
+    }
+
+    private void cancelGame() {
+        lobbyController.removeRoom(gameModel.getGame().getPlayer().getUuid());
+        showStartMenu();
     }
 
     @Override
@@ -117,16 +122,6 @@ public final class GameController implements IGameController, InvalidationListen
     private void endGame(String message) {
         gameLoop.stop();
         gameView.showWinnerMenu(message, e -> createGame());
-    }
-
-    @Override
-    public IGameModel getGameModel() {
-        return gameModel;
-    }
-
-    @Override
-    public IGameView getGameView() {
-        return gameView;
     }
 
     @Override

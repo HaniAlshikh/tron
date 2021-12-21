@@ -8,7 +8,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class WatingMenu extends VBox {
-    private final Label labelReady;
     private final Button btnCancel;
 
     public WatingMenu(String stylesheet) {
@@ -16,7 +15,7 @@ public class WatingMenu extends VBox {
         this.getStylesheets().add(stylesheet);
         this.setAlignment(Pos.CENTER);
 
-        labelReady = new Label("Please wait until someone joins!");
+        Label labelReady = new Label("Please wait until someone joins!");
         labelReady.setStyle("-fx-text-fill: " + ViewUtility.getHexTriplet(Color.PAPAYAWHIP.brighter()) + ";");
 
         btnCancel = new Button("Cancel Game");
