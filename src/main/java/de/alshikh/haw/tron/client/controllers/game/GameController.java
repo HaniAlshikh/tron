@@ -1,7 +1,8 @@
 package de.alshikh.haw.tron.client.controllers.game;
 
+import de.alshikh.haw.tron.client.controllers.game.helpers.GameUpdater;
+import de.alshikh.haw.tron.client.controllers.game.helpers.RandomNameGenerator;
 import de.alshikh.haw.tron.client.controllers.game.inputhandlers.GameInputHandler;
-import de.alshikh.haw.tron.client.controllers.game.services.GameUpdater;
 import de.alshikh.haw.tron.client.controllers.lobby.ILobbyController;
 import de.alshikh.haw.tron.client.models.game.IGameModel;
 import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
@@ -11,6 +12,8 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,11 +31,15 @@ public final class GameController implements IGameController, InvalidationListen
     private final GameUpdater gameUpdater;
     private final Timeline gameLoop;
 
+    // TODO: Player preferences
+    private final StringProperty playerName;
+
     public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController, ExecutorService es) {
         this.gameModel = gameModel;
         this.gameView = gameView;
         this.lobbyController = lobbyController;
 
+        this.playerName = new SimpleStringProperty(RandomNameGenerator.get());
         this.gameUpdater = new GameUpdater(gameModel, es, UILock);
         this.gameLoop = new Timeline(
                 new KeyFrame(Duration.seconds(0.1),
@@ -47,13 +54,14 @@ public final class GameController implements IGameController, InvalidationListen
     public void showStartMenu() {
         gameView.showStartMenu(
                 e -> createGame(),
-                e -> joinGame()
+                e -> joinGame(),
+                playerName
         );
     }
 
     private void createGame() {
         logger.info("Starting a new Game as host");
-        gameModel.createGame();
+        gameModel.createGame(playerName);
         lobbyController.createRoom(gameModel.getGame().getPlayer().getName(), this);
         gameView.reset();
         gameView.showWaitingMenu();
@@ -62,12 +70,13 @@ public final class GameController implements IGameController, InvalidationListen
     @Override
     public void joinGame() {
         logger.info("Starting a new Game as player");
-        gameModel.joinGame();
+        gameModel.joinGame(playerName);
         lobbyController.showRoomsMenu(this);
     }
 
     @Override
     public void admit(IGameController opponentController) {
+        gameModel.getGame().getOpponent().nameProperty().set(opponentController.playerNameProperty().get());
         opponentController.getPlayerUpdate().addListener(gameUpdater);
     }
 
@@ -118,5 +127,10 @@ public final class GameController implements IGameController, InvalidationListen
     @Override
     public IGameView getGameView() {
         return gameView;
+    }
+
+    @Override
+    public StringProperty playerNameProperty() {
+        return playerName;
     }
 }

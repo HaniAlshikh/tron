@@ -39,7 +39,6 @@ public class GameManager extends Application {
 
         stage.setTitle("TRON Game Manager");
         stage.setScene(managerView.getScene());
-        stage.setAlwaysOnTop(true);
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         stage.show();
         stage.setX((screenBounds.getWidth() - managerView.getScene().getWidth()) / 2);

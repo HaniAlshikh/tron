@@ -15,6 +15,17 @@
     -fx-background-color: #575149;
 }
 
+.text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: #ffefd5;
+    -fx-border-width: 2px;
+    -fx-font: bold 16px "Sans";
+    -fx-text-fill: #ffefd5;
+    -fx-prompt-text-fill: #ffefd5;
+    -fx-highlight-fill: #575149;
+    -fx-highlight-text-fill: #ffefd5;
+}
+
 .list-view {
     -fx-background-color: transparent;
     -fx-border-color: #ffefd5;

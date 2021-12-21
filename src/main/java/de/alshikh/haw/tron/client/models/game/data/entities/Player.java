@@ -1,5 +1,7 @@
 package de.alshikh.haw.tron.client.models.game.data.entities;
 
+import javafx.beans.property.StringProperty;
+
 public class Player {
 
     private final PlayerUpdate update = new PlayerUpdate();
@@ -7,10 +9,10 @@ public class Player {
     private boolean dead = false;
     private boolean pauseGame = false;
 
-    private final String name;
+    private final StringProperty name;
     private final Bike bike;
 
-    public Player(String name, Bike bike) {
+    public Player(StringProperty name, Bike bike) {
         this.name = name;
         this.bike = bike;
         resetUpdate(); // start position
@@ -36,6 +38,10 @@ public class Player {
     }
 
     public String getName() {
+        return name.get();
+    }
+
+    public StringProperty nameProperty() {
         return name;
     }
 
@@ -65,6 +71,6 @@ public class Player {
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 }

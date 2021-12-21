@@ -6,6 +6,7 @@ import de.alshikh.haw.tron.client.views.game.overlayes.StartMenu;
 import de.alshikh.haw.tron.client.views.game.overlayes.WatingMenu;
 import de.alshikh.haw.tron.client.views.game.overlayes.WinnerMenu;
 import de.alshikh.haw.tron.client.views.view_library.ITronView;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -34,10 +35,12 @@ public class GameView implements IGameView {
     }
 
     @Override
-    public void showStartMenu(EventHandler<ActionEvent> startBtnHandler, EventHandler<ActionEvent> joinBtnHandler) {
+    public void showStartMenu(EventHandler<ActionEvent> startBtnHandler, EventHandler<ActionEvent> joinBtnHandler,
+                              StringProperty playerName) {
         StartMenu startMenu = new StartMenu("menu.css");
         startMenu.getBtnStart().setOnAction(startBtnHandler);
         startMenu.getBtnJoin().setOnAction(joinBtnHandler);
+        startMenu.getTxtPlayerName().textProperty().bindBidirectional(playerName);
         view.registerOverlay("start", startMenu);
         view.init();
         view.showOverlay("start");

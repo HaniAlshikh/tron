@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.client.controllers.game.services;
+package de.alshikh.haw.tron.client.controllers.game.helpers;
 
 import de.alshikh.haw.tron.client.models.game.IGameModel;
 import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
