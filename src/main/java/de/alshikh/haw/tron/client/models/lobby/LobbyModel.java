@@ -28,8 +28,8 @@ public class LobbyModel implements ILobbyModel {
     }
 
     @Override
-    public void addRoom(UUID uuid, Room room) {
-        rooms.put(uuid, room);
+    public void addRoom(Room room) {
+        rooms.put(room.getUuid(), room);
     }
 
     @Override

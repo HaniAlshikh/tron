@@ -8,9 +8,9 @@ public class Player {
 
     private final UUID uuid = UUID.randomUUID();
     private final PlayerUpdate update = new PlayerUpdate();
-    private int updateVersion;
-    private boolean dead = false;
     private boolean pauseGame = false;
+    private boolean dead = false;
+    private int updateVersion;
 
     private final StringProperty name;
     private final Bike bike;
@@ -18,21 +18,29 @@ public class Player {
     public Player(StringProperty name, Bike bike) {
         this.name = name;
         this.bike = bike;
-        resetUpdate(); // start position
     }
 
     public void move() {
         bike.move();
-        resetUpdate();
+        pushUpdate();
     }
 
-    private void resetUpdate() {
-        this.update.setValues(bike.getPosition().x, bike.getPosition().y, pauseGame, ++updateVersion);
+    public void die() {
+        this.dead = true;
+    }
+
+    public void togglePauseGame() {
+        this.pauseGame = !this.pauseGame;
+    }
+
+    public void pushUpdate() {
+        this.update.setValues(bike.getPosition().x, bike.getPosition().y, pauseGame, dead, ++updateVersion);
     }
 
     public void applyUpdate(PlayerUpdate update) {
         bike.move(update.getX(), update.getY());
         pauseGame = update.pauseGame();
+        dead = update.isDead();
         updateVersion = update.getVersion();
     }
 
@@ -52,20 +60,12 @@ public class Player {
         return bike;
     }
 
-    public void die() {
-        this.dead = true;
-    }
-
     public boolean isDead() {
         return dead;
     }
 
     public boolean pausedGame() {
         return pauseGame;
-    }
-
-    public void togglePauseGame() {
-        this.pauseGame = !this.pauseGame;
     }
 
     public int getUpdateVersion() {

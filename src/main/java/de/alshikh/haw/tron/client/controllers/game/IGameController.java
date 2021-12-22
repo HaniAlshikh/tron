@@ -5,6 +5,8 @@ import javafx.beans.property.StringProperty;
 
 public interface IGameController {
 
+    void close();
+
     void showStartMenu();
 
     void joinGame();

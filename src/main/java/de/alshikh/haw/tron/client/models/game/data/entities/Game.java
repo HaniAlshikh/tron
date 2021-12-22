@@ -15,37 +15,20 @@ public class Game {
     private Player player;
     private Player opponent;
 
-    public void updateState(PlayerUpdate opponentUpdate) {
+    public void applyOpponentUpdate(PlayerUpdate opponentUpdate) {
         opponent.applyUpdate(opponentUpdate);
-        checkForCollision();
-        checkForBreak();
     }
 
-    private void checkForCollision() {
-        ended = true;
-        if (player.getBike().getPosition().equals(opponent.getBike().getPosition())) {
-            log.info(player + " collided with " + opponent);
-            player.die();
-            opponent.die();
-        }
-        else if (opponent.getBike().getTrail().contains(player.getBike().getPosition())) {
-            player.die();
-            winner = opponent;
-        }
-        else if (player.getBike().getTrail().contains(opponent.getBike().getPosition())) {
-            opponent.die();
-            winner = player;
-        } else {
-            ended = false;
-        }
-    }
-
-    private void checkForBreak() {
+    public void checkForBreak() {
         paused = player.pausedGame() || opponent.pausedGame();
     }
 
     public boolean ended() {
         return ended;
+    }
+
+    public void setEnded(boolean ended) {
+        this.ended = ended;
     }
 
     public boolean paused() {
@@ -54,6 +37,10 @@ public class Game {
 
     public Player getWinner() {
         return winner;
+    }
+
+    public void setWinner(Player winner) {
+        this.winner = winner;
     }
 
     public Player getPlayer() {

@@ -10,39 +10,52 @@ import java.util.List;
 
 public class Bike {
     Direction movingDirection;
-    List<Coordinate> trail = new ArrayList<>();
+    Direction steeringDirection;
+    List<Coordinate> coordinates = new ArrayList<>();
     Color color;
 
     public Bike(BikeStartingPosition startPosition, Color color) {
-        this.trail.add(startPosition.getCoordinate());
+        this.coordinates.add(startPosition.getCoordinate());
         this.color = color;
-        this.movingDirection = startPosition.getMovingDirection();
+        this.steeringDirection = this.movingDirection = startPosition.getMovingDirection();
+    }
+
+    public Bike(Color color) {
+        this.color = color;
     }
 
     public void steer(Direction newDirection) {
-        if (newDirection.isAllowed(movingDirection)) {
-            this.movingDirection = newDirection;
-        }
+        this.steeringDirection = newDirection;
     }
 
     public void move() {
-        trail.add(movingDirection.calculateNewPosition(getPosition()));
+        if (steeringDirection.isAllowed(movingDirection))
+            this.movingDirection = Direction.valueOf(steeringDirection.name());
+        coordinates.add(movingDirection.calculateNewPosition(getPosition()));
+        System.out.println(coordinates);
     }
 
     public void move(int x, int y) {
-        trail.add(new Coordinate(x, y));
+        coordinates.add(new Coordinate(x, y));
+        System.out.println(coordinates);
+    }
+
+    public List<Coordinate> getCoordinates() {
+        return coordinates;
+    }
+
+    public Coordinate getPosition() {
+        return coordinates.get(coordinates.size() - 1);
+    }
+
+    public List<Coordinate> getTrail() {
+        List<Coordinate> trail = new ArrayList<>(coordinates);
+        trail.remove(getPosition());
+        return trail;
     }
 
     public Direction getMovingDirection() {
         return movingDirection;
-    }
-
-    public List<Coordinate> getTrail() {
-        return trail;
-    }
-
-    public Coordinate getPosition() {
-        return trail.get(trail.size() - 1);
     }
 
     public Color getColor() {

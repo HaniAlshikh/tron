@@ -2,28 +2,35 @@ package de.alshikh.haw.tron.client.models.game.data.entities;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerUpdate implements Observable {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final List<InvalidationListener> listeners = new ArrayList<>();
+    private PlayerUpdate previousUpdate;
 
     private int x, y;
     private boolean pauseGame;
     private int version;
+    private boolean dead = false;
 
     public PlayerUpdate() {}
 
-    public PlayerUpdate(int x, int y, boolean pauseGame, int version) {
-        setValues(x, y, pauseGame, version);
+    public PlayerUpdate(int x, int y, boolean pauseGame, boolean dead, int version) {
+        setValues(x, y, pauseGame, dead, version);
     }
 
-    public void setValues(int x, int y, boolean pauseGame, int version) {
+    public void setValues(int x, int y, boolean pauseGame, boolean dead, int version) {
+        previousUpdate = this.copy();
         this.x = x;
         this.y = y;
         this.pauseGame = pauseGame;
+        this.dead = dead;
         this.version = version;
         publishUpdate();
     }
@@ -31,7 +38,7 @@ public class PlayerUpdate implements Observable {
     @Override
     public void addListener(InvalidationListener listener) {
         listeners.add(listener);
-        publishUpdate();
+        listener.invalidated(this);
     }
 
     @Override
@@ -40,39 +47,44 @@ public class PlayerUpdate implements Observable {
     }
 
     public void publishUpdate() {
+        logger.debug("publishing player update: " + this);
         listeners.forEach(l -> l.invalidated(this));
+    }
+
+
+    public void publishPreviousUpdate() {
+        logger.debug("publishing previous player update: " + previousUpdate);
+        listeners.forEach(l -> l.invalidated(previousUpdate));
+    }
+
+    public PlayerUpdate copy() {
+        PlayerUpdate playerUpdate = new PlayerUpdate();
+        playerUpdate.x = this.x;
+        playerUpdate.y = this.y;
+        playerUpdate.pauseGame = this.pauseGame;
+        playerUpdate.dead = this.dead;
+        playerUpdate.version = this.version;
+        return playerUpdate;
     }
 
     public int getX() {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 
     public boolean pauseGame() {
         return pauseGame;
     }
 
-    public void setPauseGame(boolean pauseGame) {
-        this.pauseGame = pauseGame;
+    public boolean isDead() {
+        return dead;
     }
 
     public int getVersion() {
         return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
     }
 
     @Override
@@ -82,6 +94,7 @@ public class PlayerUpdate implements Observable {
                 ", y=" + y +
                 ", pauseGame=" + pauseGame +
                 ", version=" + version +
+                ", dead=" + dead +
                 '}';
     }
 }

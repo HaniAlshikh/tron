@@ -7,7 +7,7 @@ import javafx.collections.ObservableMap;
 import java.util.UUID;
 
 public interface ILobbyModel {
-    void addRoom(UUID uuid, Room room);
+    void addRoom(Room room);
 
     void removeRoom(UUID uuid);
 

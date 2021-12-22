@@ -47,6 +47,7 @@ public class TronGame implements Runnable {
             stage.setTitle("TRON - Light Cycles");
             stage.setScene(gameView.getScene());
             stage.show();
+            stage.setOnCloseRequest(e -> gameController.close());
         } catch (IOException e) {
             e.printStackTrace();
         }

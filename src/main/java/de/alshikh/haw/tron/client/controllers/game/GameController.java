@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 public final class GameController implements IGameController, InvalidationListener {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -28,11 +29,15 @@ public final class GameController implements IGameController, InvalidationListen
     private final ILobbyController lobbyController;
 
     private final Object UILock = new Object();
+    private final Object steeringLock = new Object();
     private final GameUpdater gameUpdater;
     private final Timeline gameLoop;
 
     // TODO: Player preferences
     private final StringProperty playerName;
+
+    // TODO: implement managed ExecutorService
+    private Future<GameUpdater> gameUpdaterFuture;
 
     public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController, ExecutorService es) {
         this.gameModel = gameModel;
@@ -40,13 +45,12 @@ public final class GameController implements IGameController, InvalidationListen
         this.lobbyController = lobbyController;
 
         this.playerName = new SimpleStringProperty(RandomNameGenerator.get());
-        this.gameUpdater = new GameUpdater(gameModel, es, UILock);
+        this.gameUpdater = new GameUpdater(gameModel, es, UILock, steeringLock);
         this.gameLoop = new Timeline(
                 new KeyFrame(Duration.seconds(0.1),
-                e -> es.execute(gameUpdater::updateGame))
+                e -> this.gameUpdaterFuture = es.submit(gameUpdater::updateGame, gameUpdater))
         );
 
-        this.gameModel.addListener(this); // on model update update the view
         this.gameLoop.setCycleCount(Timeline.INDEFINITE);
     }
 
@@ -88,7 +92,9 @@ public final class GameController implements IGameController, InvalidationListen
     @Override
     public void startGame() {
         gameView.reset();
-        gameView.getScene().setOnKeyPressed(new GameInputHandler(gameModel.getGame().getPlayer()));
+        GameInputHandler gameInputHandler = new GameInputHandler(steeringLock, gameModel.getGame().getPlayer());
+        gameView.getScene().setOnKeyPressed(gameInputHandler);
+        gameModel.addListener(this); // on model update update the view
         gameLoop.play();
     }
 
@@ -121,7 +127,18 @@ public final class GameController implements IGameController, InvalidationListen
 
     private void endGame(String message) {
         gameLoop.stop();
+        gameUpdaterFuture.cancel(true);
         gameView.showWinnerMenu(message, e -> createGame());
+    }
+
+    @Override
+    public void close() {
+        if (gameModel.getGame().getPlayer() != null) {
+            cancelGame();
+            gameLoop.stop();
+            gameUpdaterFuture.cancel(true);
+            gameModel.getGame().getPlayer().die();
+        }
     }
 
     @Override

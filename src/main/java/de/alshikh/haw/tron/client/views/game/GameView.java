@@ -27,8 +27,8 @@ public class GameView implements IGameView {
     public void showGame(Game game) {
         for (Player p : Arrays.asList(game.getPlayer(), game.getOpponent())) {
             try {
-                view.draw(p.getBike().getTrail(), p.getBike().getColor());
-            } catch (IllegalArgumentException e) { // went out of boundary
+                view.draw(p.getBike().getCoordinates(), p.getBike().getColor());
+            } catch (IllegalArgumentException e) { // went out of bound
                 p.die();
             }
         }

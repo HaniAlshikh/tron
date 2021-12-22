@@ -25,13 +25,16 @@ public final class LobbyController implements ILobbyController {
     @Override
     public void showRoomsMenu(IGameController playerController) {
         RoomsMenuInputHandler roomsMenuInputHandler = new RoomsMenuInputHandler();
-        roomsMenuInputHandler.setListItemConsumer(room -> startGame(playerController, room.getHostController()));
+        roomsMenuInputHandler.setListItemConsumer(room -> {
+            startGame(playerController, room.getHostController());
+            removeRoom(room.getUuid());
+        });
         lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRoomsList());
     }
 
     @Override
     public void createRoom(UUID uuid, String label, IGameController hostController) {
-        lobbyModel.addRoom(uuid, new Room(label, hostController));
+        lobbyModel.addRoom(new Room(uuid, label, hostController));
     }
 
     @Override
