@@ -12,11 +12,9 @@ public class GameInputHandler implements IGameInputHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private final Object steeringLock;
     private final Player player;
 
-    public GameInputHandler(Object steeringLock, Player player) {
-        this.steeringLock = steeringLock;
+    public GameInputHandler(Player player) {
         this.player = player;
     }
 
@@ -25,9 +23,7 @@ public class GameInputHandler implements IGameInputHandler {
         KeyCode code = keyEvent.getCode();
         log.debug("pressed key: " + code);
 
-        synchronized (steeringLock) {
-            handleAWSD(code);
-        }
+        handleAWSD(code);
 
         // if no critical key is pressed, we do not need to do anything to the
         // velocity and direction of the LightCycles.

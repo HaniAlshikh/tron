@@ -18,13 +18,11 @@ public class GameUpdater implements InvalidationListener {
     private final IGameModel gameModel;
     private final ExecutorService es;
     private final Object UILock;
-    private final Object steeringLock;
 
-    public GameUpdater(IGameModel gameModel, ExecutorService es, Object UILock, Object steeringLock) {
+    public GameUpdater(IGameModel gameModel, ExecutorService es, Object UILock) {
         this.gameModel = gameModel;
         this.es = es;
         this.UILock = UILock;
-        this.steeringLock = steeringLock;
     }
 
     public void updateGame() {
@@ -51,11 +49,9 @@ public class GameUpdater implements InvalidationListener {
             logger.debug("unlock: consume opponent update");
         }
 
-        synchronized (steeringLock) {
-            logger.debug("Moving player");
-            gameModel.getGame().getPlayer().move();
-            logger.debug("New player update: " + gameModel.getGame().getPlayer().getUpdate());
-        }
+        logger.debug("Moving player");
+        gameModel.getGame().getPlayer().move();
+        logger.debug("New player update: " + gameModel.getGame().getPlayer().getUpdate());
     }
 
     private boolean fairPlayEnsured() {

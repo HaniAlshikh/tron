@@ -29,7 +29,6 @@ public final class GameController implements IGameController, InvalidationListen
     private final ILobbyController lobbyController;
 
     private final Object UILock = new Object();
-    private final Object steeringLock = new Object();
     private final GameUpdater gameUpdater;
     private final Timeline gameLoop;
 
@@ -45,7 +44,7 @@ public final class GameController implements IGameController, InvalidationListen
         this.lobbyController = lobbyController;
 
         this.playerName = new SimpleStringProperty(RandomNameGenerator.get());
-        this.gameUpdater = new GameUpdater(gameModel, es, UILock, steeringLock);
+        this.gameUpdater = new GameUpdater(gameModel, es, UILock);
         this.gameLoop = new Timeline(
                 new KeyFrame(Duration.seconds(0.1),
                 e -> this.gameUpdaterFuture = es.submit(gameUpdater::updateGame, gameUpdater))
@@ -92,7 +91,7 @@ public final class GameController implements IGameController, InvalidationListen
     @Override
     public void startGame() {
         gameView.reset();
-        GameInputHandler gameInputHandler = new GameInputHandler(steeringLock, gameModel.getGame().getPlayer());
+        GameInputHandler gameInputHandler = new GameInputHandler(gameModel.getGame().getPlayer());
         gameView.getScene().setOnKeyPressed(gameInputHandler);
         gameModel.addListener(this); // on model update update the view
         gameLoop.play();
