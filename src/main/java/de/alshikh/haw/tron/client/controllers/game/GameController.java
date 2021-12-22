@@ -9,9 +9,6 @@ import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
 import de.alshikh.haw.tron.client.views.game.IGameView;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.util.Duration;
@@ -21,14 +18,14 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public final class GameController implements IGameController, InvalidationListener {
+public final class GameController implements IGameController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final IGameModel gameModel;
     private final IGameView gameView;
     private final ILobbyController lobbyController;
+    private final ExecutorService es;
 
-    private final Object UILock = new Object();
     private final GameUpdater gameUpdater;
     private final Timeline gameLoop;
 
@@ -42,12 +39,13 @@ public final class GameController implements IGameController, InvalidationListen
         this.gameModel = gameModel;
         this.gameView = gameView;
         this.lobbyController = lobbyController;
+        this.es = es;
 
         this.playerName = new SimpleStringProperty(RandomNameGenerator.get());
-        this.gameUpdater = new GameUpdater(gameModel, es, UILock);
+        this.gameUpdater = new GameUpdater(this);
         this.gameLoop = new Timeline(
                 new KeyFrame(Duration.seconds(0.1),
-                e -> this.gameUpdaterFuture = es.submit(gameUpdater::updateGame, gameUpdater))
+                e -> this.gameUpdaterFuture = this.es.submit(gameUpdater::updateGame, gameUpdater))
         );
 
         this.gameLoop.setCycleCount(Timeline.INDEFINITE);
@@ -85,6 +83,7 @@ public final class GameController implements IGameController, InvalidationListen
 
     private void cancelGame() {
         lobbyController.removeRoom(gameModel.getGame().getPlayer().getUuid());
+        gameView.reset();
         showStartMenu("Ready?");
     }
 
@@ -93,32 +92,17 @@ public final class GameController implements IGameController, InvalidationListen
         gameView.reset();
         GameInputHandler gameInputHandler = new GameInputHandler(gameModel.getGame().getPlayer());
         gameView.getScene().setOnKeyPressed(gameInputHandler);
-        gameModel.addListener(this); // on model update update the view
+        gameModel.addListener(gameUpdater); // on model update update the view
         gameLoop.play();
     }
 
     @Override
-    public void invalidated(Observable observable) {
-        if (observable instanceof IGameModel)
-            gameStateChangeObserved((IGameModel) observable);
-    }
-
-    private void gameStateChangeObserved(IGameModel gameModel) {
-        synchronized (UILock) {
-            logger.debug("lock: rendering game state");
-            if (gameModel.getGame().ended()) {
-                Platform.runLater(this::endGame);
-            }
-            gameView.showGame(gameModel.getGame());
-            logger.debug("unlock: rendering game state");
-        }
-    }
-
-    private void endGame() {
+    public void endGame() {
         endGame(gameModel.getGame().getWinner() == null ? "It's a tie" : gameModel.getGame().getWinner() + " won");
     }
 
-    private void endGame(String message) {
+    @Override
+    public void endGame(String message) {
         gameLoop.stop();
         gameUpdaterFuture.cancel(true);
         showStartMenu(message);
@@ -142,5 +126,20 @@ public final class GameController implements IGameController, InvalidationListen
     @Override
     public StringProperty playerNameProperty() {
         return playerName;
+    }
+
+    @Override
+    public IGameModel getGameModel() {
+        return gameModel;
+    }
+
+    @Override
+    public IGameView getGameView() {
+        return gameView;
+    }
+
+    @Override
+    public ExecutorService getEs() {
+        return es;
     }
 }
