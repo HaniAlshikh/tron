@@ -122,7 +122,6 @@ public final class GameController implements IGameController, InvalidationListen
     private void endGame(String message) {
         gameLoop.stop();
         gameUpdaterFuture.cancel(true);
-        gameView.reset();
         showStartMenu(message);
     }
 

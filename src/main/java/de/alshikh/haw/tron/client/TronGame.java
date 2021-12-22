@@ -31,7 +31,6 @@ public class TronGame implements Runnable {
     public void run() {
         try {
             ITronView baseView = new TronView(VIEW_CONFIG_FILE);
-            baseView.init();
 
             ILobbyView lobbyView = new LobbyView(baseView);
             ILobbyController lobbyController = new LobbyController(lobbyView);

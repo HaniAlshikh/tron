@@ -34,7 +34,7 @@ public class Player {
     }
 
     public void pushUpdate() {
-        this.update.setValues(bike.getPosition().x, bike.getPosition().y, pauseGame, dead, ++updateVersion);
+        this.update.update(bike.getPosition().x, bike.getPosition().y, pauseGame, dead, ++updateVersion);
     }
 
     public void applyUpdate(PlayerUpdate update) {

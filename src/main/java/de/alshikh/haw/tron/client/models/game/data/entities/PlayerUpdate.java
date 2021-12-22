@@ -26,12 +26,16 @@ public class PlayerUpdate implements Observable {
     }
 
     public void setValues(int x, int y, boolean pauseGame, boolean dead, int version) {
-        previousUpdate = this.copy();
         this.x = x;
         this.y = y;
         this.pauseGame = pauseGame;
         this.dead = dead;
         this.version = version;
+    }
+
+    public void update(int x, int y, boolean pauseGame, boolean dead, int version) {
+        previousUpdate = this.copy();
+        setValues(x, y, pauseGame, dead, version);
         publishUpdate();
     }
 
@@ -58,13 +62,7 @@ public class PlayerUpdate implements Observable {
     }
 
     public PlayerUpdate copy() {
-        PlayerUpdate playerUpdate = new PlayerUpdate();
-        playerUpdate.x = this.x;
-        playerUpdate.y = this.y;
-        playerUpdate.pauseGame = this.pauseGame;
-        playerUpdate.dead = this.dead;
-        playerUpdate.version = this.version;
-        return playerUpdate;
+        return new PlayerUpdate(this.x, this.y, this.pauseGame, this.dead, this.version);
     }
 
     public int getX() {

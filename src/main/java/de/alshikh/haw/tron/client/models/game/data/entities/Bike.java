@@ -32,12 +32,10 @@ public class Bike {
         if (steeringDirection.isAllowed(movingDirection))
             this.movingDirection = Direction.valueOf(steeringDirection.name());
         coordinates.add(movingDirection.calculateNewPosition(getPosition()));
-        System.out.println(coordinates);
     }
 
     public void move(int x, int y) {
         coordinates.add(new Coordinate(x, y));
-        System.out.println(coordinates);
     }
 
     public List<Coordinate> getCoordinates() {

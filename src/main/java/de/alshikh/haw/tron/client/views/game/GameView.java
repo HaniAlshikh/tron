@@ -15,11 +15,21 @@ import java.util.Arrays;
 
 public class GameView implements IGameView {
 
+    private final StartMenu startMenu;
+    private final WatingMenu watingMenu;
 
     private final ITronView view;
 
     public GameView(ITronView view) throws IOException {
         this.view = view;
+
+        startMenu = new StartMenu("menu.css");
+        view.registerOverlay("start", startMenu);
+
+        watingMenu = new WatingMenu("menu.css");
+        view.registerOverlay("wait", watingMenu);
+
+        view.init();
     }
 
     @Override
@@ -35,21 +45,17 @@ public class GameView implements IGameView {
 
     @Override
     public void showStartMenu(StringProperty playerName, String message,
-              EventHandler<ActionEvent> startBtnHandler, EventHandler<ActionEvent> joinBtnHandler) {
-        StartMenu startMenu = new StartMenu("menu.css");
+                              EventHandler<ActionEvent> startBtnHandler, EventHandler<ActionEvent> joinBtnHandler) {
         startMenu.getTxtPlayerName().textProperty().bindBidirectional(playerName);
         startMenu.getLblMessage().textProperty().set(message);
         startMenu.getBtnStart().setOnAction(startBtnHandler);
         startMenu.getBtnJoin().setOnAction(joinBtnHandler);
-        view.registerOverlay("start", startMenu);
         view.showOverlay("start");
     }
 
     @Override
     public void showWaitingMenu(EventHandler<ActionEvent> cancelBtnHandler) {
-        WatingMenu watingMenu = new WatingMenu("menu.css");
         watingMenu.getBtnCancel().setOnAction(cancelBtnHandler);
-        view.registerOverlay("wait", watingMenu);
         view.init();
         view.showOverlay("wait");
     }

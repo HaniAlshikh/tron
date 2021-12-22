@@ -1,12 +1,6 @@
 package de.alshikh.haw.tron.client.models.game.data.entities;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-// game is observable and player is iobserver
 public class Game {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     private Player winner;
     private boolean ended;
     private boolean paused;
