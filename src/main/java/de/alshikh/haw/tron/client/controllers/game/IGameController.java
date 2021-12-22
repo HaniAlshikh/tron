@@ -5,9 +5,9 @@ import javafx.beans.property.StringProperty;
 
 public interface IGameController {
 
-    void close();
+    void closeGame();
 
-    void showStartMenu();
+    void showStartMenu(String message);
 
     void joinGame();
 

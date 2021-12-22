@@ -10,12 +10,10 @@ public interface IGameView {
 
     void showGame(Game game);
 
-    void showStartMenu(EventHandler<ActionEvent> startBtnHandler, EventHandler<ActionEvent> joinBtnHandler,
-                       StringProperty playerName);
+    void showStartMenu(StringProperty playerName, String message,
+                       EventHandler<ActionEvent> startBtnHandler, EventHandler<ActionEvent> joinBtnHandler);
 
     void showWaitingMenu(EventHandler<ActionEvent> cancelBtnHandler);
-
-    void showWinnerMenu(String message, EventHandler<ActionEvent> startBtnHandler);
 
     void reset();
 

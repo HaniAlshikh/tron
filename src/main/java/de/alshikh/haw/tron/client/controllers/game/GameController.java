@@ -55,11 +55,12 @@ public final class GameController implements IGameController, InvalidationListen
     }
 
     @Override
-    public void showStartMenu() {
+    public void showStartMenu(String message) {
         gameView.showStartMenu(
+                playerName,
+                message,
                 e -> createGame(),
-                e -> joinGame(),
-                playerName
+                e -> joinGame()
         );
     }
 
@@ -67,13 +68,7 @@ public final class GameController implements IGameController, InvalidationListen
         logger.info("Starting a new Game as host");
         gameModel.createGame(playerName);
         lobbyController.createRoom(gameModel.getGame().getPlayer().getUuid(), gameModel.getGame().getPlayer().getName(), this);
-        gameView.reset();
         gameView.showWaitingMenu(e -> cancelGame());
-    }
-
-    private void cancelGame() {
-        lobbyController.removeRoom(gameModel.getGame().getPlayer().getUuid());
-        showStartMenu();
     }
 
     @Override
@@ -89,6 +84,11 @@ public final class GameController implements IGameController, InvalidationListen
         opponentController.getPlayerUpdate().addListener(gameUpdater);
     }
 
+    private void cancelGame() {
+        lobbyController.removeRoom(gameModel.getGame().getPlayer().getUuid());
+        showStartMenu("Ready?");
+    }
+
     @Override
     public void startGame() {
         gameView.reset();
@@ -96,11 +96,6 @@ public final class GameController implements IGameController, InvalidationListen
         gameView.getScene().setOnKeyPressed(gameInputHandler);
         gameModel.addListener(this); // on model update update the view
         gameLoop.play();
-    }
-
-    @Override
-    public PlayerUpdate getPlayerUpdate() {
-        return gameModel.getGame().getPlayer().getUpdate();
     }
 
     @Override
@@ -114,7 +109,6 @@ public final class GameController implements IGameController, InvalidationListen
             logger.debug("lock: rendering game state");
             if (gameModel.getGame().ended()) {
                 Platform.runLater(this::endGame);
-                return;
             }
             gameView.showGame(gameModel.getGame());
             logger.debug("unlock: rendering game state");
@@ -128,17 +122,23 @@ public final class GameController implements IGameController, InvalidationListen
     private void endGame(String message) {
         gameLoop.stop();
         gameUpdaterFuture.cancel(true);
-        gameView.showWinnerMenu(message, e -> createGame());
+        gameView.reset();
+        showStartMenu(message);
     }
 
     @Override
-    public void close() {
-        if (gameModel.getGame().getPlayer() != null) {
+    public void closeGame() {
+        if (gameModel.getGame() != null) {
             cancelGame();
             gameLoop.stop();
             gameUpdaterFuture.cancel(true);
             gameModel.getGame().getPlayer().die();
         }
+    }
+
+    @Override
+    public PlayerUpdate getPlayerUpdate() {
+        return gameModel.getGame().getPlayer().getUpdate();
     }
 
     @Override

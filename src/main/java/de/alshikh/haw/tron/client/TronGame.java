@@ -31,6 +31,7 @@ public class TronGame implements Runnable {
     public void run() {
         try {
             ITronView baseView = new TronView(VIEW_CONFIG_FILE);
+            baseView.init();
 
             ILobbyView lobbyView = new LobbyView(baseView);
             ILobbyController lobbyController = new LobbyController(lobbyView);
@@ -39,7 +40,7 @@ public class TronGame implements Runnable {
             IGameView gameView = new GameView(baseView);
 
             IGameController gameController = new GameController(gameModel, gameView, lobbyController, es);
-            gameController.showStartMenu();
+            gameController.showStartMenu("Ready?");
 
 
             // configure and show stage
@@ -47,7 +48,7 @@ public class TronGame implements Runnable {
             stage.setTitle("TRON - Light Cycles");
             stage.setScene(gameView.getScene());
             stage.show();
-            stage.setOnCloseRequest(e -> gameController.close());
+            stage.setOnCloseRequest(e -> gameController.closeGame());
         } catch (IOException e) {
             e.printStackTrace();
         }

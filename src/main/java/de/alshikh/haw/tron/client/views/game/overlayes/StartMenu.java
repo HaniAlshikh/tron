@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 
 public class StartMenu extends VBox {
     private final TextField txtPlayerName;
+    private final Label lblMessage;
     private final Button btnStart;
     private final Button btnJoin;
 
@@ -30,7 +31,7 @@ public class StartMenu extends VBox {
         userInput.getChildren().add(lblName);
         userInput.getChildren().add(txtPlayerName);
 
-        Label lblMessage = new Label("Ready?");
+        lblMessage = new Label("Ready?");
         lblMessage.setStyle("-fx-text-fill: " + ViewUtility.getHexTriplet(Color.PAPAYAWHIP.brighter()) + ";");
 
         btnStart = new Button("Start Game");
@@ -42,15 +43,19 @@ public class StartMenu extends VBox {
         this.getChildren().add(btnJoin);
     }
 
+    public TextField getTxtPlayerName() {
+        return txtPlayerName;
+    }
+
+    public Label getLblMessage() {
+        return lblMessage;
+    }
+
     public Button getBtnStart() {
         return btnStart;
     }
 
     public Button getBtnJoin() {
         return btnJoin;
-    }
-
-    public TextField getTxtPlayerName() {
-        return txtPlayerName;
     }
 }
