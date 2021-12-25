@@ -25,9 +25,7 @@ public class GameInputHandler implements IGameInputHandler {
 
         handleAWSD(code);
 
-        // if no critical key is pressed, we do not need to do anything to the
-        // velocity and direction of the LightCycles.
-        keyEvent.consume();
+        keyEvent.consume(); // do nothing
     }
 
     private void handleAWSD(KeyCode keyCode) {

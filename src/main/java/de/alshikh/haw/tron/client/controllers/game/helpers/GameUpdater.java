@@ -9,12 +9,21 @@ import javafx.beans.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+// TODO: WIP the skip problem
+//  see if the idee of per version updating make any sense
+
 public class GameUpdater implements InvalidationListener {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+
+    Map<Integer, PlayerUpdate> receivedUpdates = new ConcurrentHashMap<>();
 
     private PlayerUpdate receivedOpponentUpdate;
     private final Object gameStateLock = new Object();
     private final Object UILock = new Object();
+    private int retries = 0;
 
     private final IGameController gameController;
 
@@ -24,14 +33,19 @@ public class GameUpdater implements InvalidationListener {
 
     public void updateGame() {
         synchronized (gameStateLock) {
-            logger.debug("lock: consume opponent update: " + receivedOpponentUpdate);
-            if (!fairPlayEnsured()) {
-                // TODO: after x attempts end the game?
-                //  player version < opponent -> player lost
-                //Platform.runLater(() -> endGame("Game ended because of a network error"));
-                return; // wait for resend or correct upddate version
+            // insure fair play
+            this.receivedOpponentUpdate = receivedUpdates.remove(getUpdateVersion());
+            if (this.receivedOpponentUpdate == null) {
+                if (retries == gameController.getNumberOfRetries())
+                    Platform.runLater(() -> gameController.endGame("You won because of a network error"));
+                retries++;
+                return;
             }
-            //if (this.receivedOpponentUpdate == null) return; // we received no updates yet
+
+            logger.debug("lock: consume opponent update: " + receivedOpponentUpdate);
+            logger.debug("it took " + retries + " retries to get the update");
+            retries = 0;
+
             // no need to run this asynchronously as the opponent will keep pushing it's update
             // on each tick and wait for us to send our update
             // we will have to wait for the game state update to give the player the chance to react
@@ -42,18 +56,15 @@ public class GameUpdater implements InvalidationListener {
                 logger.debug("unlock: update game state");
             }
 
-            //this.receivedOpponentUpdate = null; // consume the update
-            logger.debug("unlock: consume opponent update");
+            logger.debug("Moving player");
+            gameController.getGameModel().getGame().getPlayer().move();
+            logger.debug("New player update: " + gameController.getGameModel().getGame().getPlayer().getUpdate());
         }
-
-        logger.debug("Moving player");
-        gameController.getGameModel().getGame().getPlayer().move();
-        logger.debug("New player update: " + gameController.getGameModel().getGame().getPlayer().getUpdate());
     }
 
     private boolean fairPlayEnsured() {
-        logger.debug("Player version: " + gameController.getGameModel().getGame().getPlayer().getUpdateVersion() + " " + this.receivedOpponentUpdate.getVersion() + " :Opponent version");
-        return gameController.getGameModel().getGame().getPlayer().getUpdateVersion() == this.receivedOpponentUpdate.getVersion();
+        logger.debug("Player version: " + getUpdateVersion() + " " + this.receivedOpponentUpdate.getVersion() + " :Opponent version");
+        return getUpdateVersion() == this.receivedOpponentUpdate.getVersion();
         //if (gameModel.getGame().getPlayer().getUpdateVersion() == this.receivedOpponentUpdate.getVersion() ||
                 // Player is lacking behind and should have the opportunity to continue moving
                 // the opponent will wait as he has a grater version
@@ -101,34 +112,24 @@ public class GameUpdater implements InvalidationListener {
     }
 
     private void playerUpdateObserved(PlayerUpdate playerUpdate) {
-        //logger.debug("received opponent update: " + playerUpdate);
-        //synchronized (gameStateLock) {
-        //    logger.debug("set opponent update for consumption");
-        //    receivedOpponentUpdate = playerUpdate;
-        //}
+        logger.debug("received opponent update: " + playerUpdate);
 
-        //logger.debug("received opponent update: " + playerUpdate);
-        //if (receivedOpponentUpdate == null) {
-        //    logger.debug("set opponent update for consumption");
-        //    receivedOpponentUpdate = playerUpdate;
-        //}
+        receivedUpdates.put(playerUpdate.getVersion(), playerUpdate);
 
-        synchronized (gameStateLock) {
-            logger.debug("received opponent update: " + playerUpdate);
-            if (gameController.getGameModel().getGame().getPlayer().getUpdateVersion() == playerUpdate.getVersion()) {
-                logger.debug("set opponent update for consumption");
-                receivedOpponentUpdate = playerUpdate;
-            }
-
-            if (gameController.getGameModel().getGame().getPlayer().getUpdateVersion() > playerUpdate.getVersion()) {
-                logger.debug("resending previous update");
-                gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishPreviousUpdate());
-            }
-
-            if (gameController.getGameModel().getGame().getPlayer().getUpdateVersion() < playerUpdate.getVersion()) {
-                logger.debug("resending update");
-                gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
-            }
+        if (getUpdateVersion() > playerUpdate.getVersion()) {
+            retries++;
+            logger.debug("resending previous update");
+            gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishPreviousUpdate());
         }
+
+        else if (getUpdateVersion() < playerUpdate.getVersion()) {
+            retries++;
+            logger.debug("resending update");
+            gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
+        }
+    }
+
+    private int getUpdateVersion() {
+        return gameController.getGameModel().getGame().getPlayer().getUpdateVersion();
     }
 }

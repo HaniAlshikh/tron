@@ -69,20 +69,40 @@ public class PlayerUpdate implements Observable {
         return x;
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
     public int getY() {
         return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     public boolean pauseGame() {
         return pauseGame;
     }
 
-    public boolean isDead() {
-        return dead;
+    public void setPauseGame(boolean pauseGame) {
+        this.pauseGame = pauseGame;
     }
 
     public int getVersion() {
         return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 
     @Override

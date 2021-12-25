@@ -32,4 +32,6 @@ public interface IGameController {
     IGameView getGameView();
 
     ExecutorService getEs();
+
+    int getNumberOfRetries();
 }

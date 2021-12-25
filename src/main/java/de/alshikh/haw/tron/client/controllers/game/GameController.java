@@ -34,6 +34,7 @@ public final class GameController implements IGameController {
 
     // TODO: implement managed ExecutorService
     private Future<GameUpdater> gameUpdaterFuture;
+    private final int numberOfRetries = 10;
 
     public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController, ExecutorService es) {
         this.gameModel = gameModel;
@@ -111,10 +112,8 @@ public final class GameController implements IGameController {
     @Override
     public void closeGame() {
         if (gameModel.getGame() != null) {
-            cancelGame();
             gameLoop.stop();
             gameUpdaterFuture.cancel(true);
-            gameModel.getGame().getPlayer().die();
         }
     }
 
@@ -141,5 +140,10 @@ public final class GameController implements IGameController {
     @Override
     public ExecutorService getEs() {
         return es;
+    }
+
+    @Override
+    public int getNumberOfRetries() {
+        return numberOfRetries;
     }
 }
