@@ -19,6 +19,4 @@ module de.alshikh.haw.tron {
     opens de.alshikh.haw.tron.client.models.game to javafx.fxml;
     exports de.alshikh.haw.tron.client.controllers.game.inputhandlers;
     opens de.alshikh.haw.tron.client.controllers.game.inputhandlers to javafx.fxml;
-    exports de.alshikh.haw.tron.client.controllers.game.inputhandlers.data.datatypes;
-    opens de.alshikh.haw.tron.client.controllers.game.inputhandlers.data.datatypes to javafx.fxml;
 }
