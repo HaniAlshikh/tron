@@ -1,35 +1,32 @@
 package de.alshikh.haw.tron.middleware.rpc.server;
 
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcServiceServerStub;
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessage;
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcRequest;
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcResponse;
-import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.RpcCall;
+import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
+import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcCall;
+import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
+import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcResponse;
 import de.alshikh.haw.tron.middleware.rpc.message.data.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class ServerStub implements Runnable {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    private UUID id;
+    private UUID reqId;
 
     private final Socket client;
-    private final IRpcMessage rpcMessage;
+    private final IRpcMessageApi rpcMsgApi;
     private final HashMap<String, IRpcServiceServerStub> serviceRegistry;
 
-    public ServerStub(Socket client, IRpcMessage rpcMessage, HashMap<String, IRpcServiceServerStub> serviceRegistry) {
+    public ServerStub(Socket client, IRpcMessageApi rpcMsgApi, HashMap<String, IRpcServiceServerStub> serviceRegistry) {
         this.client = client;
-        this.rpcMessage = rpcMessage;
+        this.rpcMsgApi = rpcMsgApi;
         this.serviceRegistry = serviceRegistry;
     }
 
@@ -38,62 +35,56 @@ public class ServerStub implements Runnable {
         IRpcResponse response = null;
         try {
             byte[] request = receive();
-            RpcCall rpcCall = unmarshal(request);
+            IRpcCall rpcCall = unmarshal(request);
             response = call(rpcCall);
         } catch (RpcException e) {
-            response = rpcMessage.errorResponse(id, e);
+            response = rpcMsgApi.newErrorResponse(reqId, e);
         } catch (IOException e) {
-            log.error("Can't read Request:", e);
+            log.error("Failed to handle Request due to network error:", e);
         } finally {
             if (response != null)
                 send(response);
             try {
                 client.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Failed to close client connection: " + reqId, e);
             }
         }
     }
 
     private byte[] receive() throws IOException {
-        // TODO: receive bytes
-        ObjectInputStream input = new ObjectInputStream(client.getInputStream());
-        return input.readUTF().getBytes(StandardCharsets.UTF_8);
+        return client.getInputStream().readAllBytes();
     }
 
-    private RpcCall unmarshal(byte[] request) throws InvalidParamsRpcException {
-        IRpcRequest requestObj = rpcMessage.readRequest(request);
+    private IRpcCall unmarshal(byte[] request) throws InvalidParamsRpcException {
+        IRpcRequest requestObj = rpcMsgApi.readRequest(request);
         log.debug("received request: " + requestObj);
-        this.id = requestObj.getId();
-        return rpcMessage.toRpcCall(requestObj);
+        this.reqId = requestObj.getId();
+        return rpcMsgApi.toRpcCall(requestObj);
     }
 
-    private IRpcResponse call(RpcCall rpcCall) throws InvocationRpcException, MethodNotFoundRpcException, ServiceNotFoundRpcException {
-        IRpcServiceServerStub serviceServerStub = serviceRegistry.get(rpcCall.getServiceName());
-        if (serviceServerStub == null)
-            throw new ServiceNotFoundRpcException("Service not found: " + rpcCall.getServiceName());
-
-        Object result;
+    private IRpcResponse call(IRpcCall rpcCall) throws InvocationRpcException, MethodNotFoundRpcException, ServiceNotFoundRpcException {
         try {
-            result = serviceServerStub.call(rpcCall.getMethodName(), rpcCall.getParameterTypes(), rpcCall.getArguments());
+            IRpcServiceServerStub serviceServerStub = serviceRegistry.get(rpcCall.getServiceName());
+            if (serviceServerStub == null)
+                throw new ServiceNotFoundRpcException("Service not found: " + rpcCall.getServiceName());
+
+            Object result = serviceServerStub.call(rpcCall.getMethodName(), rpcCall.getParameterTypes(), rpcCall.getArguments());
+
+            return rpcMsgApi.newSuccessResponse(reqId, result);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new InvocationRpcException();
         } catch (NoSuchMethodException e) {
             throw new MethodNotFoundRpcException();
         }
-
-        return rpcMessage.successResponse(id, result);
-
     }
 
     private void send(IRpcResponse response) {
         try {
-            ObjectOutputStream output = new ObjectOutputStream(client.getOutputStream());
-            output.writeUTF(new String(response.getBytes()));
-            output.flush();
-            //client.getOutputStream().write(response.getBytes());
+            client.getOutputStream().write(response.getBytes());
+            client.shutdownOutput();
         } catch (IOException e) {
-            log.error("Can't send Response:", e);
+            log.error("Failed to send Response:", e);
         }
     }
 }

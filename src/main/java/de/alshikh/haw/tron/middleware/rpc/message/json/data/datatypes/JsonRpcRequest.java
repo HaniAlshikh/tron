@@ -1,10 +1,9 @@
 package de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes;
 
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcRequest;
+import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.UUID;
 
 public class JsonRpcRequest implements IRpcRequest {
@@ -21,9 +20,16 @@ public class JsonRpcRequest implements IRpcRequest {
     }
 
     private void parse() {
-        id = UUID.fromString(reqObj.getString("id"));
+        String uuid = reqObj.optString("id");
+        if (!uuid.isEmpty())
+            id = UUID.fromString(uuid);
         method = reqObj.getString("method");
         params = reqObj.getJSONObject("params");
+    }
+
+    @Override
+    public boolean isNotification() {
+        return id == null;
     }
 
     @Override

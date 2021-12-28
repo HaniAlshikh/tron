@@ -1,11 +1,11 @@
 package de.alshikh.haw.tron.middleware.rpc.message.data.datatypes;
 
-public class RpcCall {
+public class RpcCall implements IRpcCall {
 
-    String serviceName;
-    String methodName;
-    Class<?>[] parameterTypes;
-    Object[] arguments;
+    private final String serviceName;
+    private final String methodName;
+    private final Class<?>[] parameterTypes;
+    private final Object[] arguments;
 
     public RpcCall(String serviceName, String methodName, Class<?>[] parameterTypes, Object[] arguments) {
         this.serviceName = serviceName;
@@ -14,18 +14,22 @@ public class RpcCall {
         this.arguments = arguments;
     }
 
+    @Override
     public String getServiceName() {
         return serviceName;
     }
 
+    @Override
     public String getMethodName() {
         return methodName;
     }
 
+    @Override
     public Class<?>[] getParameterTypes() {
         return parameterTypes;
     }
 
+    @Override
     public Object[] getArguments() {
         return arguments;
     }

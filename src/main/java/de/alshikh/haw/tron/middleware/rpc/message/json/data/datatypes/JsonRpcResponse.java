@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes;
 
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcResponse;
+import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcResponse;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -12,28 +12,24 @@ public class JsonRpcResponse implements IRpcResponse {
     Object result;
     JsonRpcError error;
 
-    JSONObject responseObj;
+    JSONObject resObj;
 
-    public JsonRpcResponse(JSONObject responseObj) {
-        this.responseObj = responseObj;
+    public JsonRpcResponse(JSONObject resObj) {
+        this.resObj = resObj;
         parse();
     }
 
     private void parse() {
-        id = UUID.fromString(responseObj.getString("id"));
-
-        Object result = responseObj.opt("result");
-        if (result != null)
-            this.result = result;
-
-        JSONObject error = responseObj.optJSONObject("error");
-        if (error != null)
-            this.error = new JsonRpcError(error.getInt("code"), error.getString("message"));
+        id = UUID.fromString(resObj.getString("id"));
+        result = resObj.opt("result");
+        JSONObject err = resObj.optJSONObject("error");
+        if (err == null) return;
+        error = new JsonRpcError(err.getInt("code"), err.getString("message"));
     }
 
     @Override
     public byte[] getBytes() {
-        return responseObj.toString().getBytes(StandardCharsets.UTF_8);
+        return resObj.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     @Override
@@ -42,7 +38,7 @@ public class JsonRpcResponse implements IRpcResponse {
     }
 
     @Override
-    public Object result() {
+    public Object getResult() {
         return result;
     }
 

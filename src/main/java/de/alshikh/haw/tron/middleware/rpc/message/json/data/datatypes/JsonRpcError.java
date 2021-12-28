@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes;
 
-import de.alshikh.haw.tron.middleware.rpc.message.data.exceptions.IRpcError;
+import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcError;
 
 public class JsonRpcError implements IRpcError {
 
