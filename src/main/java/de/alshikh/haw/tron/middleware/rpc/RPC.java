@@ -1,34 +1,49 @@
 package de.alshikh.haw.tron.middleware.rpc;
 
-import de.alshikh.haw.tron.middleware.helloworld.HelloWorld;
-import de.alshikh.haw.tron.middleware.helloworld.IHelloWorld;
-import de.alshikh.haw.tron.middleware.rpc.client.IRPCClient;
+import de.alshikh.haw.tron.middleware.helloworld.HelloWorldClient;
+import de.alshikh.haw.tron.middleware.helloworld.HelloWorldJsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.helloworld.HelloWorldServer;
+import de.alshikh.haw.tron.middleware.helloworld.service.HelloWorld;
+import de.alshikh.haw.tron.middleware.helloworld.service.IHelloWorld;
+import de.alshikh.haw.tron.middleware.helloworld.service.data.datatypes.HelloWorldMessage;
+import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcServiceServerStub;
+import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
+import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
-import de.alshikh.haw.tron.middleware.rpc.server.RPCServer;
+import de.alshikh.haw.tron.middleware.rpc.server.JsonRpcServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
 class RPC {
     public static void main(String[] args) throws IOException {
+        JsonRpcSerializer jsonRpcSerializer = new HelloWorldJsonRpcSerializer();
 
-        IHelloWorld helloWorldServer = new HelloWorld();
+        IHelloWorld helloWorld = new HelloWorld();
+        // TODO: application server stubs are not really necessary?
+        IRpcServiceServerStub helloWorldServer = new HelloWorldServer(helloWorld);
 
         new Thread(() -> {
-            try {
-                IRPCServer rpcServer = new RPCServer(8088);
-                rpcServer.register(IHelloWorld.class, helloWorldServer);
-                rpcServer.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            IRPCServer rpcServer = new JsonRpcServer(8088, jsonRpcSerializer);
+            rpcServer.register(IHelloWorld.class, helloWorldServer);
+            rpcServer.start();
         }).start();
 
-        IHelloWorld helloWorldClient = IRPCClient.getServiceStub(
-                IHelloWorld.class,
-                new InetSocketAddress("localhost", 8088)
-        );
+        // delay until the server starts
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        System.out.println(helloWorldClient.sayHello());
+        // TODO: are we allowed to use java ProxyInstance to generate application stubs?
+        IHelloWorld helloWorldClient = new HelloWorldClient(
+                new JsonRpcClient(IHelloWorld.class,
+                        new InetSocketAddress("localhost", 8088),
+                        jsonRpcSerializer
+                        ));
+
+        System.out.println(helloWorldClient.helloWorld());
+        System.out.println(helloWorldClient.helloWorld(new HelloWorldMessage("Custom Data Type")));
     }
 }

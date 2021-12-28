@@ -2,6 +2,7 @@ module de.alshikh.haw.tron {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.slf4j;
+    requires org.json;
 
 
     exports de.alshikh.haw.tron.client;

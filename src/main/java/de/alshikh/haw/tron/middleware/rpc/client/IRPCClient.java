@@ -1,15 +1,9 @@
 package de.alshikh.haw.tron.middleware.rpc.client;
 
-import java.lang.reflect.Proxy;
-import java.net.InetSocketAddress;
+import java.lang.reflect.Method;
 
 public interface IRPCClient {
-    @SuppressWarnings("unchecked")
-    static <T> T getServiceStub(final Class<?> serviceInterface, final InetSocketAddress serverAddress) {
-        return (T) Proxy.newProxyInstance(
-                serviceInterface.getClassLoader(),
-                new Class<?>[]{serviceInterface},
-                new ClientStub(serviceInterface, serverAddress)
-        );
-    }
+    Object invoke(Method method, Object... args);
+
+    Object invokeWithResponse(Method method, Object... args);
 }

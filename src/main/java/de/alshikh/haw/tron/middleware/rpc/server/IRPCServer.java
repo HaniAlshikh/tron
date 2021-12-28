@@ -1,19 +1,16 @@
 package de.alshikh.haw.tron.middleware.rpc.server;
 
-import java.io.IOException;
-import java.util.HashMap;
+import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcServiceServerStub;
 
 public interface IRPCServer {
 
-    public void stop();
+    void register(Class<?> serviceInterface, IRpcServiceServerStub serviceServerStub);
 
-    public void start() throws IOException;
+    void start();
 
-    void register(Class<?> serviceInterface, Object impl);
+    void stop();
 
-    public boolean isRunning();
+    boolean isRunning();
 
-    public int getPort();
-
-    HashMap<String, Object> getServiceRegistry();
+    int getPort();
 }
