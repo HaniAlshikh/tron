@@ -9,6 +9,7 @@ import java.util.UUID;
 public class JsonRpcRequest implements IRpcRequest {
 
     UUID id;
+    UUID serviceId;
     String method;
     JSONObject params;
 
@@ -23,6 +24,7 @@ public class JsonRpcRequest implements IRpcRequest {
         String uuid = reqObj.optString("id");
         if (!uuid.isEmpty())
             id = UUID.fromString(uuid);
+        serviceId = UUID.fromString(reqObj.getString("service"));
         method = reqObj.getString("method");
         params = reqObj.getJSONObject("params");
     }
@@ -43,7 +45,12 @@ public class JsonRpcRequest implements IRpcRequest {
     }
 
     @Override
-    public String getMethod() {
+    public UUID getServiceId() {
+        return serviceId;
+    }
+
+    @Override
+    public String getMethodName() {
         return method;
     }
 

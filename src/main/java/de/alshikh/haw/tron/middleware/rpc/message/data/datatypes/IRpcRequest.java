@@ -11,7 +11,9 @@ public interface IRpcRequest {
 
     UUID getId();
 
-    String getMethod();
+    UUID getServiceId();
+
+    String getMethodName();
 
     JSONObject getParams();
 }

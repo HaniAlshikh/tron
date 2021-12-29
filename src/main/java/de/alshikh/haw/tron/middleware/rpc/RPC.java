@@ -25,7 +25,7 @@ class RPC {
 
         new Thread(() -> {
             IRPCServer rpcServer = new JsonRpcServer(8088, jsonRpcSerializer);
-            rpcServer.register(IHelloWorld.class, helloWorldServer);
+            rpcServer.register(helloWorldServer);
             rpcServer.start();
         }).start();
 
@@ -39,7 +39,6 @@ class RPC {
         // TODO: are we allowed to use java ProxyInstance to generate application stubs?
         IHelloWorld helloWorldClient = new HelloWorldClient(
                 new JsonRpcClient(
-                        IHelloWorld.class,
                         new InetSocketAddress("localhost", 8088),
                         jsonRpcSerializer
                         ));

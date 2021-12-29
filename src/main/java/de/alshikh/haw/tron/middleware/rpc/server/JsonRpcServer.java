@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,7 +21,7 @@ public class JsonRpcServer implements IRPCServer {
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private boolean running = true;
-    private final HashMap<String, IRpcServiceServerStub> serviceRegistry = new HashMap<>();
+    private final HashMap<UUID, IRpcServiceServerStub> serviceRegistry = new HashMap<>();
 
     private final int port;
     private final IRpcMessageApi jsonRpcMessageApi;
@@ -35,8 +36,8 @@ public class JsonRpcServer implements IRPCServer {
     }
 
     @Override
-    public void register(Class<?> serviceInterface, IRpcServiceServerStub serviceServerStub) {
-        serviceRegistry.put(serviceInterface.getSimpleName(), serviceServerStub);
+    public void register(IRpcServiceServerStub serviceServerStub) {
+        serviceRegistry.put(serviceServerStub.getId(), serviceServerStub);
     }
 
     @Override

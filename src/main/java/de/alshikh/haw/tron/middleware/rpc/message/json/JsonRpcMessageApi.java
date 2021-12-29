@@ -29,15 +29,15 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
     // request API
 
     @Override
-    public IRpcRequest newRequest(Class<?> serviceInterface, Method method, Object[] args) {
-        JSONObject reqObj = newRequestObj(serviceInterface, method, args);
+    public IRpcRequest newRequest(UUID serviceId, Method method, Object[] args) {
+        JSONObject reqObj = newRequestObj(serviceId, method, args);
         reqObj.put("id", UUID.randomUUID().toString());
         return new JsonRpcRequest(reqObj);
     }
 
     @Override
-    public IRpcRequest newNotification(Class<?> serviceInterface, Method method, Object[] args) {
-        JSONObject reqObj = newRequestObj(serviceInterface, method, args);
+    public IRpcRequest newNotification(UUID serviceId, Method method, Object[] args) {
+        JSONObject reqObj = newRequestObj(serviceId, method, args);
         return new JsonRpcRequest(reqObj);
     }
 
@@ -48,12 +48,12 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
 
     @Override
     public IRpcCall toRpcCall(IRpcRequest rpcRequest) throws InvalidParamsRpcException {
-        String serviceName = rpcRequest.getMethod().split("\\.")[0];
-        String methodName = rpcRequest.getMethod().split("\\.")[1];
+        UUID serviceId = rpcRequest.getServiceId();
+        String methodName = rpcRequest.getMethodName();
         Class<?>[] parameterTypes = new Class[rpcRequest.getParams().keySet().size()];
         Object[] args = new Object[rpcRequest.getParams().keySet().size()];
         parseParamsObj(rpcRequest.getParams(), parameterTypes, args);
-        return new RpcCall(serviceName, methodName, parameterTypes, args);
+        return new RpcCall(serviceId, methodName, parameterTypes, args);
     }
 
     // response API
@@ -94,9 +94,10 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
         return jsonObj;
     }
 
-    private JSONObject newRequestObj(Class<?> serviceInterface, Method method, Object[] args) {
+    private JSONObject newRequestObj(UUID serviceId, Method method, Object[] args) {
         JSONObject reqObj = newJsonObject();
-        reqObj.put("method", serviceInterface.getSimpleName() + "." + method.getName());
+        reqObj.put("service", serviceId.toString());
+        reqObj.put("method", method.getName());
         reqObj.put("params", newParamsObj(method.getParameterTypes(), args));
         return reqObj;
     }

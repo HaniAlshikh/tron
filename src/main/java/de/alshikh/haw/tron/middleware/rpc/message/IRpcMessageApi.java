@@ -9,9 +9,9 @@ import java.util.UUID;
 public interface IRpcMessageApi {
     IRpcCall toRpcCall(IRpcRequest rpcRequest) throws InvalidParamsRpcException;
 
-    IRpcRequest newRequest(Class<?> serviceInterface, Method method, Object[] args);
+    IRpcRequest newRequest(UUID serviceId, Method method, Object[] args);
 
-    IRpcRequest newNotification(Class<?> serviceInterface, Method method, Object[] args);
+    IRpcRequest newNotification(UUID serviceId, Method method, Object[] args);
 
     IRpcRequest readRequest(byte[] request);
 

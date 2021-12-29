@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.UUID;
 
 public class ClientStub {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -19,25 +20,23 @@ public class ClientStub {
     // TODO: rpc callback with future<IRpcResponse>
     private boolean waitForResponse = false;
 
-    private final Class<?> serviceInterface;
     private final InetSocketAddress serverAddress;
     private final IRpcMessageApi rpcMsgApi;
 
-    public ClientStub(Class<?> serviceInterface, InetSocketAddress serverAddress, IRpcMessageApi rpcMsgApi) {
-        this.serviceInterface = serviceInterface;
+    public ClientStub(InetSocketAddress serverAddress, IRpcMessageApi rpcMsgApi) {
         this.serverAddress = serverAddress;
         this.rpcMsgApi = rpcMsgApi;
     }
 
-    public Object invoke(Method method, Object... args) {
+    public Object invoke(UUID serviceId, Method method, Object... args) {
         log.debug("Invoking: " + method.getName() + " with args: " + Arrays.toString(args));
-        IRpcResponse response = send(marshal(method, args));
+        IRpcResponse response = send(marshal(serviceId, method, args));
         log.debug("Received response: " + response);
         return rpcMsgApi.toInvocationResult(response);
     }
 
-    private IRpcRequest marshal(Method method, Object[] args) {
-        return rpcMsgApi.newRequest(serviceInterface, method, args);
+    private IRpcRequest marshal(UUID serviceId, Method method, Object[] args) {
+        return rpcMsgApi.newRequest(serviceId, method, args);
     }
 
     private IRpcResponse send(IRpcRequest request) {
@@ -51,6 +50,7 @@ public class ClientStub {
             if (!waitForResponse)
                 return rpcMsgApi.newSuccessResponse(request.getId(), null);
 
+            // TODO: receive method
             byte[] response = server.getInputStream().readAllBytes();
             return rpcMsgApi.readResponse(response);
         } catch (IOException e) {

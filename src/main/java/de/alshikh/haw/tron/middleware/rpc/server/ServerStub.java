@@ -22,9 +22,9 @@ public class ServerStub implements Runnable {
 
     private final Socket client;
     private final IRpcMessageApi rpcMsgApi;
-    private final HashMap<String, IRpcServiceServerStub> serviceRegistry;
+    private final HashMap<UUID, IRpcServiceServerStub> serviceRegistry;
 
-    public ServerStub(Socket client, IRpcMessageApi rpcMsgApi, HashMap<String, IRpcServiceServerStub> serviceRegistry) {
+    public ServerStub(Socket client, IRpcMessageApi rpcMsgApi, HashMap<UUID, IRpcServiceServerStub> serviceRegistry) {
         this.client = client;
         this.rpcMsgApi = rpcMsgApi;
         this.serviceRegistry = serviceRegistry;
@@ -65,9 +65,9 @@ public class ServerStub implements Runnable {
 
     private IRpcResponse call(IRpcCall rpcCall) throws InvocationRpcException, MethodNotFoundRpcException, ServiceNotFoundRpcException {
         try {
-            IRpcServiceServerStub serviceServerStub = serviceRegistry.get(rpcCall.getServiceName());
+            IRpcServiceServerStub serviceServerStub = serviceRegistry.get(rpcCall.getServiceId());
             if (serviceServerStub == null)
-                throw new ServiceNotFoundRpcException("Service not found: " + rpcCall.getServiceName());
+                throw new ServiceNotFoundRpcException("Service not found: " + rpcCall.getServiceId());
 
             Object result = serviceServerStub.call(rpcCall.getMethodName(), rpcCall.getParameterTypes(), rpcCall.getArguments());
 

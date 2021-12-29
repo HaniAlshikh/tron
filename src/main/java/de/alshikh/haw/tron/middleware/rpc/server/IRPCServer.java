@@ -4,7 +4,7 @@ import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcServiceServerStu
 
 public interface IRPCServer {
 
-    void register(Class<?> serviceInterface, IRpcServiceServerStub serviceServerStub);
+    void register(IRpcServiceServerStub serviceServerStub);
 
     void start();
 
