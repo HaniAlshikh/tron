@@ -16,6 +16,13 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 class RPC {
+    // TODO: iterate over the methods and create a client stub
+    // TODO: callback server and locking queue
+    // TODO: application stubs are preferred to be in the application layer (rename client to application and create stubs package)
+    // TODO: see if return type can be inferred or add it in the marshaling protocol
+    // TODO: rpc middleware per call
+    // TODO: maybe rename message package to marshal and create network to send/receive
+    // TODO: naming server component (send dose lookup and receive dose register)
     public static void main(String[] args) throws IOException {
         JsonRpcSerializer jsonRpcSerializer = new HelloWorldJsonRpcSerializer();
 
