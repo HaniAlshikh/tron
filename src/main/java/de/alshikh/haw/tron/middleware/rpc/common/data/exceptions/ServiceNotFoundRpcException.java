@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.rpc.message.data.exceptions;
+package de.alshikh.haw.tron.middleware.rpc.common.data.exceptions;
 
 public class ServiceNotFoundRpcException extends RpcException {
     public static final String MESSAGE = "service not found";

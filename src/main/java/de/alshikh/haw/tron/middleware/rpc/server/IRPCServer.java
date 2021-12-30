@@ -1,10 +1,10 @@
 package de.alshikh.haw.tron.middleware.rpc.server;
 
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcServiceServerStub;
+import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
 
 public interface IRPCServer {
 
-    void register(IRpcServiceServerStub serviceServerStub);
+    void register(IRpcAppServerStub serviceServerStub);
 
     void start();
 

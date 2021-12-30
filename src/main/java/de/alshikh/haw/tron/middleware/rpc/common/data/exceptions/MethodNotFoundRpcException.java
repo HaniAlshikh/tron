@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.rpc.message.data.exceptions;
+package de.alshikh.haw.tron.middleware.rpc.common.data.exceptions;
 
 public class MethodNotFoundRpcException extends RpcException{
     public MethodNotFoundRpcException() {

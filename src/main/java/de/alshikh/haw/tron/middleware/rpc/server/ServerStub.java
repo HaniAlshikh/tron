@@ -1,15 +1,17 @@
 package de.alshikh.haw.tron.middleware.rpc.server;
 
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcServiceServerStub;
+import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
+import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.*;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcResponse;
-import de.alshikh.haw.tron.middleware.rpc.message.data.exceptions.*;
+import de.alshikh.haw.tron.middleware.rpc.network.IRpcConnection;
+import de.alshikh.haw.tron.middleware.rpc.network.RpcConnection;
+import de.alshikh.haw.tron.middleware.rpc.network.data.exceptions.FailedToReceiveNetworkRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.HashMap;
@@ -20,12 +22,12 @@ public class ServerStub implements Runnable {
 
     private UUID reqId;
 
-    private final Socket client;
+    private final IRpcConnection client;
     private final IRpcMessageApi rpcMsgApi;
-    private final HashMap<UUID, IRpcServiceServerStub> serviceRegistry;
+    private final HashMap<UUID, IRpcAppServerStub> serviceRegistry;
 
-    public ServerStub(Socket client, IRpcMessageApi rpcMsgApi, HashMap<UUID, IRpcServiceServerStub> serviceRegistry) {
-        this.client = client;
+    public ServerStub(Socket client, IRpcMessageApi rpcMsgApi, HashMap<UUID, IRpcAppServerStub> serviceRegistry) {
+        this.client = new RpcConnection(client);
         this.rpcMsgApi = rpcMsgApi;
         this.serviceRegistry = serviceRegistry;
     }
@@ -34,42 +36,41 @@ public class ServerStub implements Runnable {
     public void run() {
         IRpcResponse response = null;
         try {
-            byte[] request = receive();
+            IRpcRequest request = receive();
             IRpcCall rpcCall = unmarshal(request);
             response = call(rpcCall);
         } catch (RpcException e) {
             response = rpcMsgApi.newErrorResponse(reqId, e);
-        } catch (IOException e) {
-            log.error("Failed to handle Request due to network error:", e);
         } finally {
-            if (response != null)
+            if (!isNotification()) {
                 send(response);
-            try {
-                client.close();
-            } catch (IOException e) {
-                log.error("Failed to close client connection: " + reqId, e);
+                client.safeClose();
             }
         }
     }
 
-    private byte[] receive() throws IOException {
-        return client.getInputStream().readAllBytes();
+    private IRpcRequest receive() throws FailedToReceiveNetworkRpcException {
+        IRpcRequest req = rpcMsgApi.readRequest(client.receive());
+        log.debug("received request: " + req);
+        this.reqId = req.getId();
+        if (req.isNotification())
+            client.safeClose();
+        return req;
     }
 
-    private IRpcCall unmarshal(byte[] request) throws InvalidParamsRpcException {
-        IRpcRequest requestObj = rpcMsgApi.readRequest(request);
-        log.debug("received request: " + requestObj);
-        this.reqId = requestObj.getId();
-        return rpcMsgApi.toRpcCall(requestObj);
+    private IRpcCall unmarshal(IRpcRequest request) throws InvalidParamsRpcException {
+        return rpcMsgApi.toRpcCall(request);
     }
 
     private IRpcResponse call(IRpcCall rpcCall) throws InvocationRpcException, MethodNotFoundRpcException, ServiceNotFoundRpcException {
         try {
-            IRpcServiceServerStub serviceServerStub = serviceRegistry.get(rpcCall.getServiceId());
+            IRpcAppServerStub serviceServerStub = serviceRegistry.get(rpcCall.getServiceId());
             if (serviceServerStub == null)
                 throw new ServiceNotFoundRpcException("Service not found: " + rpcCall.getServiceId());
 
             Object result = serviceServerStub.call(rpcCall.getMethodName(), rpcCall.getParameterTypes(), rpcCall.getArguments());
+            if (isNotification())
+                return null;
 
             return rpcMsgApi.newSuccessResponse(reqId, result);
         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -80,11 +81,13 @@ public class ServerStub implements Runnable {
     }
 
     private void send(IRpcResponse response) {
+        if (response == null) return;
         try {
-            client.getOutputStream().write(response.getBytes());
-            client.shutdownOutput();
-        } catch (IOException e) {
-            log.error("Failed to send Response:", e);
-        }
+            client.send(response.getBytes());
+        } catch (FailedToReceiveNetworkRpcException ignored) {}
+    }
+
+    private boolean isNotification() {
+        return reqId == null;
     }
 }

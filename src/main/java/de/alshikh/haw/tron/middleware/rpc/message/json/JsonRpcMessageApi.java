@@ -1,8 +1,10 @@
 package de.alshikh.haw.tron.middleware.rpc.message.json;
 
+import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcCall;
+import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.RpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.*;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.message.data.exceptions.InvalidParamsRpcException;
+import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.InvalidParamsRpcException;
 import de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes.JsonRpcRequest;
 import de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes.JsonRpcResponse;
 import org.json.JSONObject;

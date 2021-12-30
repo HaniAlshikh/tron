@@ -1,13 +1,13 @@
 package de.alshikh.haw.tron.middleware.helloworld;
 
 import de.alshikh.haw.tron.middleware.helloworld.service.IHelloWorld;
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcServiceServerStub;
+import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-public class HelloWorldServer implements IRpcServiceServerStub {
+public class HelloWorldServer implements IRpcAppServerStub {
     public static UUID id = UUID.fromString("08fd9cc9-a1ff-454e-ae22-f3c1329ab93c");
 
     IHelloWorld helloWorldService;

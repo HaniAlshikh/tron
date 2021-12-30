@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.server;
 
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcServiceServerStub;
+import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
@@ -21,7 +21,7 @@ public class JsonRpcServer implements IRPCServer {
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private boolean running = true;
-    private final HashMap<UUID, IRpcServiceServerStub> serviceRegistry = new HashMap<>();
+    private final HashMap<UUID, IRpcAppServerStub> serviceRegistry = new HashMap<>();
 
     private final int port;
     private final IRpcMessageApi jsonRpcMessageApi;
@@ -36,7 +36,7 @@ public class JsonRpcServer implements IRPCServer {
     }
 
     @Override
-    public void register(IRpcServiceServerStub serviceServerStub) {
+    public void register(IRpcAppServerStub serviceServerStub) {
         serviceRegistry.put(serviceServerStub.getId(), serviceServerStub);
     }
 
