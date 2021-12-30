@@ -22,7 +22,7 @@ public class CollisionDetector {
             (p1, p2) -> theWall.test(p1) && theWall.test(p2);
 
     private static final BiPredicate<Player, Player> otherPlayer =
-            (p1, p2) -> p1.getBike().getTrail().contains(p2.getBike().getPosition());
+            (p1, p2) -> p2.getBike().getTrail().contains(p1.getBike().getPosition());
 
     private static final BiPredicate<Player, Player> eachOther =
             (p1, p2) -> p1.getBike().getPosition().equals(p2.getBike().getPosition());

@@ -24,17 +24,22 @@ public class GameUpdater implements InvalidationListener {
     private final Object gameStateLock = new Object();
     private final Object UILock = new Object();
     private int retries = 0;
+    private int currentTact; // insure fair play
 
     private final IGameController gameController;
 
     public GameUpdater(IGameController gameController) {
         this.gameController = gameController;
+        reset();
     }
 
     public void updateGame() {
+        // on each tick we publish the update which locks the steering direction
+        //gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
         synchronized (gameStateLock) {
             // insure fair play
-            this.receivedOpponentUpdate = receivedUpdates.remove(getUpdateVersion());
+            logger.debug("Current Tact: " + currentTact);
+            this.receivedOpponentUpdate = receivedUpdates.remove(currentTact);
             if (this.receivedOpponentUpdate == null) {
                 if (retries == gameController.getNumberOfRetries())
                     Platform.runLater(() -> gameController.endGame("You won because of a network error"));
@@ -52,13 +57,14 @@ public class GameUpdater implements InvalidationListener {
             // before consuming the next update
             synchronized (UILock) {
                 logger.debug("lock: update game state");
-                gameController.getGameModel().updateGameState(this.receivedOpponentUpdate);
+                gameController.getGameModel().updateGameState(this.receivedOpponentUpdate); // consumes to old and creates new update
+                gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate();
                 logger.debug("unlock: update game state");
             }
-
-            logger.debug("Moving player");
-            gameController.getGameModel().getGame().getPlayer().move();
-            logger.debug("New player update: " + gameController.getGameModel().getGame().getPlayer().getUpdate());
+            currentTact++;
+            //logger.debug("Moving player");
+            //gameController.getGameModel().getGame().getPlayer().move();
+            //logger.debug("New player update: " + gameController.getGameModel().getGame().getPlayer().getUpdate());
         }
     }
 
@@ -105,6 +111,7 @@ public class GameUpdater implements InvalidationListener {
             logger.debug("lock: rendering game state");
             if (gameModel.getGame().ended()) {
                 Platform.runLater(gameController::endGame);
+                return;
             }
             gameController.getGameView().showGame(gameModel.getGame());
             logger.debug("unlock: rendering game state");
@@ -116,20 +123,24 @@ public class GameUpdater implements InvalidationListener {
 
         receivedUpdates.put(playerUpdate.getVersion(), playerUpdate);
 
-        if (getUpdateVersion() > playerUpdate.getVersion()) {
-            retries++;
-            logger.debug("resending previous update");
-            gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishPreviousUpdate());
-        }
-
-        else if (getUpdateVersion() < playerUpdate.getVersion()) {
-            retries++;
-            logger.debug("resending update");
-            gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
-        }
+        //if (getUpdateVersion() > playerUpdate.getVersion()) {
+        //    retries++;
+        //    logger.debug("resending previous update");
+        //    gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishPreviousUpdate());
+        //}
+        //
+        //else if (getUpdateVersion() < playerUpdate.getVersion()) {
+        //    retries++;
+        //    logger.debug("resending update");
+        //    gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
+        //}
     }
 
     private int getUpdateVersion() {
         return gameController.getGameModel().getGame().getPlayer().getUpdateVersion();
+    }
+
+    public void reset() {
+        currentTact = 1;
     }
 }

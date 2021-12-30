@@ -30,24 +30,25 @@ public class GameModel implements IGameModel {
     public void createGame(StringProperty playerName) {
         this.game = new Game();
         this.game.setPlayer(new Player(playerName, new Bike(BikeStartingPosition.LEFT, Color.RED)));
-        this.game.getPlayer().pushUpdate(); // starting position to opponent
-        this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(Color.BLUE)));
+        this.game.getPlayer().resetUpdate(); // to initial position
+        this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.RIGHT, Color.BLUE)));
     }
 
     @Override
     public void joinGame(StringProperty playerName) {
         this.game = new Game();
         this.game.setPlayer(new Player(playerName, new Bike(BikeStartingPosition.RIGHT, Color.BLUE)));
-        this.game.getPlayer().pushUpdate(); // starting position to opponent
-        this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(Color.RED)));
+        this.game.getPlayer().resetUpdate(); // to initial position
+        this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.LEFT, Color.RED)));
     }
 
     @Override
     public void updateGameState(PlayerUpdate opponentUpdate) {
         game.applyOpponentUpdate(opponentUpdate);
+        game.movePlayers();
         CollisionDetector.check(game);
         game.checkForBreak();
-        publishUpdate();
+        publishUpdate(); // to the GUI
     }
 
     @Override

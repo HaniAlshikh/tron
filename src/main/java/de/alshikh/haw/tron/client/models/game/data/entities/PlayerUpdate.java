@@ -1,5 +1,6 @@
 package de.alshikh.haw.tron.client.models.game.data.entities;
 
+import de.alshikh.haw.tron.client.models.game.data.datatypes.Direction;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import org.slf4j.Logger;
@@ -14,29 +15,29 @@ public class PlayerUpdate implements Observable {
     private final List<InvalidationListener> listeners = new ArrayList<>();
     private PlayerUpdate previousUpdate;
 
-    private int x, y;
+    private Direction movingDirection;
     private boolean pauseGame;
-    private int version;
     private boolean dead = false;
+    private int version;
 
     public PlayerUpdate() {}
 
-    public PlayerUpdate(int x, int y, boolean pauseGame, boolean dead, int version) {
-        setValues(x, y, pauseGame, dead, version);
+    public PlayerUpdate(Direction movingDirection, boolean pauseGame, boolean dead, int version) {
+        setValues(movingDirection, pauseGame, dead, version);
     }
 
-    public void setValues(int x, int y, boolean pauseGame, boolean dead, int version) {
-        this.x = x;
-        this.y = y;
+    public void setValues(Direction movingDirection, boolean pauseGame, boolean dead, int version) {
+        this.movingDirection = movingDirection;
         this.pauseGame = pauseGame;
         this.dead = dead;
         this.version = version;
     }
 
-    public void update(int x, int y, boolean pauseGame, boolean dead, int version) {
+    public void update(Direction movingDirection, boolean pauseGame, boolean dead, int version) {
         previousUpdate = this.copy();
-        setValues(x, y, pauseGame, dead, version);
-        publishUpdate();
+        setValues(Direction.valueOf(movingDirection.name()), pauseGame, dead, version);
+        //setValues(movingDirection, pauseGame, dead, version);
+        //publishUpdate();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class PlayerUpdate implements Observable {
 
     public void publishUpdate() {
         logger.debug("publishing player update: " + this);
-        listeners.forEach(l -> l.invalidated(this));
+        listeners.forEach(l -> l.invalidated(this.copy()));
     }
 
 
@@ -62,23 +63,15 @@ public class PlayerUpdate implements Observable {
     }
 
     public PlayerUpdate copy() {
-        return new PlayerUpdate(this.x, this.y, this.pauseGame, this.dead, this.version);
+        return new PlayerUpdate(this.movingDirection, this.pauseGame, this.dead, this.version);
     }
 
-    public int getX() {
-        return x;
+    public Direction getMovingDirection() {
+        return movingDirection;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+    public void setMovingDirection(Direction movingDirection) {
+        this.movingDirection = movingDirection;
     }
 
     public boolean pauseGame() {
@@ -89,14 +82,6 @@ public class PlayerUpdate implements Observable {
         this.pauseGame = pauseGame;
     }
 
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
     public boolean isDead() {
         return dead;
     }
@@ -105,14 +90,17 @@ public class PlayerUpdate implements Observable {
         this.dead = dead;
     }
 
+    public int getVersion() {
+        return version;
+    }
+
     @Override
     public String toString() {
         return "PlayerUpdate{" +
-                "x=" + x +
-                ", y=" + y +
+                "movingDirection=" + movingDirection +
                 ", pauseGame=" + pauseGame +
-                ", version=" + version +
                 ", dead=" + dead +
+                ", version=" + version +
                 '}';
     }
 }

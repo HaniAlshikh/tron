@@ -13,6 +13,11 @@ public class Game {
         opponent.applyUpdate(opponentUpdate);
     }
 
+    public void movePlayers() {
+        player.move();
+        opponent.move();
+    }
+
     public void checkForBreak() {
         paused = player.pausedGame() || opponent.pausedGame();
     }

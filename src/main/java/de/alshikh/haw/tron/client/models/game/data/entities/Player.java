@@ -6,8 +6,9 @@ import java.util.UUID;
 
 public class Player {
 
-    private final UUID uuid = UUID.randomUUID();
-    private final PlayerUpdate update = new PlayerUpdate();
+    // TODO: player uuid to associate with update
+    private final UUID id = UUID.randomUUID();
+    private final PlayerUpdate update;
     private boolean pauseGame = false;
     private boolean dead = false;
     private int updateVersion;
@@ -18,11 +19,13 @@ public class Player {
     public Player(StringProperty name, Bike bike) {
         this.name = name;
         this.bike = bike;
+        this.update = new PlayerUpdate();
     }
 
     public void move() {
-        bike.move();
-        pushUpdate();
+        bike.move(); // move the old/update move
+        bike.lockDirection();
+        resetUpdate(); // lock the next move
     }
 
     public void die() {
@@ -33,12 +36,12 @@ public class Player {
         this.pauseGame = !this.pauseGame;
     }
 
-    public void pushUpdate() {
-        this.update.update(bike.getPosition().x, bike.getPosition().y, pauseGame, dead, ++updateVersion);
+    public void resetUpdate() {
+        this.update.update(bike.getMovingDirection(), pauseGame, dead, ++updateVersion);
     }
 
     public void applyUpdate(PlayerUpdate update) {
-        bike.move(update.getX(), update.getY());
+        bike.setMovingDirection(update.getMovingDirection());
         pauseGame = update.pauseGame();
         dead = update.isDead();
         updateVersion = update.getVersion();
@@ -72,8 +75,8 @@ public class Player {
         return updateVersion;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getId() {
+        return id;
     }
 
     @Override

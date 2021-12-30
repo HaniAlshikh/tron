@@ -139,6 +139,26 @@ TODO: view update state doesn't depend on model update state both run asynchrono
 TODO: stubs in the application components
 TODO: factory pattern
 TODO: updateDirection dosn't depend on setDirection
+TODO: central tact manager or keep sending and take the last result
+TODO: use what possible of the network resources as nothing is free
+TODO: Protocol is Interface and processing instructions
+TODO: manager thread to manage messages and invoke the corresponding component
+TODO: state pattern
+TODO: thread to manage messages which is observable und to call the corresponding component
+TODO: state pattern for rooms
+TODO: we don't want to save anything if the information (update) is not there we forget about it (transient and not persistent (no message queues)) so TCP
+TODO: change version to sequence number
+TODO: as long as the data type contains only primitive types it's ok for serialization
+
+TODO: skip problem workaround check skip the last two elements when checking
+
+TODO: ein Diagram ein pfeil
+TODO: state machine pattern better than dispatcher pattern
+TODO: only send movement no need for coordinates
+TODO: LobbyManager singleton is not a good idea
+TODO: LobbyManager shouldn't trigger the game start
+    start game starts the game already and hold for joiners
+TODO: LobbyManager registers a service by the middle ware
 
 \<Runtime Scenario 1\> {#__runtime_scenario_1}
 ----------------------

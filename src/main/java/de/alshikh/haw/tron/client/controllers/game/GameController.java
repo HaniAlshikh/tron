@@ -45,7 +45,7 @@ public final class GameController implements IGameController {
         this.playerName = new SimpleStringProperty(RandomNameGenerator.get());
         this.gameUpdater = new GameUpdater(this);
         this.gameLoop = new Timeline(
-                new KeyFrame(Duration.seconds(0.1),
+                new KeyFrame(Duration.seconds(0.08),
                 e -> this.gameUpdaterFuture = this.es.submit(gameUpdater::updateGame, gameUpdater))
         );
 
@@ -65,7 +65,7 @@ public final class GameController implements IGameController {
     private void createGame() {
         logger.info("Starting a new Game as host");
         gameModel.createGame(playerName);
-        lobbyController.createRoom(gameModel.getGame().getPlayer().getUuid(), gameModel.getGame().getPlayer().getName(), this);
+        lobbyController.createRoom(gameModel.getGame().getPlayer().getId(), gameModel.getGame().getPlayer().getName(), this);
         gameView.showWaitingMenu(e -> cancelGame());
     }
 
@@ -83,7 +83,7 @@ public final class GameController implements IGameController {
     }
 
     private void cancelGame() {
-        lobbyController.removeRoom(gameModel.getGame().getPlayer().getUuid());
+        lobbyController.removeRoom(gameModel.getGame().getPlayer().getId());
         gameView.reset();
         showStartMenu("Ready?");
     }
@@ -94,6 +94,7 @@ public final class GameController implements IGameController {
         GameInputHandler gameInputHandler = new GameInputHandler(gameModel.getGame().getPlayer());
         gameView.getScene().setOnKeyPressed(gameInputHandler);
         gameModel.addListener(gameUpdater); // on model update update the view
+        gameUpdater.reset();
         gameLoop.play();
     }
 
