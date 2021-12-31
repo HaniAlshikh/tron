@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.UUID;
 
 public final class LobbyController implements ILobbyController {
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final ILobbyModel lobbyModel = LobbyModel.getInstance();
     private final ILobbyView lobbyView;
@@ -26,7 +25,7 @@ public final class LobbyController implements ILobbyController {
     public void showRoomsMenu(IGameController playerController) {
         RoomsMenuInputHandler roomsMenuInputHandler = new RoomsMenuInputHandler();
         roomsMenuInputHandler.setListItemConsumer(room -> {
-            startGame(playerController, room.getHostController());
+            enterRoom(playerController, room.getHostController());
             removeRoom(room.getUuid());
         });
         lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRoomsList());
@@ -42,11 +41,8 @@ public final class LobbyController implements ILobbyController {
         lobbyModel.removeRoom(uuid);
     }
 
-    private void startGame(IGameController playerController, IGameController hostController) {
+    private void enterRoom(IGameController playerController, IGameController hostController) {
         hostController.admit(playerController);
         playerController.admit(hostController);
-
-        playerController.startGame();
-        hostController.startGame();
     }
 }

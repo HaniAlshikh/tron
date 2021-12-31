@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public class LobbyModel implements ILobbyModel {
 
+    // maps are unordered and therefore not supported in javafx as view
     ObservableMap<UUID, Room> rooms = FXCollections.observableHashMap();
     ObservableList<Room> roomsList = FXCollections.observableArrayList();
 

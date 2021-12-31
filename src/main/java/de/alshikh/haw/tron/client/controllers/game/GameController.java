@@ -80,6 +80,7 @@ public final class GameController implements IGameController {
     public void admit(IGameController opponentController) {
         gameModel.getGame().getOpponent().nameProperty().set(opponentController.playerNameProperty().get());
         opponentController.getPlayerUpdate().addListener(gameUpdater);
+        startGame();
     }
 
     private void cancelGame() {
