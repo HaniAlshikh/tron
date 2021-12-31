@@ -94,7 +94,6 @@ public final class GameController implements IGameController {
         GameInputHandler gameInputHandler = new GameInputHandler(gameModel.getGame().getPlayer());
         gameView.getScene().setOnKeyPressed(gameInputHandler);
         gameModel.addListener(gameUpdater); // on model update update the view
-        gameUpdater.reset();
         gameLoop.play();
     }
 
@@ -107,6 +106,8 @@ public final class GameController implements IGameController {
     public void endGame(String message) {
         gameLoop.stop();
         gameUpdaterFuture.cancel(true);
+        gameView.highlightCell(gameModel.getGame().getPlayer().getBike().getPosition(),
+                gameModel.getGame().getOpponent().getBike().getPosition());
         showStartMenu(message);
     }
 

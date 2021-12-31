@@ -36,8 +36,6 @@ public class PlayerUpdate implements Observable {
     public void update(Direction movingDirection, boolean pauseGame, boolean dead, int version) {
         previousUpdate = this.copy();
         setValues(Direction.valueOf(movingDirection.name()), pauseGame, dead, version);
-        //setValues(movingDirection, pauseGame, dead, version);
-        //publishUpdate();
     }
 
     @Override
@@ -53,7 +51,7 @@ public class PlayerUpdate implements Observable {
 
     public void publishUpdate() {
         logger.debug("publishing player update: " + this);
-        listeners.forEach(l -> l.invalidated(this.copy()));
+        listeners.forEach(l -> l.invalidated(this));
     }
 
 

@@ -2,15 +2,13 @@ package de.alshikh.haw.tron.client.controllers.game.inputhandlers;
 
 import de.alshikh.haw.tron.client.models.game.data.datatypes.Direction;
 import de.alshikh.haw.tron.client.models.game.data.entities.Player;
-import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GameInputHandler implements IGameInputHandler {
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final Player player;
 
@@ -35,10 +33,5 @@ public class GameInputHandler implements IGameInputHandler {
             case W: player.getBike().steer(Direction.UP); break;
             case S: player.getBike().steer(Direction.DOWN); break;
         }
-    }
-
-    @Override
-    public EventHandler<KeyEvent> getHandler() {
-        return this;
     }
 }

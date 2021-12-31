@@ -29,7 +29,7 @@ public class GameModel implements IGameModel {
     @Override
     public void createGame(StringProperty playerName) {
         this.game = new Game();
-        this.game.setPlayer(new Player(playerName, new Bike(BikeStartingPosition.LEFT, Color.RED)));
+        this.game.setPlayer(new Player(playerName, new Bike(BikeStartingPosition.LEFT, Color.ORANGE)));
         this.game.getPlayer().resetUpdate(); // to initial position
         this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.RIGHT, Color.BLUE)));
     }
@@ -39,7 +39,7 @@ public class GameModel implements IGameModel {
         this.game = new Game();
         this.game.setPlayer(new Player(playerName, new Bike(BikeStartingPosition.RIGHT, Color.BLUE)));
         this.game.getPlayer().resetUpdate(); // to initial position
-        this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.LEFT, Color.RED)));
+        this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.LEFT, Color.ORANGE)));
     }
 
     @Override
@@ -48,7 +48,13 @@ public class GameModel implements IGameModel {
         game.movePlayers();
         CollisionDetector.check(game);
         game.checkForBreak();
-        publishUpdate(); // to the GUI
+        publishGameStateUpdate();
+    }
+
+    @Override
+    public void createNewPlayerUpdate() {
+        game.getPlayer().createUpdate();
+        game.getPlayer().getUpdate().publishUpdate();
     }
 
     @Override
@@ -63,7 +69,7 @@ public class GameModel implements IGameModel {
     }
 
     @Override
-    public void publishUpdate() {
+    public void publishGameStateUpdate() {
         listeners.forEach(l -> l.invalidated(this));
     }
 

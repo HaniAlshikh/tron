@@ -14,7 +14,10 @@ public interface IGameModel extends Observable {
 
     void updateGameState(PlayerUpdate opponentUpdate);
 
-    void publishUpdate();
+    void createNewPlayerUpdate();
+
+    void publishGameStateUpdate();
 
     Game getGame();
+
 }

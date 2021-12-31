@@ -4,6 +4,7 @@ import de.alshikh.haw.tron.client.models.game.data.entities.Game;
 import de.alshikh.haw.tron.client.models.game.data.entities.Player;
 import de.alshikh.haw.tron.client.views.game.overlayes.StartMenu;
 import de.alshikh.haw.tron.client.views.game.overlayes.WatingMenu;
+import de.alshikh.haw.tron.client.views.view_library.Coordinate;
 import de.alshikh.haw.tron.client.views.view_library.ITronView;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -41,6 +42,11 @@ public class GameView implements IGameView {
                 p.die();
             }
         }
+    }
+
+    @Override
+    public void highlightCell(Coordinate... cells) {
+        Arrays.stream(cells).forEach(view::highlightCell);
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class Player {
 
-    // TODO: player uuid to associate with update
+    // TODO: associate player id with the update to generalize
     private final UUID id = UUID.randomUUID();
     private final PlayerUpdate update;
     private boolean pauseGame = false;
@@ -23,9 +23,12 @@ public class Player {
     }
 
     public void move() {
-        bike.move(); // move the old/update move
+        bike.move();
+    }
+
+    public void createUpdate() {
         bike.lockDirection();
-        resetUpdate(); // lock the next move
+        resetUpdate();
     }
 
     public void die() {

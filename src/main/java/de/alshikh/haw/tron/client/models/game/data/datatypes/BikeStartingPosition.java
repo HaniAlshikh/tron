@@ -45,8 +45,8 @@ public enum BikeStartingPosition {
 
     public Coordinate getCoordinate() {
         switch (this) {
-            case LEFT: if (!isTaken()) { return new Coordinate(COLUMNS / 12, ROWS / 2); }
-            case RIGHT: if (!isTaken()) { return new Coordinate( COLUMNS - (COLUMNS / 12), ROWS / 2); }
+            case LEFT: if (!isTaken()) { return new Coordinate(2, ROWS / 2); }
+            case RIGHT: if (!isTaken()) { return new Coordinate( COLUMNS - 2, ROWS / 2); }
             default: throw new IllegalArgumentException("Position is already taken");
         }
     }
