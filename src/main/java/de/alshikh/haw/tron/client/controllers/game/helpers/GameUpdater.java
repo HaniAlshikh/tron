@@ -4,7 +4,6 @@ import de.alshikh.haw.tron.client.controllers.game.IGameController;
 import de.alshikh.haw.tron.client.models.game.IGameModel;
 import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GameUpdater implements InvalidationListener {
+public class GameUpdater implements IUpdater {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     Map<Integer, PlayerUpdate> opponentUpdatesCache = new ConcurrentHashMap<>();
