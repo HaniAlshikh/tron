@@ -4,20 +4,30 @@ Distributed Tron Game
 
 ## Requirements Overview
 
-Players of this game can host a lobby or join one. After joining a lobby the game will start. Each player control the game with a keyboard to move his tron.
+Players of this game can create a room (host) or join one (guest). After joining a room the game will start. Each player controls the game with a keyboard to move his tron.
 
 a Tron is a representation of the player and will continuously move forward. It can be moved right and left but not backward.
 
-When the Tron moves it leaves a trail behind it. The objective is to force the enemy tron into walls or trails, while simultaneously avoiding them.
+When the Tron moves it leaves a trail behind it. The objective is to force the opponent tron into walls or trails, while simultaneously avoiding them.
 
-If the player restarted or existed the game. The enemy wins.
+If the player restarted or existed the game. The opponent wins and vise versa.
+
+| ID | Use-Case | Description |
+|----|----------|-------------|
+| UC01 | create game | as a host I want to create a room to host a game |
+| UC02 | join game | as a guest I want to see available rooms to join one and play against the host |
+| UC03 | start game | as a host I want the game to start when to guest enters |
+| UC04 | play game | as a player I want to see real time updates to play the game |
+| UC05 | keyboard controls | as a player I want to control the game with a keyboard |
+| UC06 | restart game | as a player I want to restart a game by creating or joining one |
+| UC07 | exit game | <ul><li>as a player I want to exit the game anytime i want</li><li>as a player i want to be notified when my opponent exited the game</li></ul>  |
 
 ## Quality Goals
 
-| Goal | Description |
-|-------------|-------------|
-| Server stability | server should not be blocked by the players |
-| Fairness | response time should not favour one player over the other |
+| ID |Goal | Description |
+|----|-----|-------------|
+| QG01 | Server stability | server should not be blocked by the players |
+| QG02 | Fairness | response time should not favour one player over the other |
 
 ## Stakeholders
 
@@ -30,27 +40,27 @@ If the player restarted or existed the game. The enemy wins.
 
 ### Technical Constraints
 
-| Constraint | Description |
-|------------|-------------|
-| Programing language | Implementation in an object-oriented language |
-| Communication | <ul><li>RPC interface - Own RPC implementation no framework => solution part A</li><li>ReST (at least level 1 in the Richardson Maturity Model) => solution part B</li></ul> |
-| Implementation | musst use Dependency-inversion-principle |
-| Frameworks | The use of frameworks must be approved by the customer |
-| 2 players | a maximum of 2 players per game |
-| Multiple games | N Games should be supported by the system |
-| Multiplayer | each player can start a new game or enter a playroom |
-| User interface | Each player gets his owen GUI |
-| Motion | <ul><li>player moves in a straight line automatically</li><li>player can manipulate direction, but can't go back</li></ul>
-| Keyboard control | player can use the keyboard to control the game |
+| ID | Constraint | Description |
+|----|------------|-------------|
+| TC01 | Programing language | Implementation in an object-oriented language |
+| TC02| Communication | <ul><li>RPC interface - Own RPC implementation no framework => solution part A</li><li>ReST (at least level 1 in the Richardson Maturity Model) => solution part B</li></ul> |
+| TC03 | Implementation | musst use Dependency-inversion-principle |
+| TC04 | Frameworks | The use of frameworks must be approved by the customer |
+| TC05 | 2 players | a maximum of 2 players per game |
+| TC06 | Multiple games | N Games should be supported by the system |
+| TC07 | Multiplayer | each player can start a new game or enter a playroom |
+| TC08 | User interface | Each player gets his owen GUI |
+| TC09 | Motion | <ul><li>player moves in a straight line automatically</li><li>player can manipulate direction, but can't go back</li></ul>
+| TC10 | Keyboard control | player can use the keyboard to control the game |
 
 ### Organisational constraints
 
-| Constraint | Description |
-|------------|-------------|
-| Documentation | clear representation of the structure in at least 2 hierarchy levels: component diagram, class diagram, deployment diagram (ARC42)
-| Project Management | fixed method for project management (proof) |
-| Problem Solving | problem-solving strategies must be derived from reference literature or accepted third-party literature |
-| Deadline | project musst be delivered by 03.02.2021|
+| ID | Constraint | Description |
+|----|------------|-------------|
+| OC01 | Documentation | clear representation of the structure in at least 2 hierarchy levels: component diagram, class diagram, deployment diagram (ARC42)
+| OC02 | Project Management | fixed method for project management (proof) |
+| OC03 | Problem Solving | problem-solving strategies must be derived from reference literature or accepted third-party literature |
+| OC04 | Deadline | project musst be delivered by 25.01.2022|
 
 ## System Scope and Context
 
@@ -58,8 +68,6 @@ If the player restarted or existed the game. The enemy wins.
 
 ![Usecases](images/Usecases.drawio.svg)
 <!-- ![Business Context](images/BusinessContext.drawio.svg) -->
-
-TODO: use cases table with ids
 
 Technical Context
 -----------------
@@ -70,6 +78,7 @@ Technical Context
 
 TODO: add use cases ids
 TODO: Error cases
+TODO: Need updating
 
 | Actor | Function | Semantics | Precondition | Postcondition |
 |-------|----------|-----------|--------------|---------------|
@@ -90,64 +99,98 @@ TODO: Error cases
 
 ![Component Diagram](images/ComponentDiagram.drawio.svg)
 
-| Component | Description |
-|------------|--------------|
-| GameController | enables the interconnection between the GameViewer and GameModeler so it acts as an intermediary. |
-| GameModeler | handels game data and state including the game logic |
-| GameViewer | handels game representation and generate the needed UI components |
-| ViewLibrary | provides methods to draw on a canvas and to register, show and hide overlays such as menus |
+the MVC pattern is used in the system to be developed. The reason for choosing this pattern is to make a clear division between domain objects and their presentation seen in the GUI.
 
-TODO: Interfaces (functional description)
+X referees to the component name in the different packages 
 
-[comment]: <> (Level 2 {#_level_2})
+| stereotype | Component | Interface | Description |
+|------------|-----------|-----------|-------------|
+| model | X | IXModel | handles the data and state including the logic |
+| view | X | IXView | handles the representation and generate the needed UI components |
+| controller | X | IXController | enables the interconnection between the view and model so it acts as an intermediary. |
 
-[comment]: <> (-------)
+#### Level 2
 
-[comment]: <> (### White Box *\<building block 1\>* {#_white_box_emphasis_building_block_1_emphasis})
+##### Model
 
-[comment]: <> (*\<white box template\>*)
+###### Game
 
-[comment]: <> (### White Box *\<building block 2\>* {#_white_box_emphasis_building_block_2_emphasis})
+![Component Diagram](images/GameModelClassDiagram.drawio.svg)
 
-[comment]: <> (*\<white box template\>*)
+###### Lobby
 
-[comment]: <> (...)
+TODO
 
-[comment]: <> (### White Box *\<building block m\>* {#_white_box_emphasis_building_block_m_emphasis})
+##### View
 
-[comment]: <> (*\<white box template\>*)
+###### Game
 
-[comment]: <> (Level 3 {#_level_3})
+TODO
 
-[comment]: <> (-------)
+###### Lobby
 
-[comment]: <> (### White Box \<\_building block x.1\_\> {#_white_box_building_block_x_1})
+TODO
 
-[comment]: <> (*\<white box template\>*)
+#### Controller
 
-[comment]: <> (### White Box \<\_building block x.2\_\> {#_white_box_building_block_x_2})
+###### Game
 
-[comment]: <> (*\<white box template\>*)
+TODO
 
-[comment]: <> (### White Box \<\_building block y.1\_\> {#_white_box_building_block_y_1})
+###### Lobby
 
-[comment]: <> (*\<white box template\>*)
+TODO
 
-## Runtime View {#section-runtime-view}
+## Runtime View 
 
-TODO: view update state doesn't depend on model update state both run asynchronously (model pushes the update)
-TODO: stubs in the application components
-TODO: factory pattern
-TODO: central tick manager or keep sending and take the last result
-TODO: use what possible of the network resources as nothing is free
-TODO: Protocol is Interface and processing instructions
-TODO: thread to manage messages which is observable und to call the corresponding component
-TODO: we don't want to save anything if the information (update) is not there we forget about it (transient and not persistent (no message queues)) so TCP
-TODO: ideally one diagram one arrow
-TODO: state machine pattern better than dispatcher pattern
-TODO: state pattern for rooms
-TODO: LobbyManager singleton is not a good idea
-TODO: LobbyManager registers a service by the middle ware
+### UC01: Create Game
+
+wie macht man es async?  
+ist das ein oder zwei Sequenzdiagramme?  
+ist die Kommunikation zwischen Game und Lobby Controller richtig?  
+macht man alle Räume remote?  
+
+![Component Diagram](images/UC01SequenceDiagram.drawio.svg)
+
+### UC02: Join Game
+
+![Component Diagram](images/UC02SequenceDiagram.drawio.svg)
+
+### UC03: Start Game
+
+wie moduliert man das?
+
+wenn einem Raum beigetreten wird sollten die UpdateChanel instanzen getaucht werden -> Local-instance/remote-stub
+
+
+![Component Diagram](images/UC03EnterSequenceDiagram.drawio.svg)
+![Component Diagram](images/UC03RoomFullSequenceDiagram.drawio.svg)
+
+
+### UC04: Play Game
+
+
+wie zeigt man dass das in der Game-Controller-Komponente läuft? oder State machine?  
+soll man hier update controlling machen? (wenn z.b. nicht der gesuchte Update geschickt wurde)
+![Component Diagram](images/UC04PlayerUpdateObservedSequenceDiagram.drawio.svg)
+Darf der LobbyController das Spiel starten?  
+Wenn nein  
+wie kann man unterscheiden zwischen dem ersten update und dem Rest ohne bei jedem Update zu prüfen?
+![Component Diagram](images/UC04UpdateGameStateMachineDiagram.drawio.svg)
+
+TODO: view update state doesn't depend on model update state both run asynchronously (model pushes the update)  
+TODO: stubs in the application components  
+TODO: factory pattern  
+TODO: central tick manager or keep sending and take the last result  
+TODO: use what possible of the network resources as nothing is free  
+TODO: Protocol is Interface and processing instructions  
+TODO: thread to manage messages which is observable und to call the corresponding component  
+TODO: we don't want to save anything if the information (update) is not there we forget about it (transient and not persistent (no message queues)) so TCP  
+TODO: ideally one diagram one arrow  
+TODO: state machine pattern better than dispatcher pattern  
+TODO: state pattern for rooms  
+TODO: LobbyManager singleton is not a good idea  
+TODO: LobbyManager registers a service by the middle ware  
 
 \<Runtime Scenario 1\> {#__runtime_scenario_1}
 ----------------------

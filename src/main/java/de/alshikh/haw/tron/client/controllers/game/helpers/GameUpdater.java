@@ -18,7 +18,7 @@ public class GameUpdater implements IUpdater {
 
     private PlayerUpdate receivedOpponentUpdate;
     private final Object gameStateLock = new Object();
-    private final Object UILock = new Object();
+    private final Object gameUILock = new Object();
     private int retries = 0;
 
     private final IGameController gameController;
@@ -38,13 +38,14 @@ public class GameUpdater implements IUpdater {
             // we will have to wait for the game state update to give the player the chance to react
             // before consuming the next update
             logger.debug("lock: consume opponent update: " + receivedOpponentUpdate);
-            synchronized (UILock) {
+            synchronized (gameUILock) {
                 logger.debug("lock: update game state");
                 gameController.getGameModel().updateGameState(this.receivedOpponentUpdate); // consumes to old and creates new update
-                gameController.getGameModel().createNewPlayerUpdate();
                 logger.debug("unlock: update game state");
             }
         }
+
+        gameController.getGameModel().createNewPlayerUpdate();
     }
 
     private boolean fairPlayInsured() {
@@ -68,7 +69,7 @@ public class GameUpdater implements IUpdater {
     }
 
     private void gameStateChangeObserved(IGameModel gameModel) {
-        synchronized (UILock) {
+        synchronized (gameUILock) {
             logger.debug("lock: rendering game state");
             if (gameModel.getGame().ended()) {
                 Platform.runLater(gameController::endGame);

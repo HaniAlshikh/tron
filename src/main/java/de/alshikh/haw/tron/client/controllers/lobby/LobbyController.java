@@ -33,7 +33,7 @@ public final class LobbyController implements ILobbyController {
             //  which will create the client.
             //  -> the plan is to make the directory server a remote rooms list which will be bounded
             //  the the roomsList on each instance
-            room.enter(guestUpdateChannel);
+            lobbyModel.enterRoom(room, guestUpdateChannel);
             // TODO: state pattern
             removeRoom(room.getUuid());
         });

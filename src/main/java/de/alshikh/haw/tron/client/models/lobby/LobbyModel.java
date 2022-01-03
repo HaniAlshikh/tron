@@ -1,5 +1,6 @@
 package de.alshikh.haw.tron.client.models.lobby;
 
+import de.alshikh.haw.tron.client.controllers.game.helpers.IUpdateChannel;
 import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
@@ -31,6 +32,13 @@ public class LobbyModel implements ILobbyModel {
     @Override
     public void addRoom(Room room) {
         rooms.put(room.getUuid(), room);
+    }
+
+    @Override
+    public void enterRoom(Room room, IUpdateChannel guestUpdateChannel) {
+        room.enter(guestUpdateChannel);
+        // TODO: state pattern (onFull exchange channels)
+        room.forwardChannel();
     }
 
     @Override

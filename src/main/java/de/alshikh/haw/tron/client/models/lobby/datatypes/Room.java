@@ -21,11 +21,9 @@ public class Room {
 
     public void enter(IUpdateChannel gustUpdateChannel) {
         this.gustUpdateChannel = gustUpdateChannel;
-        // TODO: state pattern (onFull exchange channels)
-        forwardChannel();
     }
 
-    private void forwardChannel() {
+    public void forwardChannel() {
         hostUpdateChannel.addListener(gustUpdateChannel);
         gustUpdateChannel.addListener(hostUpdateChannel);
     }

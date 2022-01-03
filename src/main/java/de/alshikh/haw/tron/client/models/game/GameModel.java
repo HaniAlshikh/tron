@@ -5,7 +5,6 @@ import de.alshikh.haw.tron.client.models.game.data.entities.Bike;
 import de.alshikh.haw.tron.client.models.game.data.entities.Game;
 import de.alshikh.haw.tron.client.models.game.data.entities.Player;
 import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
-import de.alshikh.haw.tron.client.models.game.helpers.CollisionDetector;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -46,7 +45,7 @@ public class GameModel implements IGameModel {
     public void updateGameState(PlayerUpdate opponentUpdate) {
         game.applyOpponentUpdate(opponentUpdate);
         game.movePlayers();
-        CollisionDetector.check(game);
+        game.checkForCollision();
         game.checkForBreak();
         publishGameStateUpdate();
     }
