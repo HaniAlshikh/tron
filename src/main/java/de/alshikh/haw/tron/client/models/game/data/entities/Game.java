@@ -1,5 +1,7 @@
 package de.alshikh.haw.tron.client.models.game.data.entities;
 
+import de.alshikh.haw.tron.client.models.game.helpers.CollisionDetector;
+
 public class Game {
     private Player winner;
     private boolean ended;
@@ -16,6 +18,10 @@ public class Game {
     public void movePlayers() {
         player.move();
         opponent.move();
+    }
+
+    public void checkForCollision() {
+        CollisionDetector.check(this);
     }
 
     public void checkForBreak() {

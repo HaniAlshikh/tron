@@ -1,11 +1,12 @@
 package de.alshikh.haw.tron.client.controllers.game;
 
 import de.alshikh.haw.tron.client.controllers.game.helpers.GameUpdater;
-import de.alshikh.haw.tron.client.controllers.game.helpers.RandomNameGenerator;
+import de.alshikh.haw.tron.client.controllers.game.helpers.IUpdateChannel;
+import de.alshikh.haw.tron.client.controllers.game.helpers.PlayerUpdateChannel;
 import de.alshikh.haw.tron.client.controllers.game.inputhandlers.GameInputHandler;
+import de.alshikh.haw.tron.client.controllers.game.util.RandomNameGenerator;
 import de.alshikh.haw.tron.client.controllers.lobby.ILobbyController;
 import de.alshikh.haw.tron.client.models.game.IGameModel;
-import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
 import de.alshikh.haw.tron.client.views.game.IGameView;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -29,6 +30,9 @@ public final class GameController implements IGameController {
     private final GameUpdater gameUpdater;
     private final Timeline gameLoop;
 
+    // TODO: dose it make sense to create an update controller
+    private IUpdateChannel playerUpdateChannel;
+
     // TODO: Player preferences
     private final StringProperty playerName;
 
@@ -46,7 +50,7 @@ public final class GameController implements IGameController {
         this.gameUpdater = new GameUpdater(this);
         this.gameLoop = new Timeline(
                 new KeyFrame(Duration.seconds(0.08),
-                e -> this.gameUpdaterFuture = this.es.submit(gameUpdater::updateGame, gameUpdater))
+                        e -> this.gameUpdaterFuture = this.es.submit(gameUpdater::updateGame, gameUpdater))
         );
 
         this.gameLoop.setCycleCount(Timeline.INDEFINITE);
@@ -62,10 +66,15 @@ public final class GameController implements IGameController {
         );
     }
 
-    private void createGame() {
+    @Override
+    public void createGame() {
         logger.info("Starting a new Game as host");
         gameModel.createGame(playerName);
-        lobbyController.createRoom(gameModel.getGame().getPlayer().getId(), gameModel.getGame().getPlayer().getName(), this);
+        playerUpdateChannel = new PlayerUpdateChannel(gameModel.getGame().getPlayer(), gameUpdater, this::startGame);
+        // TODO: lobby controller will create a local and remote rome
+        //  the local one will get the actual instance and the remote one will get the stub
+        lobbyController.createRoom(playerUpdateChannel);
+        //startGame(); TODO
         gameView.showWaitingMenu(e -> cancelGame());
     }
 
@@ -73,24 +82,21 @@ public final class GameController implements IGameController {
     public void joinGame() {
         logger.info("Starting a new Game as player");
         gameModel.joinGame(playerName);
-        lobbyController.showRoomsMenu(this);
+        playerUpdateChannel = new PlayerUpdateChannel(gameModel.getGame().getPlayer(), gameUpdater, this::startGame);
+        //startGame(); TODO
+        lobbyController.showRoomsMenu(playerUpdateChannel);
     }
 
     @Override
-    public void admit(IGameController opponentController) {
-        gameModel.getGame().getOpponent().nameProperty().set(opponentController.playerNameProperty().get());
-        opponentController.getPlayerUpdate().addListener(gameUpdater);
-        startGame();
-    }
-
-    private void cancelGame() {
+    public void cancelGame() {
         lobbyController.removeRoom(gameModel.getGame().getPlayer().getId());
         gameView.reset();
         showStartMenu("Ready?");
     }
 
     @Override
-    public void startGame() {
+    public void startGame(String opponentName) {
+        gameModel.getGame().getOpponent().nameProperty().setValue(opponentName);
         gameView.reset();
         GameInputHandler gameInputHandler = new GameInputHandler(gameModel.getGame().getPlayer());
         gameView.getScene().setOnKeyPressed(gameInputHandler);
@@ -118,16 +124,6 @@ public final class GameController implements IGameController {
             gameLoop.stop();
             gameUpdaterFuture.cancel(true);
         }
-    }
-
-    @Override
-    public PlayerUpdate getPlayerUpdate() {
-        return gameModel.getGame().getPlayer().getUpdate();
-    }
-
-    @Override
-    public StringProperty playerNameProperty() {
-        return playerName;
     }
 
     @Override

@@ -9,4 +9,6 @@ public interface IRpcMessageApi extends IRpcMarshaller, IRpcUnmarshaller {
     IRpcCall toRpcCall(IRpcRequest rpcRequest) throws InvalidParamsRpcException;
 
     Object toInvocationResult(IRpcResponse rpcResponse);
+
+    IRpcSerializer getRpcSerializer();
 }

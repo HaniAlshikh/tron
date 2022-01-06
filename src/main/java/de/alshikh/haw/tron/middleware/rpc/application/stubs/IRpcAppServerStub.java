@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public interface IRpcAppServerStub {
     Object call(String methodName, Class<?>[] parameterTypes, Object[] args) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException;
-    UUID getId();
+    UUID getServiceId();
 }

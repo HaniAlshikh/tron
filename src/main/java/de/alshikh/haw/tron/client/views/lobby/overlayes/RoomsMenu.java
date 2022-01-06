@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.client.views.lobby.overlayes;
 
-import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
+import de.alshikh.haw.tron.client.models.lobby.datatypes.IRoom;
 import de.alshikh.haw.tron.client.views.view_library.ViewUtility;
 import javafx.geometry.Pos;
 import javafx.scene.control.Control;
@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 
 public class RoomsMenu extends VBox {
 
-    private final ListView<Room> roomsListView;
+    private final ListView<IRoom> roomsListView;
 
     public RoomsMenu(String stylesheet) {
         super(20.0);
@@ -35,7 +35,7 @@ public class RoomsMenu extends VBox {
         this.getChildren().add(roomsListView);
     }
 
-    public ListView<Room> getRoomListView() {
+    public ListView<IRoom> getRoomListView() {
         return roomsListView;
     }
 }

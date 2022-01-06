@@ -1,17 +1,17 @@
 package de.alshikh.haw.tron.client.models.lobby;
 
-import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
+import de.alshikh.haw.tron.client.models.lobby.datatypes.IRoom;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 
 import java.util.UUID;
 
 public interface ILobbyModel {
-    void addRoom(Room room);
+    void addRoom(IRoom room);
 
     void removeRoom(UUID uuid);
 
-    ObservableMap<UUID, Room> getRooms();
+    ObservableMap<UUID, IRoom> getRooms();
 
-    ObservableList<Room> getRoomsList();
+    ObservableList<IRoom> getRoomsList();
 }

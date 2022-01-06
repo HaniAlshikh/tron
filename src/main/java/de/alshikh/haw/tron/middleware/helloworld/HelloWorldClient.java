@@ -36,7 +36,12 @@ public class HelloWorldClient implements IHelloWorld, IRpcAppClientStub {
     }
 
     @Override
-    public UUID getId() {
+    public IRPCClient getRpcClient() {
+        return rpcClient;
+    }
+
+    @Override
+    public UUID getServiceId() {
         return id;
     }
 }

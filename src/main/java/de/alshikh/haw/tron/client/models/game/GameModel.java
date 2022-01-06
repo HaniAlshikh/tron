@@ -5,7 +5,6 @@ import de.alshikh.haw.tron.client.models.game.data.entities.Bike;
 import de.alshikh.haw.tron.client.models.game.data.entities.Game;
 import de.alshikh.haw.tron.client.models.game.data.entities.Player;
 import de.alshikh.haw.tron.client.models.game.data.entities.PlayerUpdate;
-import de.alshikh.haw.tron.client.models.game.helpers.CollisionDetector;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -21,40 +20,45 @@ public class GameModel implements IGameModel {
 
     private final List<InvalidationListener> listeners = new ArrayList<>();
 
+    private final Player player;
     private Game game;
 
-    public GameModel() {}
+    public GameModel() {
+        this.player = new Player(); // multiple games one player (id)
+    }
 
     // TODO: find a better way (player factory?)
     @Override
     public void createGame(StringProperty playerName) {
-        this.game = new Game();
-        this.game.setPlayer(new Player(playerName, new Bike(BikeStartingPosition.LEFT, Color.ORANGE)));
-        this.game.getPlayer().resetUpdate(); // to initial position
-        this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.RIGHT, Color.BLUE)));
+        player.reset(playerName, new Bike(BikeStartingPosition.LEFT, Color.ORANGE));
+        player.resetUpdate(); // to initial position
+        game = new Game();
+        game.setPlayer(player);
+        game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.RIGHT, Color.BLUE)));
     }
 
     @Override
     public void joinGame(StringProperty playerName) {
-        this.game = new Game();
-        this.game.setPlayer(new Player(playerName, new Bike(BikeStartingPosition.RIGHT, Color.BLUE)));
-        this.game.getPlayer().resetUpdate(); // to initial position
-        this.game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.LEFT, Color.ORANGE)));
+        player.reset(playerName, new Bike(BikeStartingPosition.RIGHT, Color.BLUE));
+        player.resetUpdate(); // to initial position
+        game = new Game();
+        game.setPlayer(player);
+        game.setOpponent(new Player(new SimpleStringProperty(), new Bike(BikeStartingPosition.LEFT, Color.ORANGE)));
     }
 
     @Override
     public void updateGameState(PlayerUpdate opponentUpdate) {
         game.applyOpponentUpdate(opponentUpdate);
         game.movePlayers();
-        CollisionDetector.check(game);
+        game.checkForCollision();
         game.checkForBreak();
         publishGameStateUpdate();
     }
 
     @Override
     public void createNewPlayerUpdate() {
-        game.getPlayer().createUpdate();
-        game.getPlayer().getUpdate().publishUpdate();
+        player.createUpdate();
+        player.getUpdate().publishUpdate();
     }
 
     @Override
@@ -71,6 +75,11 @@ public class GameModel implements IGameModel {
     @Override
     public void publishGameStateUpdate() {
         listeners.forEach(l -> l.invalidated(this));
+    }
+
+    @Override
+    public Player getPlayer() {
+        return player;
     }
 
     @Override

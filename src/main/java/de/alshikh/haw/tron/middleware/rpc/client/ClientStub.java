@@ -35,6 +35,7 @@ public class ClientStub {
     public Object invoke(UUID serviceId, Method method, Object... args) {
         log.debug("Invoking: " + method.getName() + " with args: " + Arrays.toString(args));
         IRpcResponse response = send(marshal(serviceId, method, args));
+        if (response == null) return null;
         log.debug("Received response: " + response);
         return rpcMsgApi.toInvocationResult(response);
     }
@@ -52,7 +53,7 @@ public class ClientStub {
             server.send(request.getBytes());
 
             if (request.isNotification())
-                return rpcMsgApi.newSuccessResponse(request.getId(), null);
+                return null;
 
             return rpcMsgApi.readResponse(server.receive());
         } catch (Exception e) {

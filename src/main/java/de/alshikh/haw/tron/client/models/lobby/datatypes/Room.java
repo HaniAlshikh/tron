@@ -1,31 +1,49 @@
 package de.alshikh.haw.tron.client.models.lobby.datatypes;
 
-import de.alshikh.haw.tron.client.controllers.game.IGameController;
+import de.alshikh.haw.tron.client.controllers.game.helpers.IUpdateChannel;
 
 import java.util.UUID;
 
-public class Room {
+public class Room implements IRoom {
+
+    // TODO: generalize to have multiple gusts
+    private IUpdateChannel gustUpdateChannel;
 
     private final UUID uuid;
     private final String name;
-    private final IGameController hostController;
+    private final IUpdateChannel hostUpdateChannel;
 
-    public Room(UUID uuid, String name, IGameController hostController) {
-        this.uuid = uuid;
-        this.name = name;
-        this.hostController = hostController;
+    public Room(IUpdateChannel hostUpdateChannel) {
+        this.uuid = hostUpdateChannel.getId();
+        this.name = hostUpdateChannel.getName();
+        this.hostUpdateChannel = hostUpdateChannel;
     }
 
+    @Override
+    public void enter(IUpdateChannel gustUpdateChannel) {
+        this.gustUpdateChannel = gustUpdateChannel;
+        // TODO: state pattern (onFull exchange channels)
+        forwardChannel();
+    }
+
+    private void forwardChannel() {
+        hostUpdateChannel.addListener(gustUpdateChannel);
+        gustUpdateChannel.addListener(hostUpdateChannel);
+    }
+
+    @Override
     public UUID getUuid() {
         return uuid;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
-    public IGameController getHostController() {
-        return hostController;
+    @Override
+    public IUpdateChannel getHostUpdateChannel() {
+        return hostUpdateChannel;
     }
 
     @Override

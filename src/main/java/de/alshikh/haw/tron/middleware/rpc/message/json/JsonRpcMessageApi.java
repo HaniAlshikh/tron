@@ -2,6 +2,7 @@ package de.alshikh.haw.tron.middleware.rpc.message.json;
 
 import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.InvalidParamsRpcException;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
+import de.alshikh.haw.tron.middleware.rpc.message.IRpcSerializer;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.*;
 import de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes.JsonRpcRequest;
 import de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes.JsonRpcResponse;
@@ -84,6 +85,11 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
 
         // TODO: this should not be necessary if we are allowed to outsource serialization
         return parseResultObj(rpcResponse.getResult());
+    }
+
+    @Override
+    public IRpcSerializer getRpcSerializer() {
+        return jsonRpcSerializer;
     }
 
     // logic

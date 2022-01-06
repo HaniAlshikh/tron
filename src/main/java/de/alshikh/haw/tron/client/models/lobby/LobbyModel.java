@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.client.models.lobby;
 
-import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
+import de.alshikh.haw.tron.client.models.lobby.datatypes.IRoom;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
@@ -11,8 +11,8 @@ import java.util.UUID;
 public class LobbyModel implements ILobbyModel {
 
     // maps are unordered and therefore not supported in javafx as view
-    ObservableMap<UUID, Room> rooms = FXCollections.observableHashMap();
-    ObservableList<Room> roomsList = FXCollections.observableArrayList();
+    ObservableMap<UUID, IRoom> rooms = FXCollections.observableHashMap();
+    ObservableList<IRoom> roomsList = FXCollections.observableArrayList();
 
 
     private static final LobbyModel instance = new LobbyModel();
@@ -20,7 +20,7 @@ public class LobbyModel implements ILobbyModel {
         return instance;
     }
     private LobbyModel() {
-        rooms.addListener((MapChangeListener<UUID, Room>) change -> {
+        rooms.addListener((MapChangeListener<UUID, IRoom>) change -> {
             roomsList.remove(change.getValueRemoved());
             if (change.wasAdded()) {
                 roomsList.add(change.getValueAdded());
@@ -29,7 +29,7 @@ public class LobbyModel implements ILobbyModel {
     }
 
     @Override
-    public void addRoom(Room room) {
+    public void addRoom(IRoom room) {
         rooms.put(room.getUuid(), room);
     }
 
@@ -39,12 +39,12 @@ public class LobbyModel implements ILobbyModel {
     }
 
     @Override
-    public ObservableMap<UUID, Room> getRooms() {
+    public ObservableMap<UUID, IRoom> getRooms() {
         return rooms;
     }
 
     @Override
-    public ObservableList<Room> getRoomsList() {
+    public ObservableList<IRoom> getRoomsList() {
         return roomsList;
     }
 }

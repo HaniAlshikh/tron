@@ -40,7 +40,8 @@ public class ServerStub implements Runnable {
             IRpcCall rpcCall = unmarshal(request);
             response = call(rpcCall);
         } catch (RpcException e) {
-            response = rpcMsgApi.newErrorResponse(reqId, e);
+            if (!isNotification())
+                response = rpcMsgApi.newErrorResponse(reqId, e);
         } finally {
             if (!isNotification()) {
                 send(response);

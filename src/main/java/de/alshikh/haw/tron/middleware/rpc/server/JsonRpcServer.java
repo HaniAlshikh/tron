@@ -23,28 +23,33 @@ public class JsonRpcServer implements IRPCServer {
     private boolean running = true;
     private final HashMap<UUID, IRpcAppServerStub> serviceRegistry = new HashMap<>();
 
-    private final int port;
+    private final InetSocketAddress socketAddress;
     private final IRpcMessageApi jsonRpcMessageApi;
 
-    public JsonRpcServer(int port) {
-        this(port, new JsonRpcSerializer());
+    public JsonRpcServer(InetSocketAddress socketAddress) {
+        this(socketAddress, new JsonRpcSerializer());
     }
 
-    public JsonRpcServer(int port, JsonRpcSerializer jsonRpcSerializer) {
-        this.port = port;
+    public JsonRpcServer(InetSocketAddress socketAddress, JsonRpcSerializer jsonRpcSerializer) {
+        this.socketAddress = socketAddress;
         this.jsonRpcMessageApi = new JsonRpcMessageApi(jsonRpcSerializer);
     }
 
     @Override
     public void register(IRpcAppServerStub serviceServerStub) {
-        serviceRegistry.put(serviceServerStub.getId(), serviceServerStub);
+        serviceRegistry.put(serviceServerStub.getServiceId(), serviceServerStub);
+    }
+
+    @Override
+    public void unregister(UUID id) {
+        serviceRegistry.remove(id);
     }
 
     @Override
     public void start() {
         try (ServerSocket server = new ServerSocket()) {
-            server.bind(new InetSocketAddress(port));
-            log.info("RPC server started");
+            server.bind(socketAddress);
+            log.info("RPC server started at port " + server.getLocalPort());
             while (running) {
                 executor.execute(newCall(server.accept()));
             }
@@ -70,7 +75,12 @@ public class JsonRpcServer implements IRPCServer {
     }
 
     @Override
-    public int getPort() {
-        return port;
+    public InetSocketAddress getSocketAddress() {
+        return socketAddress;
+    }
+
+    @Override
+    public IRpcMessageApi getMessageApi() {
+        return jsonRpcMessageApi;
     }
 }

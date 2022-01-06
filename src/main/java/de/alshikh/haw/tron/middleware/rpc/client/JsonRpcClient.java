@@ -5,13 +5,12 @@ import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
 
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.UUID;
 
 // TODO: auto generate stubs
 public class JsonRpcClient implements IRPCClient {
 
-    private final SocketAddress serverAddress;
+    private final InetSocketAddress serverAddress;
     private final JsonRpcMessageApi jsonRpcMessageApi;
 
     public JsonRpcClient(InetSocketAddress serverAddress) {
@@ -37,5 +36,10 @@ public class JsonRpcClient implements IRPCClient {
     public Object invokeWithResponse(UUID serviceId, Method method, Object... args) {
         ClientStub clientStub = new ClientStub(serverAddress, jsonRpcMessageApi, true);
         return clientStub.invoke(serviceId, method, args);
+    }
+
+    @Override
+    public InetSocketAddress getServerAddress() {
+        return serverAddress;
     }
 }

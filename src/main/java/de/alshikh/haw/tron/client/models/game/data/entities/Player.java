@@ -8,18 +8,27 @@ public class Player {
 
     // TODO: associate player id with the update to generalize
     private final UUID id = UUID.randomUUID();
-    private final PlayerUpdate update;
-    private boolean pauseGame = false;
-    private boolean dead = false;
+
+    private StringProperty name;
+    private Bike bike;
+    private PlayerUpdate update;
+    private boolean pauseGame;
+    private boolean dead;
     private int updateVersion;
 
-    private final StringProperty name;
-    private final Bike bike;
+    public Player() {}
 
     public Player(StringProperty name, Bike bike) {
+        reset(name, bike);
+    }
+
+    public void reset(StringProperty name, Bike bike) {
         this.name = name;
         this.bike = bike;
         this.update = new PlayerUpdate();
+        this.pauseGame = false;
+        this.dead = false;
+        this.updateVersion = 0;
     }
 
     public void move() {

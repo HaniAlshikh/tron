@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.client.controllers.lobby.inputhandlers;
 
-import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
+import de.alshikh.haw.tron.client.models.lobby.datatypes.IRoom;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 
 public class RoomsMenuInputHandler implements EventHandler<MouseEvent> {
 
-    ListView<Room> listView;
-    Consumer<Room> listItemConsumer;
+    ListView<IRoom> listView;
+    Consumer<IRoom> listItemConsumer;
 
     public RoomsMenuInputHandler() {}
 
@@ -21,19 +21,19 @@ public class RoomsMenuInputHandler implements EventHandler<MouseEvent> {
         }
     }
 
-    public ListView<Room> getListView() {
+    public ListView<IRoom> getListView() {
         return listView;
     }
 
-    public void setListView(ListView<Room> listView) {
+    public void setListView(ListView<IRoom> listView) {
         this.listView = listView;
     }
 
-    public Consumer<Room> getListItemConsumer() {
+    public Consumer<IRoom> getListItemConsumer() {
         return listItemConsumer;
     }
 
-    public void setListItemConsumer(Consumer<Room> listItemConsumer) {
+    public void setListItemConsumer(Consumer<IRoom> listItemConsumer) {
         this.listItemConsumer = listItemConsumer;
     }
 }

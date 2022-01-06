@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.client.controllers.lobby;
 
-import de.alshikh.haw.tron.client.controllers.game.IGameController;
+import de.alshikh.haw.tron.client.controllers.game.helpers.IUpdateChannel;
 import de.alshikh.haw.tron.client.controllers.lobby.inputhandlers.RoomsMenuInputHandler;
 import de.alshikh.haw.tron.client.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.client.models.lobby.LobbyModel;
@@ -22,27 +22,31 @@ public final class LobbyController implements ILobbyController {
     }
 
     @Override
-    public void showRoomsMenu(IGameController playerController) {
+    public void showRoomsMenu(IUpdateChannel guestUpdateChannel) {
         RoomsMenuInputHandler roomsMenuInputHandler = new RoomsMenuInputHandler();
         roomsMenuInputHandler.setListItemConsumer(room -> {
-            enterRoom(playerController, room.getHostController());
+            // TODO: what is the best practise to create subs
+            //  when sharing a remote room should i create room || roomManager || roomController || lobbyModel stubs?
+            //  for example the room stub will get the guestUpdateChannel instance from which a guestUpdateChannelClient
+            //  will be shared (room stub will do the conversion) on the other end
+            //  the guestUpdateChannelClient addListener method will be called for the hostUpdateChannel
+            //  which will create the client.
+            //  -> the plan is to make the directory server a remote rooms list which will be bounded
+            //  the the roomsList on each instance
+            room.enter(guestUpdateChannel);
+            // TODO: state pattern
             removeRoom(room.getUuid());
         });
         lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRoomsList());
     }
 
     @Override
-    public void createRoom(UUID uuid, String label, IGameController hostController) {
-        lobbyModel.addRoom(new Room(uuid, label, hostController));
+    public void createRoom(IUpdateChannel hostUpdateChannel) {
+        lobbyModel.addRoom(new Room(hostUpdateChannel));
     }
 
     @Override
     public void removeRoom(UUID uuid) {
         lobbyModel.removeRoom(uuid);
-    }
-
-    private void enterRoom(IGameController playerController, IGameController hostController) {
-        hostController.admit(playerController);
-        playerController.admit(hostController);
     }
 }

@@ -23,7 +23,7 @@ public class HelloWorldServer implements IRpcAppServerStub {
     }
 
     @Override
-    public UUID getId() {
+    public UUID getServiceId() {
         return id;
     }
 }
