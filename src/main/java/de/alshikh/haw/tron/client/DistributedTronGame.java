@@ -19,6 +19,7 @@ import de.alshikh.haw.tron.client.views.lobby.ILobbyView;
 import de.alshikh.haw.tron.client.views.lobby.LobbyView;
 import de.alshikh.haw.tron.client.views.view_library.ITronView;
 import de.alshikh.haw.tron.client.views.view_library.TronView;
+import de.alshikh.haw.tron.middleware.directoryserver.discovery.DiscoveryClient;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceClient;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
@@ -47,6 +48,9 @@ public class DistributedTronGame implements Runnable {
         try {
             ITronView baseView = new TronView(VIEW_CONFIG_FILE);
 
+            // TODO: find a pattern to have multiple model instances
+            //  as this is causing a problem when adding a remote room
+            //  where all instances will try to add the same room over and over again
             ILobbyModel lobbyModel = LobbyModel.getInstance();
             ILobbyView lobbyView = new LobbyView(baseView);
             ILobbyController lobbyController = new LobbyController(lobbyView);
@@ -58,29 +62,28 @@ public class DistributedTronGame implements Runnable {
             gameController.showStartMenu("Ready?");
 
 
-            // RPC
+            // middleware
+
+
+            JsonRpcSerializer jsonRpcSerializer = new TronJsonRpcSerializer();
 
             // rpcServer
-            //InetSocketAddress socketAddress = new InetSocketAddress(getRandomFreePort());
-            //InetSocketAddress socketAddress = new InetSocketAddress(InetAddress.getLocalHost(), getRandomFreePort());
-            JsonRpcSerializer jsonRpcSerializer = new TronJsonRpcSerializer();
             IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
             // TODO: maybe replace with ExecutorService (what if we have one core only)
+            // TODO: dose it make sense to have a server per service (now it's sever per instance)
             new Thread(rpcServer::start).start();
 
             // directoryService
-            //InetSocketAddress directoryServiceAddress = new DirectoryServiceListener().getFirst();
-            IDirectoryService dsc = new DirectoryServiceClient(new JsonRpcClient(
-                    new InetSocketAddress("192.168.2.106", 58698), jsonRpcSerializer
-            ));
+            InetSocketAddress directoryServiceAddress = DiscoveryClient.getServerAddress();
+            IDirectoryService dsc = new DirectoryServiceClient(new JsonRpcClient(directoryServiceAddress, jsonRpcSerializer));
 
             // remoteRoomsFactory
             IRemoteRoomsFactory remoteRoomsFactory = new RemoteRoomsFactory(gameModel.getPlayer().getId(), lobbyModel, rpcServer, dsc, jsonRpcSerializer);
             IRpcAppServerStub remoteRoomsFactoryServer = new RemoteRoomsFactoryServer(remoteRoomsFactory);
             rpcServer.register(remoteRoomsFactoryServer);
-            System.out.println(rpcServer.getSocketAddress());
             dsc.addListener(new RemoteRoomsFactoryClient(new JsonRpcClient(rpcServer.getSocketAddress(), jsonRpcSerializer)));
 
+            // TODO: no need to wait for middleware (improve UX)
             // configure and show stage
             Stage stage = new Stage();
             stage.setTitle("TRON - Light Cycles");

@@ -21,6 +21,7 @@ import static de.alshikh.haw.tron.middleware.rpc.network.util.util.getLocalIp;
 
 public class JsonRpcServer implements IRPCServer {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
+    // TODO: managed executor service
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     private boolean running = true;
