@@ -13,8 +13,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static de.alshikh.haw.tron.middleware.rpc.network.util.util.getLocalIp;
 
 public class JsonRpcServer implements IRPCServer {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -22,16 +25,15 @@ public class JsonRpcServer implements IRPCServer {
 
     private boolean running = true;
     private final HashMap<UUID, IRpcAppServerStub> serviceRegistry = new HashMap<>();
+    private final CompletableFuture<InetSocketAddress> serverAddress = new CompletableFuture<>();
 
-    private final InetSocketAddress socketAddress;
     private final IRpcMessageApi jsonRpcMessageApi;
 
-    public JsonRpcServer(InetSocketAddress socketAddress) {
-        this(socketAddress, new JsonRpcSerializer());
+    public JsonRpcServer() {
+        this(new JsonRpcSerializer());
     }
 
-    public JsonRpcServer(InetSocketAddress socketAddress, JsonRpcSerializer jsonRpcSerializer) {
-        this.socketAddress = socketAddress;
+    public JsonRpcServer(JsonRpcSerializer jsonRpcSerializer) {
         this.jsonRpcMessageApi = new JsonRpcMessageApi(jsonRpcSerializer);
     }
 
@@ -41,14 +43,14 @@ public class JsonRpcServer implements IRPCServer {
     }
 
     @Override
-    public void unregister(UUID id) {
-        serviceRegistry.remove(id);
+    public void unregister(UUID serviceId) {
+        serviceRegistry.remove(serviceId);
     }
 
     @Override
     public void start() {
-        try (ServerSocket server = new ServerSocket()) {
-            server.bind(socketAddress);
+        try (ServerSocket server = new ServerSocket(0, 50, getLocalIp())) {
+            serverAddress.complete(new InetSocketAddress(server.getInetAddress(), server.getLocalPort()));
             log.info("RPC server started at port " + server.getLocalPort());
             while (running) {
                 executor.execute(newCall(server.accept()));
@@ -76,7 +78,11 @@ public class JsonRpcServer implements IRPCServer {
 
     @Override
     public InetSocketAddress getSocketAddress() {
-        return socketAddress;
+        try {
+            return serverAddress.get();
+        } catch (Exception e) { // TODO:
+            return null;
+        }
     }
 
     @Override

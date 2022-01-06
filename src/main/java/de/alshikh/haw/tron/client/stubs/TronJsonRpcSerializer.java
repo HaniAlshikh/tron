@@ -95,7 +95,7 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
             JSONObject serializedObj = new JSONObject();
             // TODO: type can be inferred from the method
             serializedObj.put("type", IUpdateChannel.class.getName());
-            serializedObj.put("ip", "localhost");
+            serializedObj.put("ip", clientStub.getRpcClient().getServerAddress().getAddress().getHostAddress());
             serializedObj.put("port", clientStub.getRpcClient().getServerAddress().getPort());
             obj = serializedObj;
         }
@@ -105,7 +105,7 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
             JSONObject serializedObj = new JSONObject();
             // TODO: type can be inferred from the method
             serializedObj.put("type", IRemoteRoomsFactory.class.getName());
-            serializedObj.put("ip", "localhost");
+            serializedObj.put("ip", clientStub.getRpcClient().getServerAddress().getAddress().getHostAddress());
             serializedObj.put("port", clientStub.getRpcClient().getServerAddress().getPort());
             obj = serializedObj;
         }

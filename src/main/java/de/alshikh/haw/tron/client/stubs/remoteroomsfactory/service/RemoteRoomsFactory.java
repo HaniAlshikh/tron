@@ -39,7 +39,7 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
     public void invalidated(Observable observable) {
         if (observable instanceof DirectoryServiceEntry) {
             DirectoryServiceEntry e = (DirectoryServiceEntry) observable;
-            if (//!isLocalRoom(e) &&
+            if (!isLocalRoom(e) &&
                     isPlayerUpdateChannel(e) && !isOwnUpdateChannel(e)) {
                 Platform.runLater(() -> {
                     if (e.isReachable())

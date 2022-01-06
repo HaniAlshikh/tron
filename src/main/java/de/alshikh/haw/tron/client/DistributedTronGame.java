@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 
-import static de.alshikh.haw.tron.middleware.rpc.network.util.util.getRandomFreePort;
-
 public class DistributedTronGame implements Runnable {
 
     public final static String VIEW_CONFIG_FILE = "view.properties";
@@ -63,23 +61,25 @@ public class DistributedTronGame implements Runnable {
             // RPC
 
             // rpcServer
-            InetSocketAddress socketAddress = new InetSocketAddress(getRandomFreePort());
+            //InetSocketAddress socketAddress = new InetSocketAddress(getRandomFreePort());
+            //InetSocketAddress socketAddress = new InetSocketAddress(InetAddress.getLocalHost(), getRandomFreePort());
             JsonRpcSerializer jsonRpcSerializer = new TronJsonRpcSerializer();
-            IRPCServer rpcServer = new JsonRpcServer(socketAddress, jsonRpcSerializer);
+            IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
             // TODO: maybe replace with ExecutorService (what if we have one core only)
             new Thread(rpcServer::start).start();
 
             // directoryService
             //InetSocketAddress directoryServiceAddress = new DirectoryServiceListener().getFirst();
             IDirectoryService dsc = new DirectoryServiceClient(new JsonRpcClient(
-                    new InetSocketAddress("localhost", 8090), jsonRpcSerializer
+                    new InetSocketAddress("192.168.2.106", 58698), jsonRpcSerializer
             ));
 
             // remoteRoomsFactory
             IRemoteRoomsFactory remoteRoomsFactory = new RemoteRoomsFactory(gameModel.getPlayer().getId(), lobbyModel, rpcServer, dsc, jsonRpcSerializer);
             IRpcAppServerStub remoteRoomsFactoryServer = new RemoteRoomsFactoryServer(remoteRoomsFactory);
             rpcServer.register(remoteRoomsFactoryServer);
-            dsc.addListener(new RemoteRoomsFactoryClient(new JsonRpcClient(socketAddress, jsonRpcSerializer)));
+            System.out.println(rpcServer.getSocketAddress());
+            dsc.addListener(new RemoteRoomsFactoryClient(new JsonRpcClient(rpcServer.getSocketAddress(), jsonRpcSerializer)));
 
             // configure and show stage
             Stage stage = new Stage();

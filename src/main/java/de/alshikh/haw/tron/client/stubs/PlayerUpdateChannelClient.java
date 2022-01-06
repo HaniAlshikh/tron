@@ -48,6 +48,8 @@ public class PlayerUpdateChannelClient implements IUpdateChannel, IRpcAppClientS
     @Override
     public UUID getId() {
         return serviceId;
+        // TODO: this causes a loop because the gameModel is shared and the local room
+        //  will be replaced by the remote one in an unending loop
         //Method method = new Object(){}.getClass().getEnclosingMethod();
         //Object response = rpcClient.invokeWithResponse(serviceId, method);
         //if (response instanceof Exception)

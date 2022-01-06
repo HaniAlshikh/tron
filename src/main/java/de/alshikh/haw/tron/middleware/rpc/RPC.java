@@ -13,9 +13,6 @@ import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
 import de.alshikh.haw.tron.middleware.rpc.server.JsonRpcServer;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-
-import static de.alshikh.haw.tron.middleware.rpc.network.util.util.getRandomFreePort;
 
 class RPC {
     // TODO: iterate over the methods and create a client stub
@@ -40,12 +37,9 @@ class RPC {
         // TODO: application server stubs are not really necessary?
         IRpcAppServerStub helloWorldServer = new HelloWorldServer(helloWorld);
 
-        InetSocketAddress socketAddress = new InetSocketAddress(getRandomFreePort());
-        new Thread(() -> {
-            IRPCServer rpcServer = new JsonRpcServer(socketAddress, jsonRpcSerializer);
-            rpcServer.register(helloWorldServer);
-            rpcServer.start();
-        }).start();
+        IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
+        rpcServer.register(helloWorldServer);
+        new Thread(rpcServer::start).start();
 
         // delay until the server starts
         try {
@@ -57,7 +51,7 @@ class RPC {
         // TODO: are we allowed to use java ProxyInstance to generate application stubs?
         IHelloWorld helloWorldClient = new HelloWorldClient(
                 new JsonRpcClient(
-                        socketAddress,
+                        rpcServer.getSocketAddress(),
                         jsonRpcSerializer
                         ));
 

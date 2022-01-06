@@ -11,7 +11,6 @@ import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
 import de.alshikh.haw.tron.middleware.rpc.server.JsonRpcServer;
 
-import java.net.InetSocketAddress;
 import java.util.UUID;
 
 public class DirectoryServer {
@@ -23,29 +22,19 @@ public class DirectoryServer {
         IDirectoryService directoryService = new DirectoryService();
         IRpcAppServerStub directoryServiceServer = new DirectoryServiceServer(directoryService);
 
-        InetSocketAddress socketAddress = new InetSocketAddress(8090);
-        new Thread(() -> {
-            IRPCServer rpcServer = new JsonRpcServer(socketAddress, jsonRpcSerializer);
-            rpcServer.register(directoryServiceServer);
-            rpcServer.start();
-        }).start();
+        IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
+        rpcServer.register(directoryServiceServer);
+        new Thread(rpcServer::start).start();
 
         // TODO: this or maybe multicast
         // new ServiceBroadcaster(ip, port).broadcast();
 
-        // delay until the server starts
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         IDirectoryService directoryServiceClient = new DirectoryServiceClient(
                 new JsonRpcClient(
-                        new InetSocketAddress("localhost", 8090),
+                        rpcServer.getSocketAddress(),
                         jsonRpcSerializer
                 ));
 
-        directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), socketAddress));
+        directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), rpcServer.getSocketAddress()));
     }
 }
