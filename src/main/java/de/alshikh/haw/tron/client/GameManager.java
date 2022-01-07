@@ -16,6 +16,7 @@ public class GameManager extends Application {
 
     public final static String MANAGER_CONFIG_FILE = "manager.properties";
     public final static double RESOURCES_LIMIT = 0.8;
+    public final static boolean DISTRIBUTED = true;
 
     // TODO: limit to only 80% of machine resources
     //  is this enough?
@@ -31,7 +32,7 @@ public class GameManager extends Application {
         ITronView managerView = new TronView(MANAGER_CONFIG_FILE);
 
         ManagerMenu managerMenu = new ManagerMenu("menu.css");
-        managerMenu.getBtnNew().setOnAction(e -> Platform.runLater(new TronGame(es)));
+        managerMenu.getBtnNew().setOnAction(e -> Platform.runLater(new TronGame(es, DISTRIBUTED)));
         managerView.registerOverlay("managerMenu", managerMenu);
 
         managerView.init();

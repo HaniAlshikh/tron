@@ -5,13 +5,11 @@ import de.alshikh.haw.tron.client.controllers.game.helpers.IUpdateChannel;
 import java.util.UUID;
 
 public class Room implements IRoom {
-
-    // TODO: generalize to have multiple gusts
-    private IUpdateChannel gustUpdateChannel;
+    protected IUpdateChannel gustUpdateChannel;
 
     private final UUID uuid;
     private final String name;
-    private final IUpdateChannel hostUpdateChannel;
+    protected final IUpdateChannel hostUpdateChannel;
 
     public Room(IUpdateChannel hostUpdateChannel) {
         this.uuid = hostUpdateChannel.getId();
@@ -26,7 +24,7 @@ public class Room implements IRoom {
         forwardChannel();
     }
 
-    private void forwardChannel() {
+    protected void forwardChannel() {
         hostUpdateChannel.addListener(gustUpdateChannel);
         gustUpdateChannel.addListener(hostUpdateChannel);
     }

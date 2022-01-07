@@ -4,22 +4,29 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DirectoryServiceEntry implements Observable {
-    private List<InvalidationListener> listeners = new ArrayList<>();
+    private ConcurrentLinkedQueue<InvalidationListener> listeners;
 
-    private final UUID id;
+    private final UUID providerId;
+    private final UUID serviceId;
     private final InetSocketAddress serviceAddress;
     private boolean reachable;
 
-    public DirectoryServiceEntry(UUID id, InetSocketAddress serviceAddress) {
-        this.id = id;
+    public DirectoryServiceEntry(UUID providerId, UUID serviceId, InetSocketAddress serviceAddress) {
+        this(providerId, serviceId, serviceAddress, true);
+    }
+
+    public DirectoryServiceEntry(UUID providerId, UUID serviceId, InetSocketAddress serviceAddress, boolean reachable) {
+        this.listeners = new ConcurrentLinkedQueue<>();
+
+        this.providerId = providerId;
+        this.serviceId = serviceId;
         this.serviceAddress = serviceAddress;
-        this.reachable = true;
+        this.reachable = reachable;
     }
 
     @Override
@@ -42,16 +49,20 @@ public class DirectoryServiceEntry implements Observable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DirectoryServiceEntry that = (DirectoryServiceEntry) o;
-        return id.equals(that.id) && serviceAddress.equals(that.serviceAddress);
+        return providerId.equals(that.providerId) && serviceId.equals(that.serviceId) && serviceAddress.equals(that.serviceAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, serviceAddress);
+        return Objects.hash(providerId, serviceId, serviceAddress);
     }
 
-    public UUID getId() {
-        return id;
+    public UUID getProviderId() {
+        return providerId;
+    }
+
+    public UUID getServiceId() {
+        return serviceId;
     }
 
     public InetSocketAddress getServiceAddress() {
@@ -62,7 +73,7 @@ public class DirectoryServiceEntry implements Observable {
         return reachable;
     }
 
-    public void setListeners(List<InvalidationListener> listeners) {
+    public void setListeners(ConcurrentLinkedQueue<InvalidationListener> listeners) {
         this.listeners = listeners;
     }
 
@@ -73,7 +84,7 @@ public class DirectoryServiceEntry implements Observable {
     @Override
     public String toString() {
         return "DirectoryServiceEntry{" +
-                "id=" + id +
+                "id=" + serviceId +
                 ", serviceAddress=" + serviceAddress +
                 ", reachable=" + reachable +
                 '}';

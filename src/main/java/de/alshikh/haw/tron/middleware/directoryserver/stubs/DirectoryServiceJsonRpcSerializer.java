@@ -13,11 +13,13 @@ public class DirectoryServiceJsonRpcSerializer extends JsonRpcSerializer {
         if (type == DirectoryServiceEntry.class && obj instanceof JSONObject) {
             JSONObject serializedObj = (JSONObject) obj;
             obj = new DirectoryServiceEntry(
+                    UUID.fromString(serializedObj.getString("providerId")),
                     UUID.fromString(serializedObj.getString("serviceId")),
                     new InetSocketAddress(
                             serializedObj.getString("address"),
                             serializedObj.getInt("port")
-                    )
+                    ),
+                    serializedObj.getBoolean("reachable")
             );
         }
 
@@ -30,7 +32,7 @@ public class DirectoryServiceJsonRpcSerializer extends JsonRpcSerializer {
             DirectoryServiceEntry e = (DirectoryServiceEntry) obj;
             JSONObject serializedObj = new JSONObject();
             serializedObj.put("type", DirectoryServiceEntry.class.getName());
-            serializedObj.put("serviceId", e.getId());
+            serializedObj.put("serviceId", e.getServiceId());
             serializedObj.put("address", e.getServiceAddress().getAddress().getHostAddress());
             serializedObj.put("port", e.getServiceAddress().getPort());
             obj = serializedObj;

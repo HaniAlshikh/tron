@@ -2,44 +2,69 @@ package de.alshikh.haw.tron.middleware.directoryserver.service;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
 import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class DirectoryService implements IDirectoryService {
+public class DirectoryService implements IDirectoryService, Observable {
 
-    private final List<InvalidationListener> listeners = new ArrayList<>();
+    private final ConcurrentHashMap<UUID, ConcurrentLinkedQueue<InvalidationListener>> listenersRegistry;
+    private final ConcurrentLinkedQueue<InvalidationListener> listeners;
 
-    private final ConcurrentHashMap<Integer, DirectoryServiceEntry> serviceRegistry;
+    private final ConcurrentLinkedQueue<DirectoryServiceEntry> serviceRegistry;
 
     public DirectoryService(){
-        serviceRegistry = new ConcurrentHashMap<>();
+        this.listenersRegistry = new ConcurrentHashMap<>();
+        this.listeners = new ConcurrentLinkedQueue<>();
+        this.serviceRegistry = new ConcurrentLinkedQueue<>();
     }
 
     @Override
     public void register(DirectoryServiceEntry directoryServiceEntry) {
-        serviceRegistry.put(directoryServiceEntry.hashCode(), directoryServiceEntry);
-        directoryServiceEntry.setListeners(listeners);
-        directoryServiceEntry.publishUpdate();
-
-        // TODO: make it observable
-        System.out.println(this);
+        serviceRegistry.add(directoryServiceEntry);
+        publishServiceUpdate(directoryServiceEntry);
+        publishUpdate();
     }
 
     @Override
     public void unregister(DirectoryServiceEntry directoryServiceEntry) {
-        directoryServiceEntry = serviceRegistry.remove(directoryServiceEntry.hashCode());
-        directoryServiceEntry.setReachable(false);
-        directoryServiceEntry.publishUpdate();
+        if (serviceRegistry.remove(directoryServiceEntry)) { // known service
+            directoryServiceEntry.setReachable(false);
+            publishServiceUpdate(directoryServiceEntry);
+            publishUpdate();
+        }
+    }
 
-        // TODO: make it observable
-        System.out.println(this);
+    // TODO: publisher subscriber?
+    @Override
+    public void addListenerTo(UUID serviceId, InvalidationListener listener) {
+        listenersRegistry.putIfAbsent(serviceId, new ConcurrentLinkedQueue<>());
+        listenersRegistry.get(serviceId).add(listener);
+
+    }
+
+    private void publishServiceUpdate(DirectoryServiceEntry directoryServiceEntry) {
+        directoryServiceEntry.setListeners(listenersRegistry.getOrDefault(
+                directoryServiceEntry.getServiceId(), new ConcurrentLinkedQueue<>()));
+        directoryServiceEntry.publishUpdate();
+    }
+
+    @Override
+    public void removeListenerForm(UUID serviceId, InvalidationListener listener) {
+        if (listenersRegistry.containsKey(serviceId))
+            listenersRegistry.get(serviceId).remove(listener);
     }
 
     @Override
     public void addListener(InvalidationListener listener) {
         listeners.add(listener);
-        serviceRegistry.values().forEach(DirectoryServiceEntry::publishUpdate);
+        listener.invalidated(this);
+    }
+
+    public void publishUpdate() {
+        listeners.forEach(l -> l.invalidated(this));
     }
 
     @Override

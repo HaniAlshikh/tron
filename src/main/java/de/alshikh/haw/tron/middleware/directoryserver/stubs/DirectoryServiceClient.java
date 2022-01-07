@@ -31,15 +31,15 @@ public class DirectoryServiceClient implements IDirectoryService, IRpcAppClientS
     }
 
     @Override
-    public void addListener(InvalidationListener invalidationListener) {
+    public void addListenerTo(UUID serviceId, InvalidationListener listener) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClient.invoke(id, method, invalidationListener);
+        rpcClient.invoke(id, method, serviceId, listener);
     }
 
     @Override
-    public void removeListener(InvalidationListener invalidationListener) {
+    public void removeListenerForm(UUID serviceId, InvalidationListener listener) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClient.invoke(id, method, invalidationListener);
+        rpcClient.invoke(id, method, serviceId, listener);
     }
 
     @Override

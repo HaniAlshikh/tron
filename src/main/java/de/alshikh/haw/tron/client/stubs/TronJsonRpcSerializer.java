@@ -16,41 +16,43 @@ import org.json.JSONObject;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 
+// TODO: refactor
 public class TronJsonRpcSerializer extends JsonRpcSerializer {
-
     @Override
     public Object deserialize(Object obj, Class<?> type) {
-        if (type == InvalidationListener.class && obj instanceof JSONObject) {
-            JSONObject serializedObj = (JSONObject) obj;
+        if (!(obj instanceof JSONObject))
+            return obj;
+        JSONObject serializedObj = (JSONObject) obj;
 
+        if (type == InvalidationListener.class) {
             if (serializedObj.getString("type").equals(IRemoteRoomsFactory.class.getName())) {
-                obj = new RemoteRoomsFactoryClient(new JsonRpcClient(
+                return new RemoteRoomsFactoryClient(new JsonRpcClient(
                         new InetSocketAddress(serializedObj.getString("ip"), serializedObj.getInt("port")),
                         this));
             }
 
             if (serializedObj.getString("type").equals(IUpdateChannel.class.getName())) {
-                obj = new PlayerUpdateChannelClient(new JsonRpcClient(
+                return new PlayerUpdateChannelClient(new JsonRpcClient(
                         new InetSocketAddress(serializedObj.getString("ip"), serializedObj.getInt("port")),
                         this));
             }
         }
 
-        if (type == Observable.class && obj instanceof JSONObject) {
-            JSONObject serializedObj = (JSONObject) obj;
-
+        if (type == Observable.class) {
             if (serializedObj.getString("type").equals(DirectoryServiceEntry.class.getName())) {
-                obj = new DirectoryServiceEntry(
+                return new DirectoryServiceEntry(
+                        UUID.fromString(serializedObj.getString("providerId")),
                         UUID.fromString(serializedObj.getString("serviceId")),
                         new InetSocketAddress(
                                 serializedObj.getString("address"),
                                 serializedObj.getInt("port")
-                        )
+                        ),
+                        serializedObj.getBoolean("reachable")
                 );
             }
 
             if (serializedObj.getString("type").equals(PlayerUpdate.class.getName())) {
-                obj = new PlayerUpdate(
+                return new PlayerUpdate(
                         Direction.valueOf(serializedObj.getString("movingDirection")),
                         serializedObj.getBoolean("pauseGame"),
                         serializedObj.getBoolean("dead"),
@@ -59,9 +61,8 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
             }
         }
 
-        if (type == PlayerUpdate.class && obj instanceof JSONObject) {
-            JSONObject serializedObj = (JSONObject) obj;
-            obj = new PlayerUpdate(
+        if (type == PlayerUpdate.class) {
+            return new PlayerUpdate(
                     Direction.valueOf(serializedObj.getString("movingDirection")),
                     serializedObj.getBoolean("pauseGame"),
                     serializedObj.getBoolean("dead"),
@@ -69,20 +70,20 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
             );
         }
 
-        if (type == DirectoryServiceEntry.class && obj instanceof JSONObject) {
-            JSONObject serializedObj = (JSONObject) obj;
-            obj = new DirectoryServiceEntry(
+        if (type == DirectoryServiceEntry.class) {
+            return new DirectoryServiceEntry(
+                    UUID.fromString(serializedObj.getString("providerId")),
                     UUID.fromString(serializedObj.getString("serviceId")),
                     new InetSocketAddress(
                             serializedObj.getString("address"),
                             serializedObj.getInt("port")
-                    )
+                    ),
+                    serializedObj.getBoolean("reachable")
             );
         }
 
-        if (type == UUID.class && obj instanceof JSONObject) {
-            JSONObject serializedObj = (JSONObject) obj;
-            obj = UUID.fromString(serializedObj.getString("uuid"));
+        if (type == UUID.class) {
+            return UUID.fromString(serializedObj.getString("uuid"));
         }
 
         return obj;
@@ -90,24 +91,24 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
 
     @Override
     public Object serialize(Object obj) {
-        if (obj instanceof IUpdateChannel && obj instanceof IRpcAppClientStub) {
-            IRpcAppClientStub clientStub = (IRpcAppClientStub) obj;
-            JSONObject serializedObj = new JSONObject();
-            // TODO: type can be inferred from the method
-            serializedObj.put("type", IUpdateChannel.class.getName());
-            serializedObj.put("ip", clientStub.getRpcClient().getServerAddress().getAddress().getHostAddress());
-            serializedObj.put("port", clientStub.getRpcClient().getServerAddress().getPort());
-            obj = serializedObj;
-        }
+        if (obj instanceof IRpcAppClientStub) {
+            if (obj instanceof IUpdateChannel) {
+                IRpcAppClientStub clientStub = (IRpcAppClientStub) obj;
+                JSONObject serializedObj = new JSONObject();
+                serializedObj.put("type", IUpdateChannel.class.getName());
+                serializedObj.put("ip", clientStub.getRpcClient().getServerAddress().getAddress().getHostAddress());
+                serializedObj.put("port", clientStub.getRpcClient().getServerAddress().getPort());
+                return serializedObj;
+            }
 
-        if (obj instanceof IRemoteRoomsFactory && obj instanceof IRpcAppClientStub) {
-            IRpcAppClientStub clientStub = (IRpcAppClientStub) obj;
-            JSONObject serializedObj = new JSONObject();
-            // TODO: type can be inferred from the method
-            serializedObj.put("type", IRemoteRoomsFactory.class.getName());
-            serializedObj.put("ip", clientStub.getRpcClient().getServerAddress().getAddress().getHostAddress());
-            serializedObj.put("port", clientStub.getRpcClient().getServerAddress().getPort());
-            obj = serializedObj;
+            if (obj instanceof IRemoteRoomsFactory) {
+                IRpcAppClientStub clientStub = (IRpcAppClientStub) obj;
+                JSONObject serializedObj = new JSONObject();
+                serializedObj.put("type", IRemoteRoomsFactory.class.getName());
+                serializedObj.put("ip", clientStub.getRpcClient().getServerAddress().getAddress().getHostAddress());
+                serializedObj.put("port", clientStub.getRpcClient().getServerAddress().getPort());
+                return serializedObj;
+            }
         }
 
         if (obj instanceof PlayerUpdate) {
@@ -118,17 +119,19 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
             serializedObj.put("pauseGame", playerUpdate.pauseGame());
             serializedObj.put("dead", playerUpdate.isDead());
             serializedObj.put("version", playerUpdate.getVersion());
-            obj = serializedObj;
+            return serializedObj;
         }
 
         if (obj instanceof DirectoryServiceEntry) {
             DirectoryServiceEntry e = (DirectoryServiceEntry) obj;
             JSONObject serializedObj = new JSONObject();
             serializedObj.put("type", DirectoryServiceEntry.class.getName());
-            serializedObj.put("serviceId", e.getId());
+            serializedObj.put("providerId", e.getProviderId());
+            serializedObj.put("serviceId", e.getServiceId());
             serializedObj.put("address", e.getServiceAddress().getAddress().getHostAddress());
             serializedObj.put("port", e.getServiceAddress().getPort());
-            obj = serializedObj;
+            serializedObj.put("reachable", e.isReachable());
+            return serializedObj;
         }
 
         if (obj instanceof UUID) {
@@ -136,7 +139,7 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
             JSONObject serializedObj = new JSONObject();
             serializedObj.put("type", UUID.class.getName());
             serializedObj.put("uuid", uuid.toString());
-            obj = serializedObj;
+            return serializedObj;
         }
 
         return obj;

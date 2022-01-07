@@ -71,8 +71,6 @@ public final class GameController implements IGameController {
         logger.info("Starting a new Game as host");
         gameModel.createGame(playerName);
         playerUpdateChannel = new PlayerUpdateChannel(gameModel.getGame().getPlayer(), gameUpdater, this::startGame);
-        // TODO: lobby controller will create a local and remote rome
-        //  the local one will get the actual instance and the remote one will get the stub
         lobbyController.createRoom(playerUpdateChannel);
         //startGame(); TODO
         gameView.showWaitingMenu(e -> cancelGame());

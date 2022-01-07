@@ -39,15 +39,14 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
     public void invalidated(Observable observable) {
         if (observable instanceof DirectoryServiceEntry) {
             DirectoryServiceEntry e = (DirectoryServiceEntry) observable;
-            if (!isLocalRoom(e) &&
-                    isPlayerUpdateChannel(e) && !isOwnUpdateChannel(e)) {
+            if (isPlayerUpdateChannel(e) && !isLocalRoom(e) && !isOwnUpdateChannel(e)) {
                 Platform.runLater(() -> {
                     if (e.isReachable())
                         lobbyModel.addRoom(new RemoteRoom(new PlayerUpdateChannelClient(
-                                new JsonRpcClient(e.getServiceAddress(), jsonRpcSerializer)
-                        ), this::createGuestUpdateChannelRpcClient));
+                                new JsonRpcClient(e.getServiceAddress(), jsonRpcSerializer)),
+                                this::createGuestUpdateChannelRpcClient));
                     else
-                        lobbyModel.removeRoom(e.getId());
+                        lobbyModel.removeRoom(e.getProviderId());
                 });
             }
         }
@@ -59,14 +58,14 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
             change.getAddedSubList().forEach(r -> {
                 if (r.getUuid().equals(playerId)) { // owen room
                     rpcServer.register(new PlayerUpdateChannelServer(r.getHostUpdateChannel()));
-                    directoryService.register(new DirectoryServiceEntry(PlayerUpdateChannelClient.serviceId, rpcServer.getSocketAddress()));
+                    directoryService.register(new DirectoryServiceEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getSocketAddress()));
                 }
             });
 
             change.getRemoved().forEach(r -> {
                 if (r.getUuid().equals(playerId)) { // owen room
                     rpcServer.unregister(PlayerUpdateChannelServer.serviceId);
-                    directoryService.unregister(new DirectoryServiceEntry(PlayerUpdateChannelClient.serviceId, rpcServer.getSocketAddress()));
+                    directoryService.unregister(new DirectoryServiceEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getSocketAddress()));
                 }
             });
         }
@@ -82,7 +81,7 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
     }
 
     private boolean isPlayerUpdateChannel(DirectoryServiceEntry e) {
-        return e.getId().equals(PlayerUpdateChannelClient.serviceId);
+        return e.getServiceId().equals(PlayerUpdateChannelClient.serviceId);
     }
 
 

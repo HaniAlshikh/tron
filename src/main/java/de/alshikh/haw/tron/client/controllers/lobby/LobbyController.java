@@ -3,7 +3,6 @@ package de.alshikh.haw.tron.client.controllers.lobby;
 import de.alshikh.haw.tron.client.controllers.game.helpers.IUpdateChannel;
 import de.alshikh.haw.tron.client.controllers.lobby.inputhandlers.RoomsMenuInputHandler;
 import de.alshikh.haw.tron.client.models.lobby.ILobbyModel;
-import de.alshikh.haw.tron.client.models.lobby.LobbyModel;
 import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
 import de.alshikh.haw.tron.client.views.lobby.ILobbyView;
 import org.slf4j.Logger;
@@ -14,11 +13,12 @@ import java.util.UUID;
 public final class LobbyController implements ILobbyController {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    private final ILobbyModel lobbyModel = LobbyModel.getInstance();
+    private final ILobbyModel lobbyModel;
     private final ILobbyView lobbyView;
 
-    public LobbyController(ILobbyView lobbyView) {
+    public LobbyController(ILobbyModel lobbyModel, ILobbyView lobbyView) {
         this.lobbyView = lobbyView;
+        this.lobbyModel = lobbyModel;
     }
 
     @Override
