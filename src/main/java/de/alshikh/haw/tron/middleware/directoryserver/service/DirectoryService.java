@@ -42,6 +42,8 @@ public class DirectoryService implements IDirectoryService, Observable {
     public void addListenerTo(UUID serviceId, InvalidationListener listener) {
         listenersRegistry.putIfAbsent(serviceId, new ConcurrentLinkedQueue<>());
         listenersRegistry.get(serviceId).add(listener);
+        // TODO: make serviceRegistry a map as well?
+        serviceRegistry.stream().filter(s -> s.getServiceId().equals(serviceId)).forEach(listener::invalidated);
 
     }
 
@@ -75,5 +77,9 @@ public class DirectoryService implements IDirectoryService, Observable {
     @Override
     public String toString() {
         return serviceRegistry.toString();
+    }
+
+    public ConcurrentLinkedQueue<DirectoryServiceEntry> getServiceRegistry() {
+        return serviceRegistry;
     }
 }

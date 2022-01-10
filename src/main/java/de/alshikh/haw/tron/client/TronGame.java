@@ -81,18 +81,19 @@ public class TronGame implements Runnable {
         }
     }
 
+    // TODO: how to handle user starting a game while the middleware is booting up
     public void bootUpMiddleware(UUID playerId, ILobbyModel lobbyModel) {
         JsonRpcSerializer jsonRpcSerializer = new TronJsonRpcSerializer();
+
+        // directoryService
+        InetSocketAddress directoryServiceAddress = DirectoryDiscoveryClient.discover();
+        IDirectoryService dsc = new DirectoryServiceClient(new JsonRpcClient(directoryServiceAddress, jsonRpcSerializer));
 
         // rpcServer
         IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
         // TODO: maybe replace with ExecutorService (what if we have one core only)
         // TODO: dose it make sense to have a server per service (now it's sever per instance)
         new Thread(rpcServer::start).start();
-
-        // directoryService
-        InetSocketAddress directoryServiceAddress = DirectoryDiscoveryClient.discover();
-        IDirectoryService dsc = new DirectoryServiceClient(new JsonRpcClient(directoryServiceAddress, jsonRpcSerializer));
 
         // remoteRoomsFactory
         IRemoteRoomsFactory remoteRoomsFactory = new RemoteRoomsFactory(playerId, lobbyModel, rpcServer, dsc, jsonRpcSerializer);

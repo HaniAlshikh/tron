@@ -5,16 +5,15 @@ import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscove
 import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryServer;
 import de.alshikh.haw.tron.middleware.directoryserver.service.DirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
-import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceClient;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceServer;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
 import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
 import de.alshikh.haw.tron.middleware.rpc.server.JsonRpcServer;
+import javafx.beans.Observable;
 
 import java.net.InetSocketAddress;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class DirectoryServer {
@@ -41,8 +40,18 @@ public class DirectoryServer {
                         jsonRpcSerializer
                 ));
 
-        directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), UUID.randomUUID(), rpcServer.getSocketAddress()));
-        directoryService.addListener(System.out::println);
+        //directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), UUID.randomUUID(), rpcServer.getSocketAddress()));
+        directoryService.addListener(DirectoryServer::tabilise);
+    }
 
+    private static void tabilise(Observable observable) {
+        System.out.println();
+        DirectoryService directoryService = (DirectoryService) observable;
+        System.out.format("%-40s%-40s%-32s%-6s\n", "Provider ID", "Service ID", "Service Address", "Is Reachable");
+        directoryService.getServiceRegistry().forEach(s -> {
+            System.out.format("%-40s%-40s%-32s%-6s\n",
+                    s.getProviderId(), s.getServiceId(), s.getServiceAddress(), s.isReachable());
+        });
+        System.out.println();
     }
 }
