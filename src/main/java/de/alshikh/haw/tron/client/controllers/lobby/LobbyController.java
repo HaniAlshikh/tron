@@ -5,6 +5,8 @@ import de.alshikh.haw.tron.client.controllers.lobby.inputhandlers.RoomsMenuInput
 import de.alshikh.haw.tron.client.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.client.models.lobby.datatypes.Room;
 import de.alshikh.haw.tron.client.views.lobby.ILobbyView;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,7 @@ public final class LobbyController implements ILobbyController {
     }
 
     @Override
-    public void showRoomsMenu(IUpdateChannel guestUpdateChannel) {
+    public void showRoomsMenu(IUpdateChannel guestUpdateChannel, EventHandler<ActionEvent> cancelBtnHandler) {
         RoomsMenuInputHandler roomsMenuInputHandler = new RoomsMenuInputHandler();
         roomsMenuInputHandler.setListItemConsumer(room -> {
             // TODO: what is the best practise to create subs
@@ -37,7 +39,7 @@ public final class LobbyController implements ILobbyController {
             // TODO: state pattern
             removeRoom(room.getUuid());
         });
-        lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRoomsList());
+        lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRoomsList(), cancelBtnHandler);
     }
 
     @Override

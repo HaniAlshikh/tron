@@ -3,6 +3,7 @@ package de.alshikh.haw.tron.client.views.lobby.overlayes;
 import de.alshikh.haw.tron.client.models.lobby.datatypes.IRoom;
 import de.alshikh.haw.tron.client.views.view_library.ViewUtility;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -12,6 +13,7 @@ import javafx.scene.paint.Color;
 public class RoomsMenu extends VBox {
 
     private final ListView<IRoom> roomsListView;
+    private final Button btnCancel;
 
     public RoomsMenu(String stylesheet) {
         super(20.0);
@@ -30,12 +32,19 @@ public class RoomsMenu extends VBox {
         labelPlaceholder.setStyle("-fx-text-fill: #575149;");
         roomsListView.setPlaceholder(labelPlaceholder);
 
+        btnCancel = new Button("Cancel");
+
 
         this.getChildren().add(labelReady);
         this.getChildren().add(roomsListView);
+        this.getChildren().add(btnCancel);
     }
 
     public ListView<IRoom> getRoomListView() {
         return roomsListView;
+    }
+
+    public Button getBtnCancel() {
+        return btnCancel;
     }
 }

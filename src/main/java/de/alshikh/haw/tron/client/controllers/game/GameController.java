@@ -82,7 +82,7 @@ public final class GameController implements IGameController {
         gameModel.joinGame(playerName);
         playerUpdateChannel = new PlayerUpdateChannel(gameModel.getGame().getPlayer(), gameUpdater, this::startGame);
         //startGame(); TODO
-        lobbyController.showRoomsMenu(playerUpdateChannel);
+        lobbyController.showRoomsMenu(playerUpdateChannel, e -> cancelGame());
     }
 
     @Override
