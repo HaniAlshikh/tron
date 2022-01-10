@@ -40,7 +40,9 @@ public class DirectoryServiceEntry implements Observable {
     }
 
     public void publishUpdate() {
-        listeners.forEach(l -> l.invalidated(this));
+        listeners.forEach(l -> {
+            l.invalidated(this);
+        });
     }
 
 

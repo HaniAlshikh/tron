@@ -1,6 +1,8 @@
 package de.alshikh.haw.tron.middleware.rpc.network;
 
+import de.alshikh.haw.tron.middleware.rpc.network.data.exceptions.FailedToConnectNetworkRpcException;
 import de.alshikh.haw.tron.middleware.rpc.network.data.exceptions.FailedToReceiveNetworkRpcException;
+import de.alshikh.haw.tron.middleware.rpc.network.data.exceptions.FailedToSendNetworkRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 
+// TODO: maybe abstract a bit more to TcpConnection <- RpcTcpConnection etc...
 public class RpcConnection implements IRpcConnection {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -25,19 +28,24 @@ public class RpcConnection implements IRpcConnection {
     }
 
     @Override
-    public void connect() throws IOException {
+    public void connect() throws FailedToConnectNetworkRpcException {
         connection = new Socket();
-        connection.connect(address);
+        try {
+            connection.connect(address);
+        } catch (Exception e) {
+            log.error("Failed to connect:", e);
+            throw new FailedToConnectNetworkRpcException(address);
+        }
     }
 
     @Override
-    public void send(byte[] data) throws FailedToReceiveNetworkRpcException {
+    public void send(byte[] data) throws FailedToSendNetworkRpcException {
         try {
             connection.getOutputStream().write(data);
             connection.shutdownOutput();
         } catch (IOException e) {
             log.error("Failed to send data:", e);
-            throw new FailedToReceiveNetworkRpcException(connection);
+            throw new FailedToSendNetworkRpcException(connection);
         }
     }
 

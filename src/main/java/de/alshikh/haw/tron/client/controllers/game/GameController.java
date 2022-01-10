@@ -120,7 +120,9 @@ public final class GameController implements IGameController {
     public void closeGame() {
         if (gameModel.getGame() != null) {
             gameLoop.stop();
-            gameUpdaterFuture.cancel(true);
+            if (gameUpdaterFuture != null) // TODO ManagedExecutorService should take care of this
+                gameUpdaterFuture.cancel(true);
+            lobbyController.removeRoom(gameModel.getPlayer().getId());
         }
     }
 

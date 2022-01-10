@@ -10,6 +10,7 @@ import de.alshikh.haw.tron.middleware.rpc.network.RpcConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.SocketAddress;
 import java.util.Arrays;
@@ -56,10 +57,11 @@ public class ClientStub {
                 return null;
 
             return rpcMsgApi.readResponse(server.receive());
-        } catch (Exception e) {
-            log.debug("Failed to send request: ", e);
-            return rpcMsgApi.newErrorResponse(request.getId(),
-                    e instanceof RpcException ? (RpcException) e : new InvocationRpcException());
+        } catch (RpcException e) {
+            return rpcMsgApi.newErrorResponse(request.getId(), e);
+        } catch (IOException e) {
+            log.error("Failed to close server socket:", e);
+            return rpcMsgApi.newErrorResponse(request.getId(), new InvocationRpcException());
         }
     }
 }

@@ -1,10 +1,11 @@
 package de.alshikh.haw.tron.middleware.rpc.network;
 
+import de.alshikh.haw.tron.middleware.rpc.network.data.exceptions.FailedToConnectNetworkRpcException;
+
 import java.io.Closeable;
-import java.io.IOException;
 
 public interface IRpcConnection extends IRpcSender, IRpcReceiver, Closeable {
-    void connect() throws IOException;
+    void connect() throws FailedToConnectNetworkRpcException;
 
     void safeClose();
 }

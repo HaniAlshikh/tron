@@ -9,6 +9,7 @@ import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcResponse;
 import de.alshikh.haw.tron.middleware.rpc.network.IRpcConnection;
 import de.alshikh.haw.tron.middleware.rpc.network.RpcConnection;
 import de.alshikh.haw.tron.middleware.rpc.network.data.exceptions.FailedToReceiveNetworkRpcException;
+import de.alshikh.haw.tron.middleware.rpc.network.data.exceptions.FailedToSendNetworkRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,7 @@ public class ServerStub implements Runnable {
         if (response == null) return;
         try {
             client.send(response.getBytes());
-        } catch (FailedToReceiveNetworkRpcException ignored) {}
+        } catch (FailedToSendNetworkRpcException ignored) {}
     }
 
     private boolean isNotification() {
