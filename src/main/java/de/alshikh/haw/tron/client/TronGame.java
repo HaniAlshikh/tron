@@ -25,6 +25,10 @@ import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceClient;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
+import de.alshikh.haw.tron.middleware.rpc.callback.LocalRpcServerPortFinder;
+import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
+import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallback;
+import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackServer;
 import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
@@ -95,12 +99,17 @@ public class TronGame implements Runnable {
         // TODO: dose it make sense to have a server per service (now it's sever per instance)
         new Thread(rpcServer::start).start();
 
+        // callback server
+        LocalRpcServerPortFinder.PORT = rpcServer.getSocketAddress().getPort();
+        IRpcCallback rpcCallback = new RpcCallback();
+        IRpcAppServerStub callbackServer = new RpcCallbackServer(rpcCallback);
+        rpcServer.register(callbackServer);
+
         // remoteRoomsFactory
         IRemoteRoomsFactory remoteRoomsFactory = new RemoteRoomsFactory(playerId, lobbyModel, rpcServer, dsc, jsonRpcSerializer);
         IRpcAppServerStub remoteRoomsFactoryServer = new RemoteRoomsFactoryServer(remoteRoomsFactory);
-        IRpcAppClientStub remoteRoomsFactoryClient = new RemoteRoomsFactoryClient(new JsonRpcClient(rpcServer.getSocketAddress(), jsonRpcSerializer));
-
         rpcServer.register(remoteRoomsFactoryServer);
+        IRpcAppClientStub remoteRoomsFactoryClient = new RemoteRoomsFactoryClient(new JsonRpcClient(rpcServer.getSocketAddress(), jsonRpcSerializer));
         dsc.addListenerTo(PlayerUpdateChannelServer.serviceId, (InvalidationListener) remoteRoomsFactoryClient);
     }
 }

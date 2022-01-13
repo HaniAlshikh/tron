@@ -4,12 +4,29 @@ import de.alshikh.haw.tron.middleware.helloworld.service.data.datatypes.HelloWor
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 public class HelloWorldJsonRpcSerializer extends JsonRpcSerializer {
     @Override
     public Object deserialize(Object obj, Class<?> type) {
-        if (type == HelloWorldMessage.class && obj instanceof JSONObject) {
-            JSONObject serializedObj = (JSONObject) obj;
+        if (!(obj instanceof JSONObject))
+            return obj;
+        JSONObject serializedObj = (JSONObject) obj;
+
+        if (type == Object.class) {
+            try {
+                return deserialize(obj, Class.forName(serializedObj.getString("type")));
+            } catch (ClassNotFoundException e) {
+                return obj;
+            }
+        }
+
+        if (type == HelloWorldMessage.class) {
             obj = new HelloWorldMessage(serializedObj.getString("message"));
+        }
+
+        if (type == UUID.class) {
+            return UUID.fromString(serializedObj.getString("uuid"));
         }
 
         return obj;
@@ -22,7 +39,15 @@ public class HelloWorldJsonRpcSerializer extends JsonRpcSerializer {
             JSONObject serializedObj = new JSONObject();
             serializedObj.put("type", HelloWorldMessage.class.getName());
             serializedObj.put("message", message.getMessage());
-            obj = serializedObj;
+            return serializedObj;
+        }
+
+        if (obj instanceof UUID) {
+            UUID uuid = (UUID) obj;
+            JSONObject serializedObj = new JSONObject();
+            serializedObj.put("type", UUID.class.getName());
+            serializedObj.put("uuid", uuid.toString());
+            return serializedObj;
         }
 
         return obj;

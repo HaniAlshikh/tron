@@ -1,5 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.message.json;
 
+import de.alshikh.haw.tron.middleware.rpc.callback.LocalRpcServerPortFinder;
 import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.InvalidParamsRpcException;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcSerializer;
@@ -33,6 +34,7 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
     public IRpcRequest newRequest(UUID serviceId, Method method, Object[] args) {
         JSONObject reqObj = newRequestObj(serviceId, method, args);
         reqObj.put("id", UUID.randomUUID().toString());
+        reqObj.put("rpcServerPort", LocalRpcServerPortFinder.PORT); // TODO find a better way
         return new JsonRpcRequest(reqObj);
     }
 

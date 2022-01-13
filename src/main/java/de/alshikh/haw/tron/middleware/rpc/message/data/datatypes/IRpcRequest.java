@@ -16,4 +16,6 @@ public interface IRpcRequest {
     String getMethodName();
 
     JSONObject getParams();
+
+    int getRpcServerPort();
 }

@@ -13,7 +13,9 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import org.json.JSONObject;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.UUID;
 
 // TODO: refactor
@@ -23,6 +25,14 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
         if (!(obj instanceof JSONObject))
             return obj;
         JSONObject serializedObj = (JSONObject) obj;
+
+        if (type == Object.class) {
+            try {
+                return deserialize(obj, Class.forName(serializedObj.getString("type")));
+            } catch (ClassNotFoundException e) {
+                return obj;
+            }
+        }
 
         if (type == InvalidationListener.class) {
             if (serializedObj.getString("type").equals(IRemoteRoomsFactory.class.getName())) {
@@ -86,6 +96,14 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
             return UUID.fromString(serializedObj.getString("uuid"));
         }
 
+        if (type == InetAddress.class) {
+            try {
+                return InetAddress.getByName(serializedObj.getString("address"));
+            } catch (UnknownHostException e) {
+                return null; // TODO;
+            }
+        }
+
         return obj;
     }
 
@@ -139,6 +157,14 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
             JSONObject serializedObj = new JSONObject();
             serializedObj.put("type", UUID.class.getName());
             serializedObj.put("uuid", uuid.toString());
+            return serializedObj;
+        }
+
+        if (obj instanceof InetAddress) {
+            InetAddress address = (InetAddress) obj;
+            JSONObject serializedObj = new JSONObject();
+            serializedObj.put("type", InetAddress.class.getName());
+            serializedObj.put("address", address.getHostAddress());
             return serializedObj;
         }
 

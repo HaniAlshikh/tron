@@ -7,6 +7,10 @@ import de.alshikh.haw.tron.middleware.helloworld.service.HelloWorld;
 import de.alshikh.haw.tron.middleware.helloworld.service.IHelloWorld;
 import de.alshikh.haw.tron.middleware.helloworld.service.data.datatypes.HelloWorldMessage;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
+import de.alshikh.haw.tron.middleware.rpc.callback.LocalRpcServerPortFinder;
+import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
+import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallback;
+import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackServer;
 import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
@@ -40,6 +44,13 @@ class RPC {
         IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
         rpcServer.register(helloWorldServer);
         new Thread(rpcServer::start).start();
+
+        // callback server
+        LocalRpcServerPortFinder.PORT = rpcServer.getSocketAddress().getPort();
+        IRpcCallback rpcCallback = new RpcCallback();
+        IRpcAppServerStub callbackServer = new RpcCallbackServer(rpcCallback);
+        rpcServer.register(callbackServer);
+
 
         // delay until the server starts
         try {

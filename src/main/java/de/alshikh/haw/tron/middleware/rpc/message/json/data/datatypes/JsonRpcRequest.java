@@ -9,6 +9,7 @@ import java.util.UUID;
 public class JsonRpcRequest implements IRpcRequest {
 
     UUID id;
+    int rpcServerPort;
     UUID serviceId;
     String method;
     JSONObject params;
@@ -22,8 +23,10 @@ public class JsonRpcRequest implements IRpcRequest {
 
     private void parse() {
         String uuid = reqObj.optString("id");
-        if (!uuid.isEmpty())
+        if (!uuid.isEmpty()) {
             id = UUID.fromString(uuid);
+            rpcServerPort = reqObj.getInt("rpcServerPort");
+        }
         serviceId = UUID.fromString(reqObj.getString("service"));
         method = reqObj.getString("method");
         params = reqObj.getJSONObject("params");
@@ -45,6 +48,11 @@ public class JsonRpcRequest implements IRpcRequest {
     }
 
     @Override
+    public int getRpcServerPort() {
+        return rpcServerPort;
+    }
+
+    @Override
     public UUID getServiceId() {
         return serviceId;
     }
@@ -63,6 +71,8 @@ public class JsonRpcRequest implements IRpcRequest {
     public String toString() {
         return "JsonRpcRequest{" +
                 "id=" + id +
+                ", rpcServerPort=" + rpcServerPort +
+                ", serviceId=" + serviceId +
                 ", method='" + method + '\'' +
                 ", params=" + params +
                 '}';

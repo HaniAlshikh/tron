@@ -4,7 +4,7 @@ import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.Dir
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
-import java.util.*;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -73,6 +73,15 @@ public class DirectoryService implements IDirectoryService, Observable {
     public void removeListener(InvalidationListener listener) {
         listeners.remove(listener);
     }
+
+    //public int getPort(UUID serviceId, InetAddress serviceProviderAddress) {
+    //    Optional<DirectoryServiceEntry> entry = serviceRegistry.stream()
+    //            .filter(s -> s.getServiceId().equals(serviceId) &&
+    //                    s.getServiceAddress().getAddress().equals(serviceProviderAddress))
+    //            .findFirst();
+    //
+    //    return entry.map(s -> s.getServiceAddress().getPort()).orElse(-1);
+    //}
 
     @Override
     public String toString() {
