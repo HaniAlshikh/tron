@@ -70,8 +70,8 @@ public class JsonRpcRequest implements IRpcRequest {
     @Override
     public String toString() {
         return "JsonRpcRequest{" +
-                "id=" + id +
-                ", rpcServerPort=" + rpcServerPort +
+                (isNotification() ? "" : "id=" + id) +
+                (isNotification() ? "" : ", rpcServerPort=" + rpcServerPort) +
                 ", serviceId=" + serviceId +
                 ", method='" + method + '\'' +
                 ", params=" + params +

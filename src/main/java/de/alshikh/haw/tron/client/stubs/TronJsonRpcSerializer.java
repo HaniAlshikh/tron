@@ -9,7 +9,7 @@ import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.Dir
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
 import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import org.json.JSONObject;

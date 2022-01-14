@@ -1,7 +1,7 @@
 package de.alshikh.haw.tron.middleware.helloworld;
 
 import de.alshikh.haw.tron.middleware.helloworld.service.data.datatypes.HelloWorldMessage;
-import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializer;
 import org.json.JSONObject;
 
 import java.util.UUID;

@@ -1,7 +1,7 @@
 package de.alshikh.haw.tron.middleware.directoryserver.stubs;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
-import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializer;
 import org.json.JSONObject;
 
 import java.net.InetSocketAddress;

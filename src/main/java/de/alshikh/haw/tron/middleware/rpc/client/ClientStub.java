@@ -3,7 +3,7 @@ package de.alshikh.haw.tron.middleware.rpc.client;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallbackHandler;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.RpcCallbackService;
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcMarshaller;
+import de.alshikh.haw.tron.middleware.rpc.message.marshal.IRpcMarshaller;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
 import de.alshikh.haw.tron.middleware.rpc.network.IRpcSender;
 import org.slf4j.Logger;
@@ -37,9 +37,7 @@ public class ClientStub {
     }
 
     private IRpcRequest marshal(UUID serviceId, Method method, Object[] args, boolean isNotification) {
-        if (isNotification)
-            return rpcMarshaller.newNotification(serviceId, method, args);
-        return rpcMarshaller.newRequest(serviceId, method, args);
+        return rpcMarshaller.newRequest(serviceId, method, args, isNotification);
     }
 
     private void send(IRpcRequest request) {

@@ -1,6 +1,6 @@
-package de.alshikh.haw.tron.middleware.rpc.message.json;
+package de.alshikh.haw.tron.middleware.rpc.message.json.serialize;
 
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.message.serialize.IRpcSerializer;
 
 public class JsonRpcSerializer implements IRpcSerializer {
 

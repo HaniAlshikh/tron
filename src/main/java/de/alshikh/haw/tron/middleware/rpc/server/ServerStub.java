@@ -5,7 +5,7 @@ import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.RpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.*;
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcUnmarshaller;
+import de.alshikh.haw.tron.middleware.rpc.message.marshal.IRpcUnmarshaller;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
 import de.alshikh.haw.tron.middleware.rpc.network.IRpcReceiver;

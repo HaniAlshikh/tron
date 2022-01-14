@@ -4,7 +4,7 @@ import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallbackHandler;
 import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackClient;
 import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcMarshaller;
+import de.alshikh.haw.tron.middleware.rpc.message.marshal.IRpcMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
