@@ -19,156 +19,150 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.UUID;
 
-// TODO: refactor
 public class TronJsonRpcSerializer extends JsonRpcSerializer {
     @Override
-    public Object deserialize(Object obj, Class<?> type) {
-        if (!(obj instanceof JSONObject))
-            return obj;
-        JSONObject serializedObj = (JSONObject) obj;
-
-        if (type == Object.class) {
-            try {
-                return deserialize(obj, Class.forName(serializedObj.getString("type")));
-            } catch (ClassNotFoundException e) {
-                return obj;
-            }
-        }
-
-        if (type == InvalidationListener.class) {
-            if (serializedObj.getString("type").equals(IRemoteRoomsFactory.class.getName())) {
-                return new RemoteRoomsFactoryClient(new RpcClient(
-                        new InetSocketAddress(serializedObj.getString("ip"), serializedObj.getInt("port")),
-                        new JsonRpcMessageApi(this)));
-            }
-
-            if (serializedObj.getString("type").equals(IUpdateChannel.class.getName())) {
-                return new PlayerUpdateChannelClient(new RpcClient(
-                        new InetSocketAddress(serializedObj.getString("ip"), serializedObj.getInt("port")),
-                        new JsonRpcMessageApi(this)));
-            }
-        }
-
-        if (type == Observable.class) {
-            if (serializedObj.getString("type").equals(DirectoryServiceEntry.class.getName())) {
-                return new DirectoryServiceEntry(
-                        UUID.fromString(serializedObj.getString("providerId")),
-                        UUID.fromString(serializedObj.getString("serviceId")),
-                        new InetSocketAddress(
-                                serializedObj.getString("address"),
-                                serializedObj.getInt("port")
-                        ),
-                        serializedObj.getBoolean("reachable")
-                );
-            }
-
-            if (serializedObj.getString("type").equals(PlayerUpdate.class.getName())) {
-                return new PlayerUpdate(
-                        Direction.valueOf(serializedObj.getString("movingDirection")),
-                        serializedObj.getBoolean("pauseGame"),
-                        serializedObj.getBoolean("dead"),
-                        serializedObj.getInt("version")
-                );
-            }
-        }
-
-        if (type == PlayerUpdate.class) {
-            return new PlayerUpdate(
-                    Direction.valueOf(serializedObj.getString("movingDirection")),
-                    serializedObj.getBoolean("pauseGame"),
-                    serializedObj.getBoolean("dead"),
-                    serializedObj.getInt("version")
-            );
-        }
-
-        if (type == DirectoryServiceEntry.class) {
-            return new DirectoryServiceEntry(
-                    UUID.fromString(serializedObj.getString("providerId")),
-                    UUID.fromString(serializedObj.getString("serviceId")),
-                    new InetSocketAddress(
-                            serializedObj.getString("address"),
-                            serializedObj.getInt("port")
-                    ),
-                    serializedObj.getBoolean("reachable")
-            );
-        }
-
-        if (type == UUID.class) {
-            return UUID.fromString(serializedObj.getString("uuid"));
-        }
-
-        if (type == InetAddress.class) {
-            try {
-                return InetAddress.getByName(serializedObj.getString("address"));
-            } catch (UnknownHostException e) {
-                return null; // TODO;
-            }
-        }
+    public Object serialize(Object obj) {
+        if (obj instanceof IRpcAppClientStub) return serializeIRpcAppClientStub((IRpcAppClientStub) obj);
+        if (obj instanceof PlayerUpdate) return serializePlayerUpdate((PlayerUpdate) obj);
+        if (obj instanceof DirectoryServiceEntry) return serializeDirectoryServiceEntry((DirectoryServiceEntry) obj);
+        if (obj instanceof InetAddress) return serializeInetAddress((InetAddress) obj);
+        if (obj instanceof UUID) return serializeUUID((UUID) obj);
 
         return obj;
     }
 
+    private JSONObject newSerializedObj(Class<?> clazz) {
+        return new JSONObject()
+                .put("type", clazz.getName());
+    }
+
+    private Object serializeIRpcAppClientStub(IRpcAppClientStub rpcAppClientStub) {
+        JSONObject serializedObj = null;
+        if (rpcAppClientStub instanceof IUpdateChannel) serializedObj = newSerializedObj(IUpdateChannel.class);
+        if (rpcAppClientStub instanceof IRemoteRoomsFactory) serializedObj = newSerializedObj(IRemoteRoomsFactory.class);
+
+        if (serializedObj == null) return rpcAppClientStub;
+        return serializedObj
+                .put("ip", rpcAppClientStub.getRpcClient().getServerAddress().getAddress().getHostAddress())
+                .put("port", rpcAppClientStub.getRpcClient().getServerAddress().getPort());
+    }
+
+    private JSONObject serializePlayerUpdate(PlayerUpdate playerUpdate) {
+        return newSerializedObj(PlayerUpdate.class)
+                .put("movingDirection", playerUpdate.getMovingDirection().name())
+                .put("pauseGame", playerUpdate.pauseGame())
+                .put("dead", playerUpdate.isDead())
+                .put("version", playerUpdate.getVersion());
+    }
+
+    private JSONObject serializeDirectoryServiceEntry(DirectoryServiceEntry directoryServiceEntry) {
+        return newSerializedObj(DirectoryServiceEntry.class)
+                .put("type", DirectoryServiceEntry.class.getName())
+                .put("providerId", directoryServiceEntry.getProviderId())
+                .put("serviceId", directoryServiceEntry.getServiceId())
+                .put("address", directoryServiceEntry.getServiceAddress().getAddress().getHostAddress())
+                .put("port", directoryServiceEntry.getServiceAddress().getPort())
+                .put("reachable", directoryServiceEntry.isReachable());
+    }
+
+    private JSONObject serializeInetAddress(InetAddress address) {
+        return newSerializedObj(InetAddress.class)
+                .put("address", address.getHostAddress());
+    }
+
+    private JSONObject serializeUUID(UUID uuid) {
+        return newSerializedObj(UUID.class)
+                .put("uuid", uuid.toString());
+    }
+
     @Override
-    public Object serialize(Object obj) {
-        if (obj instanceof IRpcAppClientStub) {
-            if (obj instanceof IUpdateChannel) {
-                IRpcAppClientStub clientStub = (IRpcAppClientStub) obj;
-                JSONObject serializedObj = new JSONObject();
-                serializedObj.put("type", IUpdateChannel.class.getName());
-                serializedObj.put("ip", clientStub.getRpcClient().getServerAddress().getAddress().getHostAddress());
-                serializedObj.put("port", clientStub.getRpcClient().getServerAddress().getPort());
-                return serializedObj;
-            }
+    public Object deserialize(Object obj, Class<?> type) {
+        if (!(obj instanceof JSONObject)) return obj;
+        
+        JSONObject serializedObj = (JSONObject) obj;
 
-            if (obj instanceof IRemoteRoomsFactory) {
-                IRpcAppClientStub clientStub = (IRpcAppClientStub) obj;
-                JSONObject serializedObj = new JSONObject();
-                serializedObj.put("type", IRemoteRoomsFactory.class.getName());
-                serializedObj.put("ip", clientStub.getRpcClient().getServerAddress().getAddress().getHostAddress());
-                serializedObj.put("port", clientStub.getRpcClient().getServerAddress().getPort());
-                return serializedObj;
-            }
-        }
-
-        if (obj instanceof PlayerUpdate) {
-            PlayerUpdate playerUpdate = (PlayerUpdate) obj;
-            JSONObject serializedObj = new JSONObject();
-            serializedObj.put("type", PlayerUpdate.class.getName());
-            serializedObj.put("movingDirection", playerUpdate.getMovingDirection().name());
-            serializedObj.put("pauseGame", playerUpdate.pauseGame());
-            serializedObj.put("dead", playerUpdate.isDead());
-            serializedObj.put("version", playerUpdate.getVersion());
-            return serializedObj;
-        }
-
-        if (obj instanceof DirectoryServiceEntry) {
-            DirectoryServiceEntry e = (DirectoryServiceEntry) obj;
-            JSONObject serializedObj = new JSONObject();
-            serializedObj.put("type", DirectoryServiceEntry.class.getName());
-            serializedObj.put("providerId", e.getProviderId());
-            serializedObj.put("serviceId", e.getServiceId());
-            serializedObj.put("address", e.getServiceAddress().getAddress().getHostAddress());
-            serializedObj.put("port", e.getServiceAddress().getPort());
-            serializedObj.put("reachable", e.isReachable());
-            return serializedObj;
-        }
-
-        if (obj instanceof UUID) {
-            UUID uuid = (UUID) obj;
-            JSONObject serializedObj = new JSONObject();
-            serializedObj.put("type", UUID.class.getName());
-            serializedObj.put("uuid", uuid.toString());
-            return serializedObj;
-        }
-
-        if (obj instanceof InetAddress) {
-            InetAddress address = (InetAddress) obj;
-            JSONObject serializedObj = new JSONObject();
-            serializedObj.put("type", InetAddress.class.getName());
-            serializedObj.put("address", address.getHostAddress());
-            return serializedObj;
-        }
+        if (type == Observable.class) return deserializeObservable(serializedObj);
+        if (type == InvalidationListener.class) return deserializeInvalidationListener(serializedObj);
+        if (type == Object.class) return deserializeObject(obj, serializedObj);
+        if (type == PlayerUpdate.class) return deserializePlayerUpdate(serializedObj);
+        if (type == DirectoryServiceEntry.class) return deserializeDirectoryServiceEntry(serializedObj);
+        if (type == InetAddress.class) return deserializeInetAddress(serializedObj);
+        if (type == UUID.class) return deserializeUuid(serializedObj);
 
         return obj;
+    }
+
+    private Object deserializeObservable(JSONObject serializedObj) {
+        if (isType(DirectoryServiceEntry.class, serializedObj)) return deserializeDirectoryServiceEntry(serializedObj);
+        if (isType(PlayerUpdate.class, serializedObj)) return deserializePlayerUpdate(serializedObj);
+
+        return serializedObj;
+    }
+
+    private Object deserializeInvalidationListener(JSONObject serializedObj) {
+        if (isType(IRemoteRoomsFactory.class, serializedObj)) return deserializeRemoteRoomsFactoryClient(serializedObj);
+        if (isType(IUpdateChannel.class, serializedObj)) return deserializePlayerUpdateChannelClient(serializedObj);
+
+        return serializedObj;
+    }
+
+    private Object deserializePlayerUpdateChannelClient(JSONObject serializedObj) {
+        return new PlayerUpdateChannelClient(new RpcClient(
+                new InetSocketAddress(
+                        serializedObj.getString("ip"),
+                        serializedObj.getInt("port")),
+                new JsonRpcMessageApi(this)));
+    }
+
+    private Object deserializeRemoteRoomsFactoryClient(JSONObject serializedObj) {
+        return new RemoteRoomsFactoryClient(new RpcClient(
+                new InetSocketAddress(
+                        serializedObj.getString("ip"),
+                        serializedObj.getInt("port")),
+                new JsonRpcMessageApi(this)));
+    }
+
+    private Object deserializeObject(Object obj, JSONObject serializedObj) {
+        try {
+            return deserialize(obj, Class.forName(serializedObj.getString("type")));
+        } catch (ClassNotFoundException e) {
+            return obj;
+        }
+    }
+    
+    private Object deserializePlayerUpdate(JSONObject serializedObj) {
+        return new PlayerUpdate(
+                Direction.valueOf(serializedObj.getString("movingDirection")),
+                serializedObj.getBoolean("pauseGame"),
+                serializedObj.getBoolean("dead"),
+                serializedObj.getInt("version")
+        );
+    }
+
+    private Object deserializeDirectoryServiceEntry(JSONObject serializedObj) {
+        return new DirectoryServiceEntry(
+                UUID.fromString(serializedObj.getString("providerId")),
+                UUID.fromString(serializedObj.getString("serviceId")),
+                new InetSocketAddress(
+                        serializedObj.getString("address"),
+                        serializedObj.getInt("port")),
+                serializedObj.getBoolean("reachable")
+        );
+    }
+
+    private Object deserializeInetAddress(JSONObject serializedObj) {
+        try {
+            return InetAddress.getByName(serializedObj.getString("address"));
+        } catch (UnknownHostException e) {
+            return serializedObj;
+        }
+    }
+
+    private UUID deserializeUuid(JSONObject serializedObj) {
+        return UUID.fromString(serializedObj.getString("uuid"));
+    }
+
+    private boolean isType(Class<?> clazz, JSONObject serializedObj) {
+        return serializedObj.getString("type").equals(clazz.getName());
     }
 }
