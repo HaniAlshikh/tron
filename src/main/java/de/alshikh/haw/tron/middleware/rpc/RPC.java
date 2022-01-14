@@ -10,11 +10,13 @@ import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.LocalRpcServerPortFinder;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallback;
+import de.alshikh.haw.tron.middleware.rpc.callback.service.RpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackServer;
-import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
-import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
+import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
+import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
-import de.alshikh.haw.tron.middleware.rpc.server.JsonRpcServer;
+import de.alshikh.haw.tron.middleware.rpc.server.RpcServer;
 
 import java.io.IOException;
 
@@ -35,18 +37,19 @@ class RPC {
     // TODO: Business Context: application is the customer
     // TODO: as long as the data type contains only primitive types it's ok for serialization
     public static void main(String[] args) throws IOException {
-        JsonRpcSerializer jsonRpcSerializer = new HelloWorldJsonRpcSerializer();
+        IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new HelloWorldJsonRpcSerializer());
 
         IHelloWorld helloWorld = new HelloWorld();
         // TODO: application server stubs are not really necessary?
         IRpcAppServerStub helloWorldServer = new HelloWorldServer(helloWorld);
 
-        IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
+        IRPCServer rpcServer = new RpcServer(rpcMessageApi);
         rpcServer.register(helloWorldServer);
         new Thread(rpcServer::start).start();
 
         // callback server
         LocalRpcServerPortFinder.PORT = rpcServer.getSocketAddress().getPort();
+        RpcCallbackService.getInstance().setRpcMarshaller(rpcMessageApi);
         IRpcCallback rpcCallback = new RpcCallback();
         IRpcAppServerStub callbackServer = new RpcCallbackServer(rpcCallback);
         rpcServer.register(callbackServer);
@@ -61,9 +64,9 @@ class RPC {
 
         // TODO: are we allowed to use java ProxyInstance to generate application stubs?
         IHelloWorld helloWorldClient = new HelloWorldClient(
-                new JsonRpcClient(
+                new RpcClient(
                         rpcServer.getSocketAddress(),
-                        jsonRpcSerializer
+                        rpcMessageApi
                         ));
 
         System.out.println(helloWorldClient.helloWorld());

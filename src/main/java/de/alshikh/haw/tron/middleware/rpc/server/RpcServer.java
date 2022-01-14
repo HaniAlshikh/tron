@@ -1,12 +1,8 @@
 package de.alshikh.haw.tron.middleware.rpc.server;
 
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
-import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
-import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackClient;
-import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.network.RpcConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,11 +15,10 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
 
 import static de.alshikh.haw.tron.middleware.rpc.network.util.util.getLocalIp;
 
-public class JsonRpcServer implements IRPCServer {
+public class RpcServer implements IRPCServer {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
     // TODO: managed executor service
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -32,14 +27,10 @@ public class JsonRpcServer implements IRPCServer {
     private final HashMap<UUID, IRpcAppServerStub> serviceRegistry = new HashMap<>();
     private final CompletableFuture<InetSocketAddress> serverAddress = new CompletableFuture<>();
 
-    private final IRpcMessageApi jsonRpcMessageApi;
+    private final IRpcMessageApi rpcMessageApi;
 
-    public JsonRpcServer() {
-        this(new JsonRpcSerializer());
-    }
-
-    public JsonRpcServer(JsonRpcSerializer jsonRpcSerializer) {
-        this.jsonRpcMessageApi = new JsonRpcMessageApi(jsonRpcSerializer);
+    public RpcServer(IRpcMessageApi rpcMessageApi) {
+        this.rpcMessageApi = rpcMessageApi;
     }
 
     @Override
@@ -67,16 +58,7 @@ public class JsonRpcServer implements IRPCServer {
     }
 
     private Runnable newCall(Socket client) {
-        // TODO: find a better way
-        //  (the server stub should not care about the messaging protocol implementation)
-        //  - make a simple RpcServer which is not dependent on the implementation
-        Function<Integer, IRpcCallback> newRpcCallback = (port) ->
-            new RpcCallbackClient(new JsonRpcClient(
-                    new InetSocketAddress(client.getInetAddress(), port),
-                    (JsonRpcSerializer) jsonRpcMessageApi.getRpcSerializer()
-            ));
-
-        return new ServerStub(client, newRpcCallback, jsonRpcMessageApi, serviceRegistry);
+        return new ServerStub(new RpcConnection(client), rpcMessageApi, serviceRegistry);
     }
 
     @Override
@@ -101,6 +83,6 @@ public class JsonRpcServer implements IRPCServer {
 
     @Override
     public IRpcMessageApi getMessageApi() {
-        return jsonRpcMessageApi;
+        return rpcMessageApi;
     }
 }

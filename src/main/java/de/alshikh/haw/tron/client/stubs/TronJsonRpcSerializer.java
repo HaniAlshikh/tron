@@ -7,7 +7,8 @@ import de.alshikh.haw.tron.client.stubs.remoteroomsfactory.service.IRemoteRoomsF
 import de.alshikh.haw.tron.client.stubs.remoteroomsfactory.stubs.RemoteRoomsFactoryClient;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
-import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
+import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
+import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -36,15 +37,15 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
 
         if (type == InvalidationListener.class) {
             if (serializedObj.getString("type").equals(IRemoteRoomsFactory.class.getName())) {
-                return new RemoteRoomsFactoryClient(new JsonRpcClient(
+                return new RemoteRoomsFactoryClient(new RpcClient(
                         new InetSocketAddress(serializedObj.getString("ip"), serializedObj.getInt("port")),
-                        this));
+                        new JsonRpcMessageApi(this)));
             }
 
             if (serializedObj.getString("type").equals(IUpdateChannel.class.getName())) {
-                return new PlayerUpdateChannelClient(new JsonRpcClient(
+                return new PlayerUpdateChannelClient(new RpcClient(
                         new InetSocketAddress(serializedObj.getString("ip"), serializedObj.getInt("port")),
-                        this));
+                        new JsonRpcMessageApi(this)));
             }
         }
 

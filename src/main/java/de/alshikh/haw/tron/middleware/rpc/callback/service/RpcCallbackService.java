@@ -1,10 +1,15 @@
 package de.alshikh.haw.tron.middleware.rpc.callback.service;
 
-import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
+import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallbackHandler;
+import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackClient;
+import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
+import de.alshikh.haw.tron.middleware.rpc.message.IRpcMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,8 +19,8 @@ public class RpcCallbackService implements IRpcCallbackService {
 
 
     private final ConcurrentMap<UUID, IRpcCallbackHandler> responseRegistry;
-    // TODO: is this the right place? or should we send the port through the messaging protocol
-    private IDirectoryService directoryService;
+    // TODO: is this the right place?
+    private IRpcMarshaller rpcMarshaller;
 
 
     private static final RpcCallbackService instance = new RpcCallbackService();
@@ -26,7 +31,6 @@ public class RpcCallbackService implements IRpcCallbackService {
         responseRegistry = new ConcurrentHashMap<>();
     }
 
-    // TODO maybe create a callback datatype?
     @Override
     public void register(UUID requestId, IRpcCallbackHandler callback) {
         responseRegistry.put(requestId, callback);
@@ -37,11 +41,25 @@ public class RpcCallbackService implements IRpcCallbackService {
         responseRegistry.get(requestId).complete(response);
     }
 
-    public IDirectoryService getDirectoryService() {
-        return directoryService;
+    @Override
+    public IRpcCallback newRpcCallback(InetAddress receiverAddress, int port) {
+        // TODO: what is the correct way to create the callback client?
+        if (rpcMarshaller == null)
+            throw new RuntimeException("missing rpc marshaller to create a callback");
+
+        return new RpcCallbackClient(new RpcClient(
+                        new InetSocketAddress(receiverAddress, port),
+                        rpcMarshaller
+                ));
     }
 
-    public void setDirectoryService(IDirectoryService directoryService) {
-        this.directoryService = directoryService;
+    @Override
+    public IRpcMarshaller getRpcMarshaller() {
+        return rpcMarshaller;
+    }
+
+    @Override
+    public void setRpcMarshaller(IRpcMarshaller rpcMarshaller) {
+        this.rpcMarshaller = rpcMarshaller;
     }
 }

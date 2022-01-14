@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
@@ -69,5 +70,10 @@ public class RpcConnection implements IRpcConnection {
         try {
             connection.close();
         } catch (IOException ignored) {}
+    }
+
+    @Override
+    public InetAddress getAddress() {
+        return connection.getInetAddress();
     }
 }

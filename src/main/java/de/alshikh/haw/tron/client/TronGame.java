@@ -28,11 +28,13 @@ import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.LocalRpcServerPortFinder;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallback;
+import de.alshikh.haw.tron.middleware.rpc.callback.service.RpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackServer;
-import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
-import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
+import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
+import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
-import de.alshikh.haw.tron.middleware.rpc.server.JsonRpcServer;
+import de.alshikh.haw.tron.middleware.rpc.server.RpcServer;
 import javafx.beans.InvalidationListener;
 import javafx.stage.Stage;
 
@@ -87,29 +89,30 @@ public class TronGame implements Runnable {
 
     // TODO: how to handle user starting a game while the middleware is booting up
     public void bootUpMiddleware(UUID playerId, ILobbyModel lobbyModel) {
-        JsonRpcSerializer jsonRpcSerializer = new TronJsonRpcSerializer();
+        IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializer());
 
         // directoryService
         InetSocketAddress directoryServiceAddress = DirectoryDiscoveryClient.discover();
-        IDirectoryService dsc = new DirectoryServiceClient(new JsonRpcClient(directoryServiceAddress, jsonRpcSerializer));
+        IDirectoryService dsc = new DirectoryServiceClient(new RpcClient(directoryServiceAddress, rpcMessageApi));
 
         // rpcServer
-        IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
+        IRPCServer rpcServer = new RpcServer(rpcMessageApi);
         // TODO: maybe replace with ExecutorService (what if we have one core only)
         // TODO: dose it make sense to have a server per service (now it's sever per instance)
         new Thread(rpcServer::start).start();
 
         // callback server
         LocalRpcServerPortFinder.PORT = rpcServer.getSocketAddress().getPort();
+        RpcCallbackService.getInstance().setRpcMarshaller(rpcMessageApi);
         IRpcCallback rpcCallback = new RpcCallback();
         IRpcAppServerStub callbackServer = new RpcCallbackServer(rpcCallback);
         rpcServer.register(callbackServer);
 
         // remoteRoomsFactory
-        IRemoteRoomsFactory remoteRoomsFactory = new RemoteRoomsFactory(playerId, lobbyModel, rpcServer, dsc, jsonRpcSerializer);
+        IRemoteRoomsFactory remoteRoomsFactory = new RemoteRoomsFactory(playerId, lobbyModel, rpcServer, dsc, rpcMessageApi);
         IRpcAppServerStub remoteRoomsFactoryServer = new RemoteRoomsFactoryServer(remoteRoomsFactory);
         rpcServer.register(remoteRoomsFactoryServer);
-        IRpcAppClientStub remoteRoomsFactoryClient = new RemoteRoomsFactoryClient(new JsonRpcClient(rpcServer.getSocketAddress(), jsonRpcSerializer));
+        IRpcAppClientStub remoteRoomsFactoryClient = new RemoteRoomsFactoryClient(new RpcClient(rpcServer.getSocketAddress(), rpcMessageApi));
         dsc.addListenerTo(PlayerUpdateChannelServer.serviceId, (InvalidationListener) remoteRoomsFactoryClient);
     }
 }

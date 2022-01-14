@@ -8,9 +8,11 @@ import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceClient;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceServer;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
-import de.alshikh.haw.tron.middleware.rpc.client.JsonRpcClient;
+import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
+import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
+import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
-import de.alshikh.haw.tron.middleware.rpc.server.JsonRpcServer;
+import de.alshikh.haw.tron.middleware.rpc.server.RpcServer;
 import javafx.beans.Observable;
 
 import java.net.InetSocketAddress;
@@ -20,12 +22,12 @@ public class DirectoryServer {
 
     public static void main(String[] args) {
         //DirectoryServiceJsonRpcSerializer jsonRpcSerializer = new DirectoryServiceJsonRpcSerializer();
-        TronJsonRpcSerializer jsonRpcSerializer = new TronJsonRpcSerializer();
+        IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializer());
 
         DirectoryService directoryService = new DirectoryService();
         IRpcAppServerStub directoryServiceServer = new DirectoryServiceServer(directoryService);
 
-        IRPCServer rpcServer = new JsonRpcServer(jsonRpcSerializer);
+        IRPCServer rpcServer = new RpcServer(rpcMessageApi);
         rpcServer.register(directoryServiceServer);
         new Thread(rpcServer::start).start();
 
@@ -35,9 +37,9 @@ public class DirectoryServer {
         // TODO: for testing should be removed
         InetSocketAddress discoveredAddress = DirectoryDiscoveryClient.discover();
         IDirectoryService directoryServiceClient = new DirectoryServiceClient(
-                new JsonRpcClient(
+                new RpcClient(
                         discoveredAddress,
-                        jsonRpcSerializer
+                        rpcMessageApi
                 ));
 
         //directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), UUID.randomUUID(), rpcServer.getSocketAddress()));
