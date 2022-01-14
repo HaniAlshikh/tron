@@ -1,0 +1,200 @@
+# Introduction and Goals
+
+TODO
+
+A distributed system is a collection of autonomous computing elements that appears to its users as a single coherent system.
+
+middleware is the same to a distributed system as what an operating system is to a computer:
+
+our important goals that should be met to make building a distributed system worth the effort. A distributed system should make resources easily accessible; it should hide the fact that resources are distributed across a network; it should be open; and it should be scalable.
+
+## Requirements Overview
+
+TODO
+
+Being open
+
+Transparency Description
+Access
+Location Relocation
+Migration Replication Concurrency
+Failure
+Hide differences in data representation and how an object is accessed
+Hide where an object is located
+Hide that an object may be moved to another location while in use
+Hide that an object may move to another location Hide that an object is replicated
+Hide that an object may be shared by several independent users
+Hide the failure and recovery of an object
+
+## Quality Goals
+
+TODO
+
+## Stakeholders
+
+TODO
+
+## Architecture Constraints
+
+### Technical Constraints
+
+TODO
+
+### Organisational constraints
+
+TODO
+
+## System Scope and Context
+
+### Business Context
+
+TODO
+
+Technical Context
+-----------------
+
+TODO
+
+## Solution Strategy
+
+TODO
+
+## Building Block View
+
+### Whitebox Overall System
+
+![Component Diagram](diagrams/middleware/MiddlewareBlackBoxLayer1.drawio.svg)
+
+TODO
+
+#### Level 2
+
+##### DirectoryServer
+
+Best practise for sharing the port and multicast address
+
+## Runtime View
+
+TODO
+
+[comment]: <> (\<Runtime Scenario 1\> {#__runtime_scenario_1})
+
+[comment]: <> (----------------------)
+
+[comment]: <> (-   *\<insert runtime diagram or textual description of the scenario\>*)
+
+[comment]: <> (-   *\<insert description of the notable aspects of the interactions)
+
+[comment]: <> (    between the building block instances depicted in this diagram.\>*)
+
+[comment]: <> (\<Runtime Scenario 2\> {#__runtime_scenario_2})
+
+[comment]: <> (----------------------)
+
+[comment]: <> (... {#_})
+
+[comment]: <> (---)
+
+[comment]: <> (\<Runtime Scenario n\> {#__runtime_scenario_n})
+
+[comment]: <> (----------------------)
+
+[comment]: <> (## Deployment View)
+
+[comment]: <> (Infrastructure Level 1 {#_infrastructure_level_1})
+
+[comment]: <> (----------------------)
+
+[comment]: <> (***\<Overview Diagram\>***)
+
+[comment]: <> (Motivation)
+
+[comment]: <> (:   *\<explanation in text form\>*)
+
+[comment]: <> (Quality and/or Performance Features)
+
+[comment]: <> (:   *\<explanation in text form\>*)
+
+[comment]: <> (Mapping of Building Blocks to Infrastructure)
+
+[comment]: <> (:   *\<description of the mapping\>*)
+
+[comment]: <> (Infrastructure Level 2 {#_infrastructure_level_2})
+
+[comment]: <> (----------------------)
+
+[comment]: <> (### *\<Infrastructure Element 1\>* {#__emphasis_infrastructure_element_1_emphasis})
+
+[comment]: <> (*\<diagram + explanation\>*)
+
+[comment]: <> (### *\<Infrastructure Element 2\>* {#__emphasis_infrastructure_element_2_emphasis})
+
+[comment]: <> (*\<diagram + explanation\>*)
+
+[comment]: <> (...)
+
+[comment]: <> (### *\<Infrastructure Element n\>* {#__emphasis_infrastructure_element_n_emphasis})
+
+[comment]: <> (*\<diagram + explanation\>*)
+
+[comment]: <> (Cross-cutting Concepts {#section-concepts})
+
+[comment]: <> (======================)
+
+[comment]: <> (*\<Concept 1\>* {#__emphasis_concept_1_emphasis})
+
+[comment]: <> (---------------)
+
+[comment]: <> (*\<explanation\>*)
+
+[comment]: <> (*\<Concept 2\>* {#__emphasis_concept_2_emphasis})
+
+[comment]: <> (---------------)
+
+[comment]: <> (*\<explanation\>*)
+
+[comment]: <> (...)
+
+[comment]: <> (*\<Concept n\>* {#__emphasis_concept_n_emphasis})
+
+[comment]: <> (---------------)
+
+[comment]: <> (*\<explanation\>*)
+
+[comment]: <> (Design Decisions {#section-design-decisions})
+
+[comment]: <> (================)
+
+[comment]: <> (Quality Requirements {#section-quality-scenarios})
+
+[comment]: <> (====================)
+
+[comment]: <> (Quality Tree {#_quality_tree})
+
+[comment]: <> (------------)
+
+[comment]: <> (Quality Scenarios {#_quality_scenarios})
+
+[comment]: <> (-----------------)
+
+[comment]: <> (Risks and Technical Debts {#section-technical-risks})
+
+[comment]: <> (=========================)
+
+[comment]: <> (Glossary {#section-glossary})
+
+[comment]: <> (========)
+
+[comment]: <> (+-----------------------+-----------------------------------------------+)
+
+[comment]: <> (| Term                  | Definition                                    |)
+
+[comment]: <> (+=======================+===============================================+)
+
+[comment]: <> (| *\<Term-1\>*          | *\<definition-1\>*                            |)
+
+[comment]: <> (+-----------------------+-----------------------------------------------+)
+
+[comment]: <> (| *\<Term-2\>*          | *\<definition-2\>*                            |)
+
+[comment]: <> (+-----------------------+-----------------------------------------------+)
