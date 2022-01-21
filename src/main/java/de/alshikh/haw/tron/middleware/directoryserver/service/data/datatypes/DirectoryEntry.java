@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class DirectoryServiceEntry implements Observable {
+public class DirectoryEntry implements Observable {
     private ConcurrentLinkedQueue<InvalidationListener> listeners;
 
     private final UUID providerId;
@@ -16,11 +16,11 @@ public class DirectoryServiceEntry implements Observable {
     private final InetSocketAddress serviceAddress;
     private boolean reachable;
 
-    public DirectoryServiceEntry(UUID providerId, UUID serviceId, InetSocketAddress serviceAddress) {
+    public DirectoryEntry(UUID providerId, UUID serviceId, InetSocketAddress serviceAddress) {
         this(providerId, serviceId, serviceAddress, true);
     }
 
-    public DirectoryServiceEntry(UUID providerId, UUID serviceId, InetSocketAddress serviceAddress, boolean reachable) {
+    public DirectoryEntry(UUID providerId, UUID serviceId, InetSocketAddress serviceAddress, boolean reachable) {
         this.listeners = new ConcurrentLinkedQueue<>();
 
         this.providerId = providerId;
@@ -50,7 +50,7 @@ public class DirectoryServiceEntry implements Observable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DirectoryServiceEntry that = (DirectoryServiceEntry) o;
+        DirectoryEntry that = (DirectoryEntry) o;
         return providerId.equals(that.providerId) && serviceId.equals(that.serviceId) && serviceAddress.equals(that.serviceAddress);
     }
 

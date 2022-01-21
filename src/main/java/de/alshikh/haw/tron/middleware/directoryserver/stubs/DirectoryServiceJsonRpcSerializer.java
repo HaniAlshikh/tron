@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.directoryserver.stubs;
 
-import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializer;
 import org.json.JSONObject;
 
@@ -10,9 +10,9 @@ import java.util.UUID;
 public class DirectoryServiceJsonRpcSerializer extends JsonRpcSerializer {
     @Override
     public Object deserialize(Object obj, Class<?> type) {
-        if (type == DirectoryServiceEntry.class && obj instanceof JSONObject) {
+        if (type == DirectoryEntry.class && obj instanceof JSONObject) {
             JSONObject serializedObj = (JSONObject) obj;
-            obj = new DirectoryServiceEntry(
+            obj = new DirectoryEntry(
                     UUID.fromString(serializedObj.getString("providerId")),
                     UUID.fromString(serializedObj.getString("serviceId")),
                     new InetSocketAddress(
@@ -28,10 +28,10 @@ public class DirectoryServiceJsonRpcSerializer extends JsonRpcSerializer {
 
     @Override
     public Object serialize(Object obj) {
-        if (obj instanceof DirectoryServiceEntry) {
-            DirectoryServiceEntry e = (DirectoryServiceEntry) obj;
+        if (obj instanceof DirectoryEntry) {
+            DirectoryEntry e = (DirectoryEntry) obj;
             JSONObject serializedObj = new JSONObject();
-            serializedObj.put("type", DirectoryServiceEntry.class.getName());
+            serializedObj.put("type", DirectoryEntry.class.getName());
             serializedObj.put("serviceId", e.getServiceId());
             serializedObj.put("address", e.getServiceAddress().getAddress().getHostAddress());
             serializedObj.put("port", e.getServiceAddress().getPort());

@@ -20,7 +20,7 @@ import de.alshikh.haw.tron.app.views.lobby.ILobbyView;
 import de.alshikh.haw.tron.app.views.lobby.LobbyView;
 import de.alshikh.haw.tron.app.views.view_library.ITronView;
 import de.alshikh.haw.tron.app.views.view_library.TronView;
-import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryClient;
+import de.alshikh.haw.tron.middleware.discoveryservice.DirectoryDiscoveryClient;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceClient;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;

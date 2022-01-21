@@ -5,7 +5,7 @@ import de.alshikh.haw.tron.app.models.game.data.datatypes.Direction;
 import de.alshikh.haw.tron.app.models.game.data.entities.PlayerUpdate;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.stubs.RemoteRoomsFactoryClient;
-import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
 import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
@@ -24,7 +24,7 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
     public Object serialize(Object obj) {
         if (obj instanceof IRpcAppClientStub) return serializeIRpcAppClientStub((IRpcAppClientStub) obj);
         if (obj instanceof PlayerUpdate) return serializePlayerUpdate((PlayerUpdate) obj);
-        if (obj instanceof DirectoryServiceEntry) return serializeDirectoryServiceEntry((DirectoryServiceEntry) obj);
+        if (obj instanceof DirectoryEntry) return serializeDirectoryServiceEntry((DirectoryEntry) obj);
         if (obj instanceof InetAddress) return serializeInetAddress((InetAddress) obj);
         if (obj instanceof UUID) return serializeUUID((UUID) obj);
 
@@ -55,14 +55,14 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
                 .put("version", playerUpdate.getVersion());
     }
 
-    private JSONObject serializeDirectoryServiceEntry(DirectoryServiceEntry directoryServiceEntry) {
-        return newSerializedObj(DirectoryServiceEntry.class)
-                .put("type", DirectoryServiceEntry.class.getName())
-                .put("providerId", directoryServiceEntry.getProviderId())
-                .put("serviceId", directoryServiceEntry.getServiceId())
-                .put("address", directoryServiceEntry.getServiceAddress().getAddress().getHostAddress())
-                .put("port", directoryServiceEntry.getServiceAddress().getPort())
-                .put("reachable", directoryServiceEntry.isReachable());
+    private JSONObject serializeDirectoryServiceEntry(DirectoryEntry directoryEntry) {
+        return newSerializedObj(DirectoryEntry.class)
+                .put("type", DirectoryEntry.class.getName())
+                .put("providerId", directoryEntry.getProviderId())
+                .put("serviceId", directoryEntry.getServiceId())
+                .put("address", directoryEntry.getServiceAddress().getAddress().getHostAddress())
+                .put("port", directoryEntry.getServiceAddress().getPort())
+                .put("reachable", directoryEntry.isReachable());
     }
 
     private JSONObject serializeInetAddress(InetAddress address) {
@@ -85,7 +85,7 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
         if (type == InvalidationListener.class) return deserializeInvalidationListener(serializedObj);
         if (type == Object.class) return deserializeObject(obj, serializedObj);
         if (type == PlayerUpdate.class) return deserializePlayerUpdate(serializedObj);
-        if (type == DirectoryServiceEntry.class) return deserializeDirectoryServiceEntry(serializedObj);
+        if (type == DirectoryEntry.class) return deserializeDirectoryServiceEntry(serializedObj);
         if (type == InetAddress.class) return deserializeInetAddress(serializedObj);
         if (type == UUID.class) return deserializeUuid(serializedObj);
 
@@ -93,7 +93,7 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
     }
 
     private Object deserializeObservable(JSONObject serializedObj) {
-        if (isType(DirectoryServiceEntry.class, serializedObj)) return deserializeDirectoryServiceEntry(serializedObj);
+        if (isType(DirectoryEntry.class, serializedObj)) return deserializeDirectoryServiceEntry(serializedObj);
         if (isType(PlayerUpdate.class, serializedObj)) return deserializePlayerUpdate(serializedObj);
 
         return serializedObj;
@@ -140,7 +140,7 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
     }
 
     private Object deserializeDirectoryServiceEntry(JSONObject serializedObj) {
-        return new DirectoryServiceEntry(
+        return new DirectoryEntry(
                 UUID.fromString(serializedObj.getString("providerId")),
                 UUID.fromString(serializedObj.getString("serviceId")),
                 new InetSocketAddress(

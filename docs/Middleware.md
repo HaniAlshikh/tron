@@ -76,6 +76,7 @@ Best practise for sharing the port and multicast address
 ## Runtime View
 
 TODO
+TODO: when documenting the protocol write how every object is serialized
 
 [comment]: <> (\<Runtime Scenario 1\> {#__runtime_scenario_1})
 
@@ -161,9 +162,16 @@ TODO
 
 [comment]: <> (*\<explanation\>*)
 
-[comment]: <> (Design Decisions {#section-design-decisions})
+## Design Decisions
 
-[comment]: <> (================)
+#### Architecture
+
+centralized component is often used to handle initial requests, for example to redirect a client to a replica server, which, in turn, may be part of a peer-to-peer network as is the case in BitTorrent-based systems. Page 102 -> Directory server
+
+Concurrent sever page 129 -> RpcServer
+
+
+we don't really care about structured naming or "human-readable" names. We mainly distribute rooms which are grouped under the same service id therefore we decided to implement a very simplified directory service (the expensive lookup/search and/or the complex mapping of attributes are not a problem in our usecase).
 
 [comment]: <> (Quality Requirements {#section-quality-scenarios})
 

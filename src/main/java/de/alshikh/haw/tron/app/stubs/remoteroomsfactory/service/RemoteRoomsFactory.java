@@ -7,7 +7,7 @@ import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelClient;
 import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelServer;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.data.datatypes.RemoteRoom;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
-import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.server.IRPCServer;
@@ -37,8 +37,8 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
 
     @Override
     public void invalidated(Observable observable) {
-        if (observable instanceof DirectoryServiceEntry) {
-            DirectoryServiceEntry e = (DirectoryServiceEntry) observable;
+        if (observable instanceof DirectoryEntry) {
+            DirectoryEntry e = (DirectoryEntry) observable;
             if (isPlayerUpdateChannel(e) && !isLocalRoom(e) && !isOwnUpdateChannel(e)) {
                 Platform.runLater(() -> {
                     if (e.isReachable())
@@ -58,7 +58,7 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
             change.getAddedSubList().forEach(r -> {
                 if (r.getUuid().equals(playerId)) { // owen room
                     rpcServer.register(new PlayerUpdateChannelServer(r.getHostUpdateChannel()));
-                    directoryService.register(new DirectoryServiceEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getSocketAddress()));
+                    directoryService.register(new DirectoryEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getSocketAddress()));
                 }
             });
 
@@ -71,7 +71,7 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
                     //  a better solution would be to bind the service to the opponent and only accept calls from him
                     //  but for now we comment this and leave the channel open (security is not a prio)
                     //rpcServer.unregister(PlayerUpdateChannelServer.serviceId);
-                    directoryService.unregister(new DirectoryServiceEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getSocketAddress()));
+                    directoryService.unregister(new DirectoryEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getSocketAddress()));
                 }
             });
         }
@@ -82,16 +82,16 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
         return new PlayerUpdateChannelClient(new RpcClient(rpcServer.getSocketAddress(), rpcMessageApi));
     };
 
-    private boolean isLocalRoom(DirectoryServiceEntry e) {
+    private boolean isLocalRoom(DirectoryEntry e) {
         return e.getServiceAddress().getAddress().equals(rpcServer.getSocketAddress().getAddress());
     }
 
-    private boolean isPlayerUpdateChannel(DirectoryServiceEntry e) {
+    private boolean isPlayerUpdateChannel(DirectoryEntry e) {
         return e.getServiceId().equals(PlayerUpdateChannelClient.serviceId);
     }
 
 
-    private boolean isOwnUpdateChannel(DirectoryServiceEntry entry) {
+    private boolean isOwnUpdateChannel(DirectoryEntry entry) {
         return entry.getServiceAddress().getPort() == rpcServer.getSocketAddress().getPort();
     }
 }

@@ -36,6 +36,18 @@ class RPC {
     // TODO: we don't want to save anything if the information (update) is not there we forget about it (transient and not persistent (no message queues)) so TCP
     // TODO: Business Context: application is the customer
     // TODO: as long as the data type contains only primitive types it's ok for serialization
+    // TODO: split the network and message components (marshal send receive umarshal) (marshaling != serializing/parsing)
+    // TODO: application stubs: callee/consumer caller/producer and not server client
+    // TODO: use UDP with some mechanism to resend missing packets (lamport?)
+    // TODO: TCP dosn't work over VPN (use UDP)
+    // TODO: lamport is implemented in a indirect way (PlayerUpdate version)
+    // TODO: UDP packte size (propping to see what possible to send)
+    // TODO: marshaling component is the ClientStub
+    // TODO: split application stub into zwei components callee caller
+    // TODO: calculate RTT when implementing UDP ( -><- / 2)
+    // TODO: fix loopback test
+    // TODO: change discover to lookup
+    // TODO: ValueObject?
     public static void main(String[] args) throws IOException {
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new HelloWorldJsonRpcSerializer());
 

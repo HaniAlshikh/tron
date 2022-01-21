@@ -190,7 +190,11 @@ TODO: Protocol is Interface and processing instructions
 TODO: ideally one diagram one arrow  
 TODO: state machine pattern better than dispatcher pattern  
 TODO: state pattern for rooms  
-
+TODO: use UDP for the game updates (rpc connection best-effort switch)
+TODO: parallels game tick logic (for example no need to wait for the collision detector)
+TODO: all function musst be used in the sequence diagrams otherwise there are not used
+TODO: write done that for example PlayerUpdate is datatype the encapsulate primitive attributes
+TODO: technical context all libraries (log for example)
 [comment]: <> (\<Runtime Scenario 1\> {#__runtime_scenario_1})
 
 [comment]: <> (----------------------)
@@ -299,6 +303,18 @@ peer to peer not much can be done (maybe directory server can benefits)
 #### Replication
 
 a transit system doesn't benefit from this
+
+#### Architecture
+
+"An important goal of distributed systems is to separate applications from underlying platforms by providing a middleware layer." page 55
+
+to reduce the load on the "server" node , that could be any node who starts the directory server -> peer to peer
+
+bottlenecks, single source of fehler, _____ -> decentralized Hierarchically organized peer-to-peer networks architecture (the directory server is centralized and per node (process) only one rpc server for all games -> is it then a hybrid?)
+
+everything is local except for the opponent state (update) -> Page 78 Figure 2.16 (e)
+
+implementing each service by means of a separate server may be a waste of resources. it is often more efficient to have a single superserver Page 129 -> one rpc server per process
 
 [comment]: <> (Quality Requirements {#section-quality-scenarios})
 

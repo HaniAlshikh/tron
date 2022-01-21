@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.directoryserver.discovery;
+package de.alshikh.haw.tron.middleware.discoveryservice;
 
 import java.io.IOException;
 

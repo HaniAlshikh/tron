@@ -1,8 +1,8 @@
 package de.alshikh.haw.tron.middleware.directoryserver;
 
 import de.alshikh.haw.tron.app.stubs.TronJsonRpcSerializer;
-import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryClient;
-import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryServer;
+import de.alshikh.haw.tron.middleware.discoveryservice.DirectoryDiscoveryClient;
+import de.alshikh.haw.tron.middleware.discoveryservice.DirectoryDiscoveryServer;
 import de.alshikh.haw.tron.middleware.directoryserver.service.DirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceClient;
@@ -50,7 +50,7 @@ public class DirectoryServer {
         System.out.println();
         DirectoryService directoryService = (DirectoryService) observable;
         System.out.format("%-40s%-40s%-32s%-6s\n", "Provider ID", "Service ID", "Service Address", "Is Reachable");
-        directoryService.getServiceRegistry().forEach(s -> {
+        directoryService.getDib().forEach(s -> {
             System.out.format("%-40s%-40s%-32s%-6s\n",
                     s.getProviderId(), s.getServiceId(), s.getServiceAddress(), s.isReachable());
         });

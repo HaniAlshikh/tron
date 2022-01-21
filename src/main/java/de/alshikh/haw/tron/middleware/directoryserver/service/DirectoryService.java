@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.directoryserver.service;
 
-import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
@@ -8,31 +8,31 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+// TODO: maybe lookup method (not really needed (rpc callback might be a use case))
 public class DirectoryService implements IDirectoryService, Observable {
+    private final ConcurrentHashMap<UUID, ConcurrentLinkedQueue<InvalidationListener>> serviceListeners;
+    private final ConcurrentLinkedQueue<InvalidationListener> directoryListeners;
 
-    private final ConcurrentHashMap<UUID, ConcurrentLinkedQueue<InvalidationListener>> listenersRegistry;
-    private final ConcurrentLinkedQueue<InvalidationListener> listeners;
-
-    private final ConcurrentLinkedQueue<DirectoryServiceEntry> serviceRegistry;
+    private final ConcurrentLinkedQueue<DirectoryEntry> dib; // directory information base
 
     public DirectoryService(){
-        this.listenersRegistry = new ConcurrentHashMap<>();
-        this.listeners = new ConcurrentLinkedQueue<>();
-        this.serviceRegistry = new ConcurrentLinkedQueue<>();
+        this.serviceListeners = new ConcurrentHashMap<>();
+        this.directoryListeners = new ConcurrentLinkedQueue<>();
+        this.dib = new ConcurrentLinkedQueue<>();
     }
 
     @Override
-    public void register(DirectoryServiceEntry directoryServiceEntry) {
-        serviceRegistry.add(directoryServiceEntry);
-        publishServiceUpdate(directoryServiceEntry);
+    public void register(DirectoryEntry directoryEntry) {
+        dib.add(directoryEntry);
+        publishServiceUpdate(directoryEntry);
         publishUpdate();
     }
 
     @Override
-    public void unregister(DirectoryServiceEntry directoryServiceEntry) {
-        if (serviceRegistry.remove(directoryServiceEntry)) { // known service
-            directoryServiceEntry.setReachable(false);
-            publishServiceUpdate(directoryServiceEntry);
+    public void unregister(DirectoryEntry directoryEntry) {
+        if (dib.remove(directoryEntry)) { // known service
+            directoryEntry.setReachable(false);
+            publishServiceUpdate(directoryEntry);
             publishUpdate();
         }
     }
@@ -40,42 +40,43 @@ public class DirectoryService implements IDirectoryService, Observable {
     // TODO: publisher subscriber?
     @Override
     public void addListenerTo(UUID serviceId, InvalidationListener listener) {
-        listenersRegistry.putIfAbsent(serviceId, new ConcurrentLinkedQueue<>());
-        listenersRegistry.get(serviceId).add(listener);
+        serviceListeners.putIfAbsent(serviceId, new ConcurrentLinkedQueue<>());
+        serviceListeners.get(serviceId).add(listener);
         // TODO: make serviceRegistry a map as well?
-        serviceRegistry.stream().filter(s -> s.getServiceId().equals(serviceId)).forEach(listener::invalidated);
+        dib.stream().filter(s -> s.getServiceId().equals(serviceId)).forEach(listener::invalidated);
 
     }
 
-    private void publishServiceUpdate(DirectoryServiceEntry directoryServiceEntry) {
-        directoryServiceEntry.setListeners(listenersRegistry.getOrDefault(
-                directoryServiceEntry.getServiceId(), new ConcurrentLinkedQueue<>()));
-        directoryServiceEntry.publishUpdate();
+    private void publishServiceUpdate(DirectoryEntry directoryEntry) {
+        directoryEntry.setListeners(serviceListeners.getOrDefault(
+                directoryEntry.getServiceId(), new ConcurrentLinkedQueue<>()));
+        directoryEntry.publishUpdate();
     }
 
     @Override
     public void removeListenerForm(UUID serviceId, InvalidationListener listener) {
-        if (listenersRegistry.containsKey(serviceId))
-            listenersRegistry.get(serviceId).remove(listener);
+        if (serviceListeners.containsKey(serviceId))
+            serviceListeners.get(serviceId).remove(listener);
     }
 
     @Override
     public void addListener(InvalidationListener listener) {
-        listeners.add(listener);
+        directoryListeners.add(listener);
         listener.invalidated(this);
     }
 
     public void publishUpdate() {
-        listeners.forEach(l -> l.invalidated(this));
+        directoryListeners.forEach(l -> l.invalidated(this));
     }
 
     @Override
     public void removeListener(InvalidationListener listener) {
-        listeners.remove(listener);
+        directoryListeners.remove(listener);
     }
 
-    //public int getPort(UUID serviceId, InetAddress serviceProviderAddress) {
-    //    Optional<DirectoryServiceEntry> entry = serviceRegistry.stream()
+    // lookup a port based on service id and provider ip (for example rpc callback server port)
+    //public int lookup(UUID serviceId, InetAddress serviceProviderAddress) {
+    //    Optional<DirectoryEntry> entry = dib.stream()
     //            .filter(s -> s.getServiceId().equals(serviceId) &&
     //                    s.getServiceAddress().getAddress().equals(serviceProviderAddress))
     //            .findFirst();
@@ -85,10 +86,10 @@ public class DirectoryService implements IDirectoryService, Observable {
 
     @Override
     public String toString() {
-        return serviceRegistry.toString();
+        return dib.toString();
     }
 
-    public ConcurrentLinkedQueue<DirectoryServiceEntry> getServiceRegistry() {
-        return serviceRegistry;
+    public ConcurrentLinkedQueue<DirectoryEntry> getDib() {
+        return dib;
     }
 }

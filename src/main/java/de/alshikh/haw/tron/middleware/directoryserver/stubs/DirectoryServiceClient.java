@@ -1,7 +1,7 @@
 package de.alshikh.haw.tron.middleware.directoryserver.stubs;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
-import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryServiceEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
 import de.alshikh.haw.tron.middleware.rpc.client.IRPCClient;
 import javafx.beans.InvalidationListener;
@@ -19,15 +19,15 @@ public class DirectoryServiceClient implements IDirectoryService, IRpcAppClientS
     }
 
     @Override
-    public void register(DirectoryServiceEntry directoryServiceEntry) {
+    public void register(DirectoryEntry directoryEntry) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClient.invoke(id, method, directoryServiceEntry);
+        rpcClient.invoke(id, method, directoryEntry);
     }
 
     @Override
-    public void unregister(DirectoryServiceEntry directoryServiceEntry) {
+    public void unregister(DirectoryEntry directoryEntry) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClient.invoke(id, method, directoryServiceEntry);
+        rpcClient.invoke(id, method, directoryEntry);
     }
 
     @Override

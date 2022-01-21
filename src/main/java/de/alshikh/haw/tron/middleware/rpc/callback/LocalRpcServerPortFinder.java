@@ -6,6 +6,7 @@ package de.alshikh.haw.tron.middleware.rpc.callback;
 //  without needing a directory service to ask for the callback service port
 //  this avoids the dependency on the directory service when it comes to callbacks
 //  if the dependency is expect and should be implemented the stubs should be created from IRpcCallbackService)
+//  piggybacked in the messaging protocol
 public class LocalRpcServerPortFinder {
     public static int PORT = 0;
 }
