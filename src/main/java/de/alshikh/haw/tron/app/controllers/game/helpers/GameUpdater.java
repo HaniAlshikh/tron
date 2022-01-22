@@ -51,7 +51,8 @@ public class GameUpdater implements IUpdater {
         this.receivedOpponentUpdate = opponentUpdatesCache.remove(getPlayerUpdateVersion());
         if (this.receivedOpponentUpdate == null) {
             if (retries == gameController.getNumberOfRetries())
-                Platform.runLater(() -> gameController.endGame("You won because of a network error"));
+                Platform.runLater(() -> gameController.endGame("You won because "
+                        + gameController.getGameModel().getGame().getOpponent().getName() + " stopped responding")); // TODO
             retries++;
             return false;
         }
@@ -82,16 +83,14 @@ public class GameUpdater implements IUpdater {
         logger.debug("received opponent update: " + opponentUpdate);
         opponentUpdatesCache.put(opponentUpdate.getVersion(), opponentUpdate);
 
-        // TODO: optimize this to maybe resend after 3 failed attempts or something
-        //  cuz this will go in a non-ending loop of old and new updates regardless if needed
-        //if (getPlayerUpdateVersion() > opponentUpdate.getVersion()) {
-        //    retries++;
-        //    logger.debug("resending previous update");
-        //    gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishPreviousUpdate());
-        //}
-        //
+        // TODO: where is the correct place for this?
+        if (getPlayerUpdateVersion() > opponentUpdate.getVersion()) {
+            logger.debug("resending previous update");
+            gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishPreviousUpdate());
+        }
+
         //else if (getPlayerUpdateVersion() < opponentUpdate.getVersion()) {
-        //    retries++;
+        //    //retries++;
         //    logger.debug("resending update");
         //    gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
         //}
