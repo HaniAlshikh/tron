@@ -40,9 +40,7 @@ public class DirectoryEntry implements Observable {
     }
 
     public void publishUpdate() {
-        listeners.forEach(l -> {
-            l.invalidated(this);
-        });
+        listeners.parallelStream().forEach(l -> l.invalidated(this));
     }
 
 

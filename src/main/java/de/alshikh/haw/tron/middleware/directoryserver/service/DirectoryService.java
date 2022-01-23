@@ -7,9 +7,13 @@ import javafx.beans.Observable;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 // TODO: maybe lookup method (not really needed (rpc callback might be a use case))
 public class DirectoryService implements IDirectoryService, Observable {
+    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
     private final ConcurrentHashMap<UUID, ConcurrentLinkedQueue<InvalidationListener>> serviceListeners;
     private final ConcurrentLinkedQueue<InvalidationListener> directoryListeners;
 
@@ -42,9 +46,11 @@ public class DirectoryService implements IDirectoryService, Observable {
     public void addListenerTo(UUID serviceId, InvalidationListener listener) {
         serviceListeners.putIfAbsent(serviceId, new ConcurrentLinkedQueue<>());
         serviceListeners.get(serviceId).add(listener);
-        // TODO: make serviceRegistry a map as well?
-        dib.stream().filter(s -> s.getServiceId().equals(serviceId)).forEach(listener::invalidated);
 
+        // TODO: make serviceRegistry a map as well?
+        executor.submit(() -> dib.stream()
+                .filter(s -> s.getServiceId().equals(serviceId))
+                .forEach(listener::invalidated));
     }
 
     private void publishServiceUpdate(DirectoryEntry directoryEntry) {

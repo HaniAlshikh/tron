@@ -20,10 +20,10 @@ public class PlayerUpdateChannel implements IUpdateChannel {
     }
 
     @Override
-    public void addListener(InvalidationListener listener) {
-        player.getUpdate().addListener(listener);
+    public void addListener(InvalidationListener opponentUpdateChannel) {
+        player.getUpdate().addListener(opponentUpdateChannel);
         // TODO: find a better way (this make no sense and only work for two players)
-        onAddedListener.accept(((IUpdateChannel) listener).getName());
+        onAddedListener.accept(((IUpdateChannel) opponentUpdateChannel).getName());
     }
 
     @Override
