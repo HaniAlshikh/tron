@@ -2,6 +2,7 @@ package de.alshikh.haw.tron.middleware.rpc.message.data.datatypes;
 
 import org.json.JSONObject;
 
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 public interface IRpcRequest {
@@ -17,5 +18,5 @@ public interface IRpcRequest {
 
     JSONObject getParams();
 
-    int getRpcServerPort();
+    InetSocketAddress getCallbackAddress();
 }

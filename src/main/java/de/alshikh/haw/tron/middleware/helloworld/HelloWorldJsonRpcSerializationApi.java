@@ -1,12 +1,12 @@
 package de.alshikh.haw.tron.middleware.helloworld;
 
 import de.alshikh.haw.tron.middleware.helloworld.service.data.datatypes.HelloWorldMessage;
-import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializationApi;
 import org.json.JSONObject;
 
 import java.util.UUID;
 
-public class HelloWorldJsonRpcSerializer extends JsonRpcSerializer {
+public class HelloWorldJsonRpcSerializationApi extends JsonRpcSerializationApi {
     @Override
     public Object deserialize(Object obj, Class<?> type) {
         if (!(obj instanceof JSONObject))

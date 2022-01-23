@@ -5,5 +5,7 @@ import de.alshikh.haw.tron.middleware.helloworld.service.data.datatypes.HelloWor
 public interface IHelloWorld {
     HelloWorldMessage helloWorld();
 
+    HelloWorldMessage helloWorldBestEffort();
+
     HelloWorldMessage helloWorld(HelloWorldMessage message);
 }

@@ -1,35 +1,36 @@
 package de.alshikh.haw.tron.middleware.rpc.message.json;
 
-import de.alshikh.haw.tron.middleware.rpc.callback.LocalRpcServerPortFinder;
 import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.InvalidParamsRpcException;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializer;
-import de.alshikh.haw.tron.middleware.rpc.message.serialize.IRpcSerializer;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.RpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes.JsonRpcRequest;
+import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializationApi;
+import de.alshikh.haw.tron.middleware.rpc.message.serialize.IRpcSerializationApi;
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 public class JsonRpcMessageApi implements IRpcMessageApi {
 
     private final static double JSONRPC = 2.0;
 
-    private final JsonRpcSerializer jsonRpcSerializer;
+    private final JsonRpcSerializationApi jsonRpcSerializer;
 
-    public JsonRpcMessageApi(JsonRpcSerializer jsonRpcSerializer) {
+    public JsonRpcMessageApi(JsonRpcSerializationApi jsonRpcSerializer) {
         this.jsonRpcSerializer = jsonRpcSerializer;
     }
 
     @Override
-    public IRpcRequest newRequest(UUID serviceId, Method method, Object[] args, boolean isNotification) {
+    public IRpcRequest newRequest(UUID serviceId, boolean isNotification, InetSocketAddress rpcCallbackServerAddress, Method method, Object[] args) {
         JSONObject reqObj = newRequestObj(serviceId, method, args);
         if (!isNotification) {
             reqObj.put("id", UUID.randomUUID().toString());
-            reqObj.put("rpcServerPort", LocalRpcServerPortFinder.PORT); // TODO find a better way
+            reqObj.put("callbackIp", rpcCallbackServerAddress.getAddress().getHostAddress());
+            reqObj.put("callbackPort", rpcCallbackServerAddress.getPort());
         }
         return new JsonRpcRequest(reqObj);
     }
@@ -50,7 +51,7 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
     }
 
     @Override
-    public IRpcSerializer getRpcSerializer() {
+    public IRpcSerializationApi getRpcSerializer() {
         return jsonRpcSerializer;
     }
 

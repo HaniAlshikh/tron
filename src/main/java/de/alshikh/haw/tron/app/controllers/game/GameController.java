@@ -38,7 +38,7 @@ public final class GameController implements IGameController {
 
     // TODO: implement managed ExecutorService
     private Future<GameUpdater> gameUpdaterFuture;
-    private final int numberOfRetries = 10;
+    private final int numberOfRetries = 50;
 
     public GameController(IGameModel gameModel, IGameView gameView, ILobbyController lobbyController, ExecutorService es) {
         this.gameModel = gameModel;

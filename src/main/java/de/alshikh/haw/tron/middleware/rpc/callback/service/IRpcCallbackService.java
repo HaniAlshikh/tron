@@ -1,10 +1,8 @@
 package de.alshikh.haw.tron.middleware.rpc.callback.service;
 
-import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallbackHandler;
-import de.alshikh.haw.tron.middleware.rpc.message.marshal.IRpcMarshaller;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.UUID;
 
 public interface IRpcCallbackService {
@@ -12,9 +10,5 @@ public interface IRpcCallbackService {
 
     void setResponse(UUID requestId, Object response);
 
-    IRpcCallback newRpcCallback(InetAddress receiverAddress, int port);
-
-    IRpcMarshaller getRpcMarshaller();
-
-    void setRpcMarshaller(IRpcMarshaller rpcMarshaller);
+    InetSocketAddress getCallbackServerAddress();
 }

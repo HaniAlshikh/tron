@@ -1,13 +1,13 @@
 package de.alshikh.haw.tron.middleware.directoryserver.stubs;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
-import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializationApi;
 import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
 
-public class DirectoryServiceJsonRpcSerializer extends JsonRpcSerializer {
+public class DirectoryServiceJsonRpcSerializationApi extends JsonRpcSerializationApi {
     @Override
     public Object deserialize(Object obj, Class<?> type) {
         if (type == DirectoryEntry.class && obj instanceof JSONObject) {

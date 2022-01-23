@@ -1,68 +1,64 @@
-package de.alshikh.haw.tron.middleware.rpc.server;
+package de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal;
 
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
-import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
-import de.alshikh.haw.tron.middleware.rpc.callback.service.RpcCallbackService;
+import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackClient;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
 import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.*;
-import de.alshikh.haw.tron.middleware.rpc.message.marshal.IRpcUnmarshaller;
+import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
-import de.alshikh.haw.tron.middleware.rpc.network.IRpcReceiver;
-import de.alshikh.haw.tron.middleware.rpc.network.data.exceptions.FailedToReceiveNetworkRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class ServerStub implements Runnable {
+public class RpcUnmarshaller implements IRpcUnmarshaller {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
-    private final IRpcCallbackService callbackService = RpcCallbackService.getInstance();
 
     private IRpcCallback rpcCallback;
     private IRpcRequest rpcRequest;
 
-    private final IRpcReceiver rpcReceiver;
-    private final IRpcUnmarshaller rpcUnmarshaller;
+    private final IRpcMessageApi rpcMsgApi;
     private final HashMap<UUID, IRpcAppServerStub> serviceRegistry;
 
-    public ServerStub(IRpcReceiver rpcReceiver, IRpcUnmarshaller rpcUnmarshaller, HashMap<UUID, IRpcAppServerStub> serviceRegistry) {
-        this.rpcReceiver = rpcReceiver;
-        this.rpcUnmarshaller = rpcUnmarshaller;
+    public RpcUnmarshaller(IRpcMessageApi rpcMsgApi, HashMap<UUID, IRpcAppServerStub> serviceRegistry) {
+        this.rpcMsgApi = rpcMsgApi;
         this.serviceRegistry = serviceRegistry;
     }
 
     @Override
-    public void run() {
+    public void unmarshal(byte[] request) {
         try {
-            receive();
-            call(unmarshal());
+            call(toRpcCall(request));
         } catch (RpcException e) {
-            if (!rpcRequest.isNotification())
+            log.debug("failed to unmarshal request " + new String(request), e);
+            if (rpcRequest != null && !rpcRequest.isNotification())
                 rpcCallback.retrn(rpcRequest.getId(), e);
         }
     }
 
-    private void receive() throws FailedToReceiveNetworkRpcException {
-        rpcRequest = rpcUnmarshaller.readRequest(rpcReceiver.receive());
+    private IRpcCall toRpcCall(byte[] request) throws ServiceNotFoundRpcException, InvalidParamsRpcException {
+        rpcRequest = rpcMsgApi.readRequest(request);
         log.debug("received request: " + rpcRequest);
-        rpcReceiver.safeClose();
-        if (!rpcRequest.isNotification())
-            rpcCallback = callbackService.newRpcCallback(rpcReceiver.getAddress(), rpcRequest.getRpcServerPort());
-    }
 
-    private IRpcCall unmarshal() throws InvalidParamsRpcException {
-        return rpcUnmarshaller.toRpcCall(rpcRequest);
+        if (!rpcRequest.isNotification())
+            rpcCallback = newRpcCallback(rpcRequest.getCallbackAddress());
+
+        if (!serviceRegistry.containsKey(rpcRequest.getServiceId()))
+            throw new ServiceNotFoundRpcException("Service not found: " + rpcRequest.getServiceId());
+
+        return rpcMsgApi.toRpcCall(rpcRequest);
     }
 
     private void call(IRpcCall rpcCall) throws InvocationRpcException, MethodNotFoundRpcException, ServiceNotFoundRpcException {
         try {
             IRpcAppServerStub serviceServerStub = serviceRegistry.get(rpcCall.getServiceId());
-            if (serviceServerStub == null)
-                throw new ServiceNotFoundRpcException("Service not found: " + rpcCall.getServiceId());
-
             Object result = serviceServerStub.call(rpcCall.getMethodName(), rpcCall.getParameterTypes(), rpcCall.getArguments());
             if (!rpcRequest.isNotification())
                 rpcCallback.retrn(rpcRequest.getId(), result);
@@ -72,4 +68,11 @@ public class ServerStub implements Runnable {
             throw new MethodNotFoundRpcException();
         }
     }
+
+
+    private IRpcCallback newRpcCallback(InetSocketAddress callbackAddress) {
+        return new RpcCallbackClient(new RpcClientStub(new RpcMarshaller(rpcMsgApi, new RpcSender(callbackAddress),
+                null))); // callback chaining is not supported
+    }
+
 }

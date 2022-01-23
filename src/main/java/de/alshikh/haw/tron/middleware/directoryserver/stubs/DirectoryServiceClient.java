@@ -3,7 +3,7 @@ package de.alshikh.haw.tron.middleware.directoryserver.stubs;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
-import de.alshikh.haw.tron.middleware.rpc.client.IRPCClient;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.IRPCClientStub;
 import javafx.beans.InvalidationListener;
 
 import java.lang.reflect.Method;
@@ -12,9 +12,9 @@ import java.util.UUID;
 public class DirectoryServiceClient implements IDirectoryService, IRpcAppClientStub {
     public static UUID id = UUID.fromString("08fd9cc9-a1dd-454e-ae22-f3c1329ab93c");
 
-    IRPCClient rpcClient;
+    IRPCClientStub rpcClient;
 
-    public DirectoryServiceClient(IRPCClient rpcClient) {
+    public DirectoryServiceClient(IRPCClientStub rpcClient) {
         this.rpcClient = rpcClient;
     }
 
@@ -43,7 +43,7 @@ public class DirectoryServiceClient implements IDirectoryService, IRpcAppClientS
     }
 
     @Override
-    public IRPCClient getRpcClient() {
+    public IRPCClientStub getRpcClient() {
         return rpcClient;
     }
 

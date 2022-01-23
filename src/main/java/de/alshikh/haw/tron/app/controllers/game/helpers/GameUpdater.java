@@ -54,6 +54,8 @@ public class GameUpdater implements IUpdater {
                 Platform.runLater(() -> gameController.endGame("You won because "
                         + gameController.getGameModel().getGame().getOpponent().getName() + " stopped responding")); // TODO
             retries++;
+            logger.debug("resending update");
+            gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
             return false;
         }
         return true;

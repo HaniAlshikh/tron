@@ -2,7 +2,7 @@ package de.alshikh.haw.tron.middleware.rpc.callback.stubs;
 
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
-import de.alshikh.haw.tron.middleware.rpc.client.IRPCClient;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.IRPCClientStub;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -11,9 +11,9 @@ import java.util.UUID;
 public class RpcCallbackClient implements IRpcCallback, IRpcAppClientStub {
     public static UUID id = UUID.fromString("08fd9cc9-a1fd-454e-ae21-f3c1329ab93c");
 
-    IRPCClient rpcClient;
+    IRPCClientStub rpcClient;
 
-    public RpcCallbackClient(IRPCClient rpcClient) {
+    public RpcCallbackClient(IRPCClientStub rpcClient) {
         this.rpcClient = rpcClient;
     }
 
@@ -24,7 +24,7 @@ public class RpcCallbackClient implements IRpcCallback, IRpcAppClientStub {
     }
 
     @Override
-    public IRPCClient getRpcClient() {
+    public IRPCClientStub getRpcClient() {
         return rpcClient;
     }
 

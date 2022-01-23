@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.rpc.network.data.exceptions;
+package de.alshikh.haw.tron.middleware.rpc.serverstub.receive.data.exceptions;
 
 import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.RpcException;
 

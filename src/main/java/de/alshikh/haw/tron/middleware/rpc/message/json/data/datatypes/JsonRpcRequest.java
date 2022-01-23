@@ -3,13 +3,15 @@ package de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
 import org.json.JSONObject;
 
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class JsonRpcRequest implements IRpcRequest {
 
     UUID id;
-    int rpcServerPort;
+    InetSocketAddress callbackAddress;
+
     UUID serviceId;
     String method;
     JSONObject params;
@@ -25,7 +27,8 @@ public class JsonRpcRequest implements IRpcRequest {
         String uuid = reqObj.optString("id");
         if (!uuid.isEmpty()) {
             id = UUID.fromString(uuid);
-            rpcServerPort = reqObj.getInt("rpcServerPort");
+            callbackAddress = new InetSocketAddress(reqObj.getString("callbackIp"),
+                    reqObj.getInt("callbackPort"));
         }
         serviceId = UUID.fromString(reqObj.getString("service"));
         method = reqObj.getString("method");
@@ -48,8 +51,8 @@ public class JsonRpcRequest implements IRpcRequest {
     }
 
     @Override
-    public int getRpcServerPort() {
-        return rpcServerPort;
+    public InetSocketAddress getCallbackAddress() {
+        return callbackAddress;
     }
 
     @Override
@@ -71,8 +74,8 @@ public class JsonRpcRequest implements IRpcRequest {
     public String toString() {
         return "JsonRpcRequest{" +
                 (isNotification() ? "" : "id=" + id) +
-                (isNotification() ? "" : ", rpcServerPort=" + rpcServerPort) +
-                ", serviceId=" + serviceId +
+                (isNotification() ? "" : ", callbackAddress=" + callbackAddress + ", ") +
+                "serviceId=" + serviceId +
                 ", method='" + method + '\'' +
                 ", params=" + params +
                 '}';

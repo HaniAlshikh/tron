@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.rpc.network.util;
+package de.alshikh.haw.tron.middleware.rpc.serverstub.receive.util;
 
 import java.io.IOException;
 import java.net.*;

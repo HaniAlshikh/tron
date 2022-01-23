@@ -7,9 +7,11 @@ import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.IRemoteRoomsFact
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.stubs.RemoteRoomsFactoryClient;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
-import de.alshikh.haw.tron.middleware.rpc.client.RpcClient;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializer;
+import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializationApi;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import org.json.JSONObject;
@@ -19,7 +21,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.UUID;
 
-public class TronJsonRpcSerializer extends JsonRpcSerializer {
+public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
+
     @Override
     public Object serialize(Object obj) {
         if (obj instanceof IRpcAppClientStub) return serializeIRpcAppClientStub((IRpcAppClientStub) obj);
@@ -107,19 +110,21 @@ public class TronJsonRpcSerializer extends JsonRpcSerializer {
     }
 
     private Object deserializePlayerUpdateChannelClient(JSONObject serializedObj) {
-        return new PlayerUpdateChannelClient(new RpcClient(
-                new InetSocketAddress(
+        return new PlayerUpdateChannelClient(new RpcClientStub(new RpcMarshaller(
+                new JsonRpcMessageApi(this),
+                new RpcSender(new InetSocketAddress(
                         serializedObj.getString("ip"),
-                        serializedObj.getInt("port")),
-                new JsonRpcMessageApi(this)));
+                        serializedObj.getInt("port"))),
+                rcs))); // TODO
     }
 
     private Object deserializeRemoteRoomsFactoryClient(JSONObject serializedObj) {
-        return new RemoteRoomsFactoryClient(new RpcClient(
-                new InetSocketAddress(
+        return new RemoteRoomsFactoryClient(new RpcClientStub(new RpcMarshaller(
+                new JsonRpcMessageApi(this),
+                new RpcSender(new InetSocketAddress(
                         serializedObj.getString("ip"),
-                        serializedObj.getInt("port")),
-                new JsonRpcMessageApi(this)));
+                        serializedObj.getInt("port"))),
+                rcs))); // TODO
     }
 
     private Object deserializeObject(Object obj, JSONObject serializedObj) {

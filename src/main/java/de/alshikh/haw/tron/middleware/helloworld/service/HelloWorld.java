@@ -11,6 +11,11 @@ public class HelloWorld implements IHelloWorld {
     }
 
     @Override
+    public HelloWorldMessage helloWorldBestEffort() {
+        return new HelloWorldMessage("Hello World Best Effort");
+    }
+
+    @Override
     public HelloWorldMessage helloWorld(HelloWorldMessage message) {
         return new HelloWorldMessage("Hello World " + message.getMessage());
     }

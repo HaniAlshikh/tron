@@ -5,7 +5,7 @@ import de.alshikh.haw.tron.middleware.helloworld.service.data.datatypes.HelloWor
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallbackHandler;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallbackHandler;
-import de.alshikh.haw.tron.middleware.rpc.client.IRPCClient;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.IRPCClientStub;
 
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -13,9 +13,9 @@ import java.util.UUID;
 public class HelloWorldClient implements IHelloWorld, IRpcAppClientStub {
     public static UUID serviceId = UUID.fromString("08fd9cc9-a1ff-454e-ae22-f3c1329ab93c");
 
-    IRPCClient rpcClient;
+    IRPCClientStub rpcClient;
 
-    public HelloWorldClient(IRPCClient rpcClient) {
+    public HelloWorldClient(IRPCClientStub rpcClient) {
         this.rpcClient = rpcClient;
     }
 
@@ -25,6 +25,17 @@ public class HelloWorldClient implements IHelloWorld, IRpcAppClientStub {
         IRpcCallbackHandler rpcCallbackHandler = new RpcCallbackHandler();
         rpcClient.invoke(serviceId, rpcCallbackHandler, method);
         Object response = rpcCallbackHandler.getResult();
+        if (response instanceof Exception)
+            return null;
+        return (HelloWorldMessage) response;
+    }
+
+    @Override
+    public HelloWorldMessage helloWorldBestEffort() {
+        Method method = new Object(){}.getClass().getEnclosingMethod();
+        IRpcCallbackHandler rpcCallbackHandler = new RpcCallbackHandler();
+        rpcClient.invoke(serviceId, rpcCallbackHandler, true, method);
+        Object response = rpcCallbackHandler.getResult(); // TODO: bestEffort and callback?
         if (response instanceof Exception)
             return null;
         return (HelloWorldMessage) response;
@@ -42,7 +53,7 @@ public class HelloWorldClient implements IHelloWorld, IRpcAppClientStub {
     }
 
     @Override
-    public IRPCClient getRpcClient() {
+    public IRPCClientStub getRpcClient() {
         return rpcClient;
     }
 

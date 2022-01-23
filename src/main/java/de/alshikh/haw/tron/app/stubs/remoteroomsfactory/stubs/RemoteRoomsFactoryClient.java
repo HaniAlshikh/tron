@@ -2,7 +2,7 @@ package de.alshikh.haw.tron.app.stubs.remoteroomsfactory.stubs;
 
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
-import de.alshikh.haw.tron.middleware.rpc.client.IRPCClient;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.IRPCClientStub;
 import javafx.beans.Observable;
 
 import java.lang.reflect.Method;
@@ -11,9 +11,9 @@ import java.util.UUID;
 public class RemoteRoomsFactoryClient implements IRemoteRoomsFactory, IRpcAppClientStub {
     public static UUID serviceId = UUID.fromString("08fd9cc9-a1dd-454e-ae18-f3c1329ab93c");
 
-    IRPCClient rpcClient;
+    IRPCClientStub rpcClient;
 
-    public RemoteRoomsFactoryClient(IRPCClient rpcClient) {
+    public RemoteRoomsFactoryClient(IRPCClientStub rpcClient) {
         this.rpcClient = rpcClient;
     }
 
@@ -24,7 +24,7 @@ public class RemoteRoomsFactoryClient implements IRemoteRoomsFactory, IRpcAppCli
     }
 
     @Override
-    public IRPCClient getRpcClient() {
+    public IRPCClientStub getRpcClient() {
         return rpcClient;
     }
 
