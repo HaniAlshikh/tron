@@ -44,7 +44,7 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
     public void invalidated(Observable observable) {
         if (observable instanceof DirectoryEntry) {
             DirectoryEntry e = (DirectoryEntry) observable;
-            if (isPlayerUpdateChannel(e) && !isLocalRoom(e) && !isOwnUpdateChannel(e)) {
+            if (isPlayerUpdateChannel(e) && !isOwnUpdateChannel(e)) {
                 Platform.runLater(() -> {
                     if (e.isReachable())
                         lobbyModel.addRoom(new RemoteRoom(new PlayerUpdateChannelClient(
@@ -70,13 +70,6 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
 
             change.getRemoved().forEach(r -> {
                 if (r.getUuid().equals(playerId)) { // owen room
-                    // TODO: we remove the "room" when the opponent joins or the player cancels the game
-                    //  by unregistering the update channel service we "close" the channel
-                    //  which means player and opponent can't communicate anymore
-                    //  yet we have to close the channel
-                    //  a better solution would be to bind the service to the opponent and only accept calls from him
-                    //  but for now we comment this and leave the channel open (security is not a prio)
-                    //rpcServer.unregister(PlayerUpdateChannelServer.serviceId);
                     directoryService.unregister(new DirectoryEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getRpcReceiver().getServerAddress()));
                 }
             });

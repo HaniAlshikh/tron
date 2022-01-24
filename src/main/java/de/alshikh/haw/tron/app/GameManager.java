@@ -1,5 +1,7 @@
 package de.alshikh.haw.tron.app;
 
+import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
+import de.alshikh.haw.tron.app.models.lobby.LobbyModel;
 import de.alshikh.haw.tron.app.views.manager.overlays.ManagerMenu;
 import de.alshikh.haw.tron.app.views.view_library.ITronView;
 import de.alshikh.haw.tron.app.views.view_library.TronView;
@@ -26,13 +28,14 @@ public class GameManager extends Application {
     //      (for example displaying the current game state in the 7th game need to wait for the other 6 games)
     ExecutorService es = Executors.newFixedThreadPool((int)
             (Runtime.getRuntime().availableProcessors() * RESOURCES_LIMIT));
+    ILobbyModel singletonLobbyModel = new LobbyModel();
 
     @Override
     public void start(Stage stage) throws Exception {
         ITronView managerView = new TronView(MANAGER_CONFIG_FILE);
 
         ManagerMenu managerMenu = new ManagerMenu("menu.css");
-        managerMenu.getBtnNew().setOnAction(e -> Platform.runLater(new TronGame(es, DISTRIBUTED)));
+        managerMenu.getBtnNew().setOnAction(e -> Platform.runLater(newTronGame()));
         managerView.registerOverlay("managerMenu", managerMenu);
 
         managerView.init();
@@ -45,6 +48,10 @@ public class GameManager extends Application {
         stage.setX((screenBounds.getWidth() - managerView.getScene().getWidth()) / 2);
         stage.setY(0);
         stage.setOnCloseRequest(e -> { Platform.exit(); System.exit(0); });
+    }
+
+    public Runnable newTronGame() {
+        return DISTRIBUTED ? new DistributedTronGame(es) : new TronGame(es, singletonLobbyModel);
     }
 
     @Override

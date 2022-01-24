@@ -49,7 +49,7 @@ public final class GameController implements IGameController {
         this.playerName = new SimpleStringProperty(RandomNameGenerator.get());
         this.gameUpdater = new GameUpdater(this);
         this.gameLoop = new Timeline(
-                new KeyFrame(Duration.seconds(0.08),
+                new KeyFrame(Duration.seconds(2),
                         e -> this.gameUpdaterFuture = this.es.submit(gameUpdater::updateGame, gameUpdater))
         );
 
