@@ -7,7 +7,6 @@ import javafx.event.EventHandler;
 import java.util.UUID;
 
 public interface ILobbyController {
-
     void showRoomsMenu(IPlayerUpdateChannel updateChannel, EventHandler<ActionEvent> cancelBtnHandler);
 
     void createRoom(IPlayerUpdateChannel updateChannel);
