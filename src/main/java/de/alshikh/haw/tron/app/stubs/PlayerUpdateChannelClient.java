@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.stubs;
 
-import de.alshikh.haw.tron.app.controllers.game.helpers.IUpdateChannel;
+import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallbackHandler;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallbackHandler;
@@ -11,7 +11,7 @@ import javafx.beans.Observable;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-public class PlayerUpdateChannelClient implements IUpdateChannel, IRpcAppClientStub {
+public class PlayerUpdateChannelClient implements IPlayerUpdateChannel, IRpcAppClientStub {
     public static UUID serviceId = UUID.fromString("08fd9cc9-a1ff-4542-ae32-f3c1329ab93c");
 
     IRPCClientStub rpcClient;
@@ -23,7 +23,7 @@ public class PlayerUpdateChannelClient implements IUpdateChannel, IRpcAppClientS
     @Override
     public void invalidated(Observable observable) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClient.invoke(serviceId, false, method, observable); // TODO: enable udp
+        rpcClient.invoke(serviceId, true, method, observable); // TODO: enable udp
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PlayerUpdateChannelClient implements IUpdateChannel, IRpcAppClientS
     }
 
     @Override
-    public String getName() {
+    public String getPlayerName() {
         Method method = new Object(){}.getClass().getEnclosingMethod();
         IRpcCallbackHandler rpcCallbackHandler = new RpcCallbackHandler();
         rpcClient.invoke(serviceId, rpcCallbackHandler, method);
@@ -50,7 +50,7 @@ public class PlayerUpdateChannelClient implements IUpdateChannel, IRpcAppClientS
     }
 
     @Override
-    public UUID getId() {
+    public UUID getPlayerId() {
         Method method = new Object(){}.getClass().getEnclosingMethod();
         IRpcCallbackHandler rpcCallbackHandler = new RpcCallbackHandler();
         rpcClient.invoke(serviceId, rpcCallbackHandler, method);

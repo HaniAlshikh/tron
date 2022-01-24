@@ -4,14 +4,11 @@ import de.alshikh.haw.tron.app.models.game.data.entities.Game;
 import de.alshikh.haw.tron.app.models.game.data.entities.Player;
 import de.alshikh.haw.tron.app.models.game.data.entities.PlayerUpdate;
 import javafx.beans.Observable;
-import javafx.beans.property.StringProperty;
 
 public interface IGameModel extends Observable {
+    void createGame();
 
-    // TODO: find a better way (player factory?)
-    void createGame(StringProperty playerName);
-
-    void joinGame(StringProperty playerName);
+    void joinGame();
 
     void updateGameState(PlayerUpdate opponentUpdate);
 

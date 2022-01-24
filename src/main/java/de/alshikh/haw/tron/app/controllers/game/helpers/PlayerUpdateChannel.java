@@ -7,42 +7,41 @@ import javafx.beans.Observable;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class PlayerUpdateChannel implements IUpdateChannel {
+public class PlayerUpdateChannel implements IPlayerUpdateChannel {
 
-    Player player;
-    IUpdater updater;
-    Consumer<String> onAddedListener;
+    private final Player player;
+    private final IGameUpdater gameUpdater;
+    private final Consumer<String> gameStarter;
 
-    public PlayerUpdateChannel(Player player, IUpdater updater, Consumer<String> onAddedListener) {
+    public PlayerUpdateChannel(Player player, IGameUpdater gameUpdater, Consumer<String> gameStarter) {
         this.player = player;
-        this.updater = updater;
-        this.onAddedListener = onAddedListener;
+        this.gameUpdater = gameUpdater;
+        this.gameStarter = gameStarter;
     }
 
     @Override
     public void addListener(InvalidationListener opponentUpdateChannel) {
         player.getUpdate().addListener(opponentUpdateChannel);
-        // TODO: find a better way (this make no sense and only work for two players)
-        onAddedListener.accept(((IUpdateChannel) opponentUpdateChannel).getName());
+        gameStarter.accept(((IPlayerUpdateChannel) opponentUpdateChannel).getPlayerName());
     }
 
     @Override
     public void removeListener(InvalidationListener listener) {
-        player.getUpdate().addListener(listener);
+        player.getUpdate().removeListener(listener);
     }
 
     @Override
     public void invalidated(Observable observable) {
-        updater.invalidated(observable);
+        gameUpdater.invalidated(observable);
     }
 
     @Override
-    public String getName() {
+    public String getPlayerName() {
         return player.getName();
     }
 
     @Override
-    public UUID getId() {
+    public UUID getPlayerId() {
         return player.getId();
     }
 }

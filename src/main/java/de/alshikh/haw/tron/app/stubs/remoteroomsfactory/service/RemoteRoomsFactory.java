@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service;
 
-import de.alshikh.haw.tron.app.controllers.game.helpers.IUpdateChannel;
+import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.models.lobby.datatypes.IRoom;
 import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelClient;
@@ -76,7 +76,7 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
         }
     }
 
-    private PlayerUpdateChannelClient createGuestUpdateChannelRpcClient(IUpdateChannel guestUpdateChannel) {
+    private PlayerUpdateChannelClient createGuestUpdateChannelRpcClient(IPlayerUpdateChannel guestUpdateChannel) {
         rpcServer.register(new PlayerUpdateChannelServer(guestUpdateChannel));
         return new PlayerUpdateChannelClient(new RpcClientStub(new RpcMarshaller(
                 rpcMessageApi,

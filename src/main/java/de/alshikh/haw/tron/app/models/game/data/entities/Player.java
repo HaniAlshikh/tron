@@ -5,25 +5,25 @@ import javafx.beans.property.StringProperty;
 import java.util.UUID;
 
 public class Player {
-
-    // TODO: associate player id with the update to generalize
     private final UUID id = UUID.randomUUID();
+    private final StringProperty name;
 
-    private StringProperty name;
     private Bike bike;
     private PlayerUpdate update;
     private boolean pauseGame;
     private boolean dead;
     private int updateVersion;
 
-    public Player() {}
-
-    public Player(StringProperty name, Bike bike) {
-        reset(name, bike);
+    public Player(StringProperty name) {
+        this(name, null);
     }
 
-    public void reset(StringProperty name, Bike bike) {
+    public Player(StringProperty name, Bike bike) {
         this.name = name;
+        reset(bike);
+    }
+
+    public void reset(Bike bike) {
         this.bike = bike;
         this.update = new PlayerUpdate();
         this.pauseGame = false;

@@ -1,24 +1,24 @@
 package de.alshikh.haw.tron.app.models.lobby.datatypes;
 
-import de.alshikh.haw.tron.app.controllers.game.helpers.IUpdateChannel;
+import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
 
 import java.util.UUID;
 
 public class Room implements IRoom {
-    protected IUpdateChannel gustUpdateChannel;
+    protected IPlayerUpdateChannel gustUpdateChannel;
 
     private final UUID uuid;
     private final String name;
-    protected final IUpdateChannel hostUpdateChannel;
+    protected final IPlayerUpdateChannel hostUpdateChannel;
 
-    public Room(IUpdateChannel hostUpdateChannel) {
-        this.uuid = hostUpdateChannel.getId();
-        this.name = hostUpdateChannel.getName();
+    public Room(IPlayerUpdateChannel hostUpdateChannel) {
+        this.uuid = hostUpdateChannel.getPlayerId();
+        this.name = hostUpdateChannel.getPlayerName();
         this.hostUpdateChannel = hostUpdateChannel;
     }
 
     @Override
-    public void enter(IUpdateChannel gustUpdateChannel) {
+    public void enter(IPlayerUpdateChannel gustUpdateChannel) {
         this.gustUpdateChannel = gustUpdateChannel;
         // TODO: state pattern (onFull exchange channels)
         forwardChannel();
@@ -40,7 +40,7 @@ public class Room implements IRoom {
     }
 
     @Override
-    public IUpdateChannel getHostUpdateChannel() {
+    public IPlayerUpdateChannel getHostUpdateChannel() {
         return hostUpdateChannel;
     }
 

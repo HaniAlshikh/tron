@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.controllers.lobby;
 
-import de.alshikh.haw.tron.app.controllers.game.helpers.IUpdateChannel;
+import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.app.controllers.lobby.inputhandlers.RoomsMenuInputHandler;
 import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.models.lobby.datatypes.Room;
@@ -24,7 +24,7 @@ public final class LobbyController implements ILobbyController {
     }
 
     @Override
-    public void showRoomsMenu(IUpdateChannel guestUpdateChannel, EventHandler<ActionEvent> cancelBtnHandler) {
+    public void showRoomsMenu(IPlayerUpdateChannel guestUpdateChannel, EventHandler<ActionEvent> cancelBtnHandler) {
         RoomsMenuInputHandler roomsMenuInputHandler = new RoomsMenuInputHandler();
         roomsMenuInputHandler.setListItemConsumer(room -> {
             // TODO: what is the best practise to create subs
@@ -43,7 +43,7 @@ public final class LobbyController implements ILobbyController {
     }
 
     @Override
-    public void createRoom(IUpdateChannel hostUpdateChannel) {
+    public void createRoom(IPlayerUpdateChannel hostUpdateChannel) {
         lobbyModel.addRoom(new Room(hostUpdateChannel));
     }
 

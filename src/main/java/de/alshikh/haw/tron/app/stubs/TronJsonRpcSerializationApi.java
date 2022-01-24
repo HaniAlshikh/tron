@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.stubs;
 
-import de.alshikh.haw.tron.app.controllers.game.helpers.IUpdateChannel;
+import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.app.models.game.data.datatypes.Direction;
 import de.alshikh.haw.tron.app.models.game.data.entities.PlayerUpdate;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.IRemoteRoomsFactory;
@@ -41,7 +41,7 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
 
     private Object serializeIRpcAppClientStub(IRpcAppClientStub rpcAppClientStub) {
         JSONObject serializedObj = null;
-        if (rpcAppClientStub instanceof IUpdateChannel) serializedObj = newSerializedObj(IUpdateChannel.class);
+        if (rpcAppClientStub instanceof IPlayerUpdateChannel) serializedObj = newSerializedObj(IPlayerUpdateChannel.class);
         if (rpcAppClientStub instanceof IRemoteRoomsFactory) serializedObj = newSerializedObj(IRemoteRoomsFactory.class);
 
         if (serializedObj == null) return rpcAppClientStub;
@@ -104,7 +104,7 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
 
     private Object deserializeInvalidationListener(JSONObject serializedObj) {
         if (isType(IRemoteRoomsFactory.class, serializedObj)) return deserializeRemoteRoomsFactoryClient(serializedObj);
-        if (isType(IUpdateChannel.class, serializedObj)) return deserializePlayerUpdateChannelClient(serializedObj);
+        if (isType(IPlayerUpdateChannel.class, serializedObj)) return deserializePlayerUpdateChannelClient(serializedObj);
 
         return serializedObj;
     }

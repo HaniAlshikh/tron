@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.app;
+package de.alshikh.haw.tron;
 
 import de.alshikh.haw.tron.app.controllers.game.GameController;
 import de.alshikh.haw.tron.app.controllers.game.IGameController;
@@ -16,17 +16,14 @@ import de.alshikh.haw.tron.app.views.view_library.TronView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 
 public class TronGame implements Runnable {
 
     public final static String VIEW_CONFIG_FILE = "view.properties";
 
-    private final ExecutorService es;
     private final ILobbyModel lobbyModel;
 
-    public TronGame(ExecutorService es, ILobbyModel lobbyModel) {
-        this.es = es;
+    public TronGame(ILobbyModel lobbyModel) {
         this.lobbyModel = lobbyModel;
     }
 
@@ -40,7 +37,7 @@ public class TronGame implements Runnable {
 
             IGameModel gameModel = new GameModel();
             IGameView gameView = new GameView(baseView);
-            IGameController gameController = new GameController(gameModel, gameView, lobbyController, es);
+            IGameController gameController = new GameController(gameModel, gameView, lobbyController);
 
             gameController.showStartMenu("Ready?");
 

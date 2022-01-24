@@ -3,8 +3,6 @@ package de.alshikh.haw.tron.app.controllers.game;
 import de.alshikh.haw.tron.app.models.game.IGameModel;
 import de.alshikh.haw.tron.app.views.game.IGameView;
 
-import java.util.concurrent.ExecutorService;
-
 public interface IGameController {
 
     void showStartMenu(String message);
@@ -26,8 +24,4 @@ public interface IGameController {
     IGameModel getGameModel();
 
     IGameView getGameView();
-
-    ExecutorService getEs();
-
-    int getNumberOfRetries();
 }

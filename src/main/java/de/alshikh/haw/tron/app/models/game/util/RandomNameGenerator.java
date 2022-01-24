@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.app.controllers.game.util;
+package de.alshikh.haw.tron.app.models.game.util;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

@@ -4,8 +4,8 @@ module de.alshikh.haw.tron {
     requires org.slf4j;
     requires org.json;
 
-    exports de.alshikh.haw.tron.app;
-    opens de.alshikh.haw.tron.app to javafx.fxml;
+    exports de.alshikh.haw.tron;
+    opens de.alshikh.haw.tron to javafx.fxml;
     exports de.alshikh.haw.tron.app.views.view_library;
     exports de.alshikh.haw.tron.app.views.game.overlayes;
     opens de.alshikh.haw.tron.app.views.game.overlayes to javafx.fxml;

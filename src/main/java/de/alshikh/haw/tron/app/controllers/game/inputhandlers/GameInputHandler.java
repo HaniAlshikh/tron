@@ -20,13 +20,11 @@ public class GameInputHandler implements IGameInputHandler {
     public void handle(KeyEvent keyEvent) {
         KeyCode code = keyEvent.getCode();
         log.debug("pressed key: " + code);
-
-        handleAWSD(code);
-
-        keyEvent.consume(); // do nothing
+        handleWASD(code);
+        keyEvent.consume();
     }
 
-    private void handleAWSD(KeyCode keyCode) {
+    private void handleWASD(KeyCode keyCode) {
         switch (keyCode) {
             case A: player.getBike().steer(Direction.LEFT); break;
             case D: player.getBike().steer(Direction.RIGHT); break;

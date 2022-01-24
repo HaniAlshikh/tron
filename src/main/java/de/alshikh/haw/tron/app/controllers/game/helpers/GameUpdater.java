@@ -1,61 +1,81 @@
 package de.alshikh.haw.tron.app.controllers.game.helpers;
 
+import de.alshikh.haw.tron.Config;
 import de.alshikh.haw.tron.app.controllers.game.IGameController;
 import de.alshikh.haw.tron.app.models.game.IGameModel;
+import de.alshikh.haw.tron.app.models.game.data.entities.Player;
 import de.alshikh.haw.tron.app.models.game.data.entities.PlayerUpdate;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class GameUpdater implements IUpdater {
+public class GameUpdater implements IGameUpdater {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
+    private final ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    Map<Integer, PlayerUpdate> opponentUpdatesCache = new ConcurrentHashMap<>();
-
-    private PlayerUpdate receivedOpponentUpdate;
     private final Object gameStateLock = new Object();
     private final Object UILock = new Object();
-    private int retries = 0;
+    private boolean running = false;
+    private int updateRetries = 0;
+
+    private PlayerUpdate receivedOpponentUpdate;
+    private final Map<Integer, PlayerUpdate> opponentUpdatesCache = new ConcurrentHashMap<>(); // 2 updates max
+    private final Timeline gameLoop;
 
     private final IGameController gameController;
 
     public GameUpdater(IGameController gameController) {
         this.gameController = gameController;
+        this.gameLoop = new Timeline(new KeyFrame(
+                Duration.seconds(1.0 / Config.FRAMES_PER_SECOND),
+                e -> es.submit(this::updateGame)));
+        this.gameLoop.setCycleCount(Timeline.INDEFINITE);
     }
 
+    @Override
+    public void start() {
+        running = true;
+        gameLoop.play();
+    }
+
+    @Override
     public void updateGame() {
         synchronized (gameStateLock) { // in case updating the state took longer than the tick
+            logger.debug("lock: update game state");
             if (!fairPlayInsured()) return;
-            logger.debug("it took " + retries + " retries to get the update");
-            retries = 0;
-
-            // no need to run this asynchronously as the opponent will keep pushing it's update
-            // on each tick and wait for us to send our update
-            // we will have to wait for the game state update to give the player the chance to react
-            // before consuming the next update
-            logger.debug("lock: consume opponent update: " + receivedOpponentUpdate);
+            logger.debug("consuming opponent update: " + receivedOpponentUpdate);
+            logger.debug("it took " + updateRetries + " retries to get the update");
+            updateRetries = 0;
+            // the UILock is needed to insure that the player had the chance to observe the new state
+            // and act accordingly (even if it's not really possible but at least he can estimate)
             synchronized (UILock) {
-                logger.debug("lock: update game state");
-                gameController.getGameModel().updateGameState(this.receivedOpponentUpdate); // consumes to old and creates new update
+                gameController.getGameModel().updateGameState(receivedOpponentUpdate);
                 gameController.getGameModel().createNewPlayerUpdate();
-                logger.debug("unlock: update game state");
             }
+            logger.debug("unlock: update game state");
         }
     }
 
+    // the opponent didn't exceed the "Fairness limit"
+    // and both players are observing the same state (matching update versions)
     private boolean fairPlayInsured() {
-        this.receivedOpponentUpdate = opponentUpdatesCache.remove(getPlayerUpdateVersion());
-        if (this.receivedOpponentUpdate == null) {
-            if (retries == gameController.getNumberOfRetries())
-                Platform.runLater(() -> gameController.endGame("You won because "
-                        + gameController.getGameModel().getGame().getOpponent().getName() + " stopped responding")); // TODO
-            retries++;
+        receivedOpponentUpdate = opponentUpdatesCache.remove(getPlayer().getUpdateVersion());
+        if (receivedOpponentUpdate == null) {
+            if (updateRetries == Config.UPDATE_MAX_RETRIES)
+                Platform.runLater(() -> gameController.endGame(
+                        "You won because " + getOpponent().getName() + " stopped responding"));
+            updateRetries++;
             logger.debug("resending update");
-            gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
+            es.execute(() -> getPlayer().getUpdate().publishUpdate());
             return false;
         }
         return true;
@@ -63,6 +83,9 @@ public class GameUpdater implements IUpdater {
 
     @Override
     public void invalidated(Observable observable) {
+        if (!running)
+            return;
+
         if (observable instanceof PlayerUpdate)
             playerUpdateObserved((PlayerUpdate) observable);
 
@@ -73,9 +96,8 @@ public class GameUpdater implements IUpdater {
     private void gameStateChangeObserved(IGameModel gameModel) {
         synchronized (UILock) {
             logger.debug("lock: rendering game state");
-            if (gameModel.getGame().ended()) {
+            if (gameModel.getGame().ended())
                 Platform.runLater(gameController::endGame);
-            }
             gameController.getGameView().showGame(gameModel.getGame());
             logger.debug("unlock: rendering game state");
         }
@@ -84,21 +106,23 @@ public class GameUpdater implements IUpdater {
     private void playerUpdateObserved(PlayerUpdate opponentUpdate) {
         logger.debug("received opponent update: " + opponentUpdate);
         opponentUpdatesCache.put(opponentUpdate.getVersion(), opponentUpdate);
-
-        // TODO: where is the correct place for this?
-        if (getPlayerUpdateVersion() > opponentUpdate.getVersion()) {
+        if (getPlayer().getUpdateVersion() > opponentUpdate.getVersion()) {
             logger.debug("resending previous update");
-            gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishPreviousUpdate());
+            es.execute(() -> getPlayer().getUpdate().publishPreviousUpdate());
         }
-
-        //else if (getPlayerUpdateVersion() < opponentUpdate.getVersion()) {
-        //    //retries++;
-        //    logger.debug("resending update");
-        //    gameController.getEs().execute(() -> gameController.getGameModel().getGame().getPlayer().getUpdate().publishUpdate());
-        //}
     }
 
-    private int getPlayerUpdateVersion() {
-        return gameController.getGameModel().getGame().getPlayer().getUpdateVersion();
+    @Override
+    public void stop() {
+        running = false;
+        gameLoop.stop();
+    }
+
+    private Player getPlayer() {
+        return gameController.getGameModel().getGame().getPlayer();
+    }
+
+    private Player getOpponent() {
+        return gameController.getGameModel().getGame().getOpponent();
     }
 }

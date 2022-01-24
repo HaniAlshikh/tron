@@ -5,8 +5,8 @@ import javafx.beans.Observable;
 
 import java.util.UUID;
 
-public interface IUpdateChannel extends InvalidationListener, Observable {
-    String getName();
+public interface IPlayerUpdateChannel extends InvalidationListener, Observable {
+    String getPlayerName();
 
-    UUID getId();
+    UUID getPlayerId();
 }

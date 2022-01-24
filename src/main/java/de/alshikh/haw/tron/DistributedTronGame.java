@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.app;
+package de.alshikh.haw.tron;
 
 import de.alshikh.haw.tron.app.controllers.game.GameController;
 import de.alshikh.haw.tron.app.controllers.game.IGameController;
@@ -10,8 +10,8 @@ import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.models.lobby.LobbyModel;
 import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelServer;
 import de.alshikh.haw.tron.app.stubs.TronJsonRpcSerializationApi;
-import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.RemoteRoomsFactory;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.IRemoteRoomsFactory;
+import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.RemoteRoomsFactory;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.stubs.RemoteRoomsFactoryClient;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.stubs.RemoteRoomsFactoryServer;
 import de.alshikh.haw.tron.app.views.game.GameView;
@@ -43,17 +43,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
 
 public class DistributedTronGame implements Runnable {
 
     public final static String VIEW_CONFIG_FILE = "view.properties";
 
-    private final ExecutorService es;
-
-    public DistributedTronGame(ExecutorService es) {
-        this.es = es;
-    }
+    public DistributedTronGame() {}
 
     @Override
     public void run() {
@@ -66,7 +61,7 @@ public class DistributedTronGame implements Runnable {
 
             IGameModel gameModel = new GameModel();
             IGameView gameView = new GameView(baseView);
-            IGameController gameController = new GameController(gameModel, gameView, lobbyController, es);
+            IGameController gameController = new GameController(gameModel, gameView, lobbyController);
 
             gameController.showStartMenu("Ready?");
 
@@ -76,7 +71,7 @@ public class DistributedTronGame implements Runnable {
             stage.show();
             stage.setOnCloseRequest(e -> gameController.closeGame());
 
-            es.execute(() -> bootUpMiddleware(gameModel.getPlayer().getId(), lobbyModel));
+            new Thread(() -> bootUpMiddleware(gameModel.getPlayer().getId(), lobbyModel)).start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
