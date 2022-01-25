@@ -1,15 +1,13 @@
 # Introduction and Goals
 
-Distributed Tron Game
+We want to create a Distributed Tron Game where People can play and enjoy the Game together while being on different Computers.  
+The Game is a clone of the "Light Cycles Mode" in the original [Tron Video Game](https://en.wikipedia.org/wiki/Tron_(video_game)) from 1982.
 
 ## Requirements Overview
 
-Players of this game can create a room (host) or join one (guest). After joining a room the game will start. Each player controls the game with a keyboard to move his tron.
-
-a Tron is a representation of the player and will continuously move forward. It can be moved right and left but not backward.
-
-When the Tron moves it leaves a trail behind it. The objective is to force the opponent tron into walls or trails, while simultaneously avoiding them.
-
+Players of this game can create a room (host) or join one (guest). After joining a room the game will start. Each player controls the game with a keyboard to move his tron.  
+A Tron is a representation of the player and will continuously move forward. It can be moved right and left but not backward.  
+When the Tron moves it leaves a trail behind it. The objective is to force the opponent tron into walls or trails, while simultaneously avoiding them.  
 If the player restarted or existed the game. The opponent wins and vise versa.
 
 | ID | Use-Case | Description |
@@ -33,7 +31,7 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 
 | Role | Expectations |
 |------|--------------|
-| Customer | <ul><li>game demo with n instances and complete documentation</li><li>fixed method for project management (proof)</li><li>fixed method for documentation (important: systematic and faithful to the method)</li><li>Protocol definition with error semantics</li><li>clear representation of the structure in at least 2 hierarchy levels: component diagram, class diagram, deployment diagram</li><li>clear representation of the behavior through sequence diagram, activity diagram, state diagram</li><li>problem-solving strategies must be derived from reference literature or accepted third-party literature</li><li>code must match the documentation and documentation must match the code</li><li>Implementation in an object-oriented language</li><li>RPC interface - Own RPC implementation no framework => solution part A</li><li>ReST (at least level 1 in the Richardson Maturity Model) => solution part B</li><li>musst use Dependency-inversion-principle</li><li>The use of frameworks must be approved by the customer</li><li>a maximum of 2 players per game</li><li>each player can start a new game or enter a playroom</li></ul> |
+| Customer | <ul><li>game demo with n instances and complete documentation</li><li>fixed method for project management (proof)</li><li>fixed method for documentation (important: systematic and faithful to the method)</li><li>Protocol definition with error semantics</li><li>clear representation of the structure in at least 2 hierarchy levels: component diagram, class diagram, deployment diagram</li><li>clear representation of the behavior through sequence diagram, activity diagram, state diagram</li><li>problem-solving strategies must be derived from reference literature or accepted third-party literature</li><li>code must match the documentation and documentation must match the code</li><li>Implementation in an object-oriented language</li><li>RPC interface - Own RPC implementation no framework </li><li>musst use Dependency-inversion-principle</li><li>The use of frameworks must be approved by the customer</li><li>a maximum of 2 players per game</li><li>each player can start a new game or enter a playroom</li></ul> |
 | Developer | <ul><li>Understanding distributed systems in a practical way</li><li>getting PVL</li></ul> |
 
 ## Architecture Constraints
@@ -43,7 +41,7 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 | ID | Constraint | Description |
 |----|------------|-------------|
 | TC01 | Programing language | Implementation in an object-oriented language |
-| TC02| Communication | <ul><li>RPC interface - Own RPC implementation no framework => solution part A</li><li>ReST (at least level 1 in the Richardson Maturity Model) => solution part B</li></ul> |
+| TC02 | Communication | RPC interface - Own RPC implementation no framework |
 | TC03 | Implementation | musst use Dependency-inversion-principle |
 | TC04 | Frameworks | The use of frameworks must be approved by the customer |
 | TC05 | 2 players | a maximum of 2 players per game |
@@ -53,8 +51,6 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 | TC09 | Motion | <ul><li>player moves in a straight line automatically</li><li>player can manipulate direction, but can't go back</li></ul>
 | TC10 | Keyboard control | player can use the keyboard to control the game |
 | TC11 | Resources usage | musst not use more than 80% of the machine resources |
-
-was ist genau mit 80% gemeint? und soll man das im Code realisieren? (z.b. bei java kann man das an die JVM als parameter übergeben)
 
 ### Organisational constraints
 
@@ -83,18 +79,18 @@ TODO: add use cases ids
 TODO: Error cases
 TODO: Need updating
 
-| Actor | Function | Semantics | Precondition | Postcondition |
-|-------|----------|-----------|--------------|---------------|
-| Controller | public void showStartMenu() | forward the call to the view component with the needed handlers to show the start menu | | the view component has the needed handlers to generate the needed UI components |
-| view | public void showStartMenu(EventHandler<ActionEvent> startBtnHandler) | generates the UI component for the start menu | the needed handlers were received | based on user choice the corresponding handler is called |
-| Controller | private void startGame(GameMode gameMode) | setup the game environment with the appropriate handlers to start the game | player has chosen a game mode from the start menu | player can play the chosen game |
-| Model | public void createGame(GameMode gameMode) | creates a game environment based on the chosen game mode | a game mode is chosen | a new game environment is created and can be used to start a game |
-| Model | private void updateGame() | updates the game state based on player input | game is running in an infinite loop | player inputs are reflected in the game |
-| view | public void showGameUpdate(GameUpdate gameUpdate) | present the received game update | game is running in an infinite loop | player inputs are presented in the UI |
-| Model | public boolean isAllowed(Direction currentDirection) | checks if player bike direction input is allowed based on current direction | player moved his bike | movement may be applied or ignored |
-| Model | public Coordinate calculateNewPosition(Coordinate currentCoordinate) | calculates the new bike coordinates based on the direction and current coordinates  | the new moving direction is allowed | new coordinates can be used to update bike trail |
-| Model | private void checkForCollision(Player player) | checks periodically for collisions to eliminate losers | game loop is running | loser is eliminated from the game |
-| Model | private void endGame() | stops the game loop to display the winner | only one player or no players are left | winner is displayed and a new game can be started |
+| Actor | Function | UCID | Semantics | Precondition | Postcondition |
+|-------|-------|----------|-----------|--------------|---------------|
+| Controller | public void showStartMenu() | UC01 | forward the call to the view component with the needed handlers to show the start menu | game ist started | the view component has the needed handlers to generate the ded UI components |
+| View | public void showStartMenu(EventHandler<ActionEvent> startBtnHandler) | UC01 | generates the UI component for the start menu | the needed handlers were received | based on user choice the corresponding handler is led |
+| Controller | private void startGame(GameMode gameMode) | UC01 | setup the game environment with the appropriate handlers to start the game | player has chosen a game mode from the start menu | player can play the chosen e |
+| Model | public void createGame(GameMode gameMode) | UC03 | creates a game environment based on the chosen game mode | a game mode is chosen | a new game environment is created and can be used to start a game |
+| Model | private void updateGame() | UC04 | updates the game state based on player input | game is running in an infinite loop | player inputs are reflected in the game |
+| View | public void showGameUpdate(GameUpdate gameUpdate) | UC04 | present the received game update | game is running in an infinite loop | player inputs are presented in the UI |
+| Model | public boolean isAllowed(Direction currentDirection) | UC05 | checks if player bike direction input is allowed based on current direction | player moved his bike | movement may be applied or ignored |
+| Model | public Coordinate calculateNewPosition(Coordinate currentCoordinate) | UC04 | calculates the new bike coordinates based on the direction and current coordinates  | the new moving direction is allowed | new rdinates can be used to update bike trail |
+| Model | private void checkForCollision(Player player) | UC04 | checks periodically for collisions to eliminate losers | game loop is running | loser is eliminated from the game |
+| Model | private void endGame() | UC07 | stops the game loop to display the winner | only one player or no players are left | winner is displayed and a new game can be started |
 
 ## Building Block View
 
@@ -108,9 +104,9 @@ X referees to the component name in the different packages
 
 | stereotype | Component | Interface | Description |
 |------------|-----------|-----------|-------------|
-| model | X | IXModel | handles the data and state including the logic |
-| view | X | IXView | handles the representation and generate the needed UI components |
-| controller | X | IXController | enables the interconnection between the view and model so it acts as an intermediary. |
+| Model | X | IXModel | handles the data and state including the logic |
+| View | X | IXView | handles the representation and generate the needed UI components |
+| Controller | X | IXController | enables the interconnection between the view and model so it acts as an intermediary. |
 
 #### Level 2
 
@@ -131,11 +127,11 @@ how to sync rooms between models if we have multiple Models instances?
 
 ###### Game
 
-TODO
+![Component Diagram](diagrams/application/GameViewClassDiagram.drawio.svg)
 
 ###### Lobby
 
-TODO
+![Component Diagram](diagrams/application/LobbyViewClassDiagram.drawio.svg)
 
 #### Controller
 
