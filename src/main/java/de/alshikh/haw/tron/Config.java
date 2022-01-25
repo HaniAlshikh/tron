@@ -20,6 +20,9 @@ public class Config {
     public static final String MANAGER_PROP = getAbsolutePath("manager.properties");
 
 
+    public static String DISCOVERY_GROUP = "235.0.0.0";
+    public static int DISCOVERY_PORT = 4446;
+
     public static final int RPC_CALLBACK_TIMEOUT = 3; // in seconds
     // a typical update message is around 254 - 256 bytes
     public static final int MAX_PACKET_SIZE = 512; // TODO: dynamic

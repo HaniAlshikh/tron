@@ -1,20 +1,20 @@
 package de.alshikh.haw.tron.middleware.discoveryservice;
 
+import de.alshikh.haw.tron.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.MulticastSocket;
 
 public class DirectoryDiscoveryClient implements IDiscoveryClient {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private String discoveredMsg;
-    private final byte[] buf;
 
-    public DirectoryDiscoveryClient() {
-        this.discoveredMsg = "";
-        this.buf = new byte[256];
-    }
+    public DirectoryDiscoveryClient() {}
 
     public static InetSocketAddress discover() {
         IDiscoveryClient directoryDiscoveryClient = new DirectoryDiscoveryClient();
@@ -30,10 +30,11 @@ public class DirectoryDiscoveryClient implements IDiscoveryClient {
 
     @Override
     public void listen() {
-        try (MulticastSocket socket =  new MulticastSocket(DirectoryDiscoveryServer.DISCOVERY_PORT)) {
-            InetAddress group = InetAddress.getByName(DirectoryDiscoveryServer.DISCOVERY_GROUP);
+        try (MulticastSocket socket =  new MulticastSocket(Config.DISCOVERY_PORT)) {
+            InetAddress group = InetAddress.getByName(Config.DISCOVERY_GROUP);
             socket.joinGroup(group);
 
+            byte[] buf = new byte[256];
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
             discoveredMsg = new String(packet.getData(), 0, packet.getLength());
@@ -50,7 +51,7 @@ public class DirectoryDiscoveryClient implements IDiscoveryClient {
     public InetSocketAddress toSocketAddress() {
         try {
             String[] msg = discoveredMsg.split(":");
-            String add = msg[0].replace("/", ""); // TODO
+            String add = msg[0].replace("/", "");
             return new InetSocketAddress(add, Integer.parseInt(msg[1]));
         } catch (Exception e) {
             return null;
