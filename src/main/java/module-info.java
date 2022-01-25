@@ -7,14 +7,6 @@ module de.alshikh.haw.tron {
 
     exports de.alshikh.haw.tron;
     opens de.alshikh.haw.tron to javafx.fxml;
-    exports de.alshikh.haw.tron.app.views.game.overlayes;
-    opens de.alshikh.haw.tron.app.views.game.overlayes to javafx.fxml;
-    exports de.alshikh.haw.tron.app.models.game.data.datatypes;
-    exports de.alshikh.haw.tron.app.models.game.data.entities;
-    opens de.alshikh.haw.tron.app.models.game.data.datatypes to javafx.fxml;
-    opens de.alshikh.haw.tron.app.models.game.data.entities to javafx.fxml;
-    exports de.alshikh.haw.tron.app.models.game;
-    opens de.alshikh.haw.tron.app.models.game to javafx.fxml;
-    exports de.alshikh.haw.tron.app.controllers.game.inputhandlers;
-    opens de.alshikh.haw.tron.app.controllers.game.inputhandlers to javafx.fxml;
+    exports de.alshikh.haw.tron.app.models.lobby;
+    exports de.alshikh.haw.tron.app.models.lobby.datatypes;
 }

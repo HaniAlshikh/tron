@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public class LobbyModel implements ILobbyModel {
     // maps are unordered and therefore not supported in javafx as view
-    ObservableMap<UUID, IRoom> rooms = FXCollections.observableHashMap();
-    ObservableList<IRoom> roomsList = FXCollections.observableArrayList();
+    private final ObservableMap<UUID, IRoom> rooms = FXCollections.observableHashMap();
+    private final ObservableList<IRoom> roomsList = FXCollections.observableArrayList();
 
     public LobbyModel() {
         rooms.addListener((MapChangeListener<UUID, IRoom>) change -> {
@@ -31,11 +31,6 @@ public class LobbyModel implements ILobbyModel {
     @Override
     public void removeRoom(UUID uuid) {
         Platform.runLater(() -> rooms.remove(uuid));
-    }
-
-    @Override
-    public ObservableMap<UUID, IRoom> getRooms() {
-        return rooms;
     }
 
     @Override
