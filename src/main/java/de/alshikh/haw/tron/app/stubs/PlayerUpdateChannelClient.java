@@ -23,7 +23,7 @@ public class PlayerUpdateChannelClient implements IPlayerUpdateChannel, IRpcAppC
     @Override
     public void invalidated(Observable observable) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClient.invoke(serviceId, true, method, observable); // TODO: enable udp
+        rpcClient.invoke(serviceId, true, method, observable);
     }
 
     @Override

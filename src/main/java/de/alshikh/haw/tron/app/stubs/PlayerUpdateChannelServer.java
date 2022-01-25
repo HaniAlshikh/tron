@@ -10,7 +10,6 @@ import java.util.UUID;
 public class PlayerUpdateChannelServer implements IRpcAppServerStub {
     public static UUID serviceId = UUID.fromString("08fd9cc9-a1ff-4542-ae32-f3c1329ab93c");
 
-    // TODO: IUpdateChannel<Player> or IPlayerUpdateChannel
     IPlayerUpdateChannel playerUpdateChannel;
 
     public PlayerUpdateChannelServer(IPlayerUpdateChannel playerUpdateChannel) {

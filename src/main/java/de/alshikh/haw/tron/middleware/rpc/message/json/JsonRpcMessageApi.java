@@ -1,9 +1,7 @@
 package de.alshikh.haw.tron.middleware.rpc.message.json;
 
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
-import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.RpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes.JsonRpcRequest;
 import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializationApi;
 import de.alshikh.haw.tron.middleware.rpc.message.serialize.IRpcSerializationApi;
@@ -34,26 +32,6 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
         return new JsonRpcRequest(reqObj);
     }
 
-    @Override
-    public IRpcRequest readRequest(byte[] request) {
-        return new JsonRpcRequest(new JSONObject(new String(request)));
-    }
-
-    @Override
-    public IRpcCall toRpcCall(IRpcRequest rpcRequest) throws InvalidParamsRpcException {
-        UUID serviceId = rpcRequest.getServiceId();
-        String methodName = rpcRequest.getMethodName();
-        Class<?>[] parameterTypes = new Class[rpcRequest.getParams().length()];
-        Object[] args = new Object[rpcRequest.getParams().length()];
-        parseParamsArray(rpcRequest.getParams(), parameterTypes, args);
-        return new RpcCall(serviceId, methodName, parameterTypes, args);
-    }
-
-    @Override
-    public IRpcSerializationApi getRpcSerializer() {
-        return jsonRpcSerializer;
-    }
-
     private JSONObject newRequestObj(UUID serviceId, Method method, Object[] args) {
         JSONObject reqObj = new JSONObject();
         reqObj.put("service", serviceId.toString());
@@ -75,7 +53,13 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
                 .put("argument", jsonRpcSerializer.serialize((arg)));
     }
 
-    private void parseParamsArray(JSONArray params, Class<?>[] parameterTypes, Object[] args) throws InvalidParamsRpcException {
+    @Override
+    public IRpcRequest parseRequest(byte[] request) {
+        return new JsonRpcRequest(new JSONObject(new String(request)));
+    }
+
+    @Override
+    public void parseParamsArray(JSONArray params, Class<?>[] parameterTypes, Object[] args) throws InvalidParamsRpcException {
         for (int i = 0; i < params.length(); i++) {
             JSONObject param = params.getJSONObject(i);
             try {
@@ -85,5 +69,10 @@ public class JsonRpcMessageApi implements IRpcMessageApi {
                 throw new InvalidParamsRpcException("Unknown type: " + param.getString("type"));
             }
         }
+    }
+
+    @Override
+    public IRpcSerializationApi getRpcSerializer() {
+        return jsonRpcSerializer;
     }
 }

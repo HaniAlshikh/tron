@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.rpc.message.data.datatypes;
+package de.alshikh.haw.tron.middleware.rpc.serverstub.data.datatypes;
 
 import java.util.UUID;
 
