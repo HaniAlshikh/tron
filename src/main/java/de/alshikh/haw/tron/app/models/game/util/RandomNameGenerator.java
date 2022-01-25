@@ -1,9 +1,10 @@
 package de.alshikh.haw.tron.app.models.game.util;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -12,10 +13,12 @@ public class RandomNameGenerator {
         String result = "";
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("randomNames.txt"));
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream is = classloader.getResourceAsStream("randomNames.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(is)));
             List<String> words = reader.lines().collect(Collectors.toList());
             result = words.get(new Random(System.currentTimeMillis()).nextInt(words.size()));
-        } catch (FileNotFoundException ignored) {}
+        } catch (Exception ignored) {}
 
         return result;
     }

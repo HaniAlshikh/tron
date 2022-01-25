@@ -1,7 +1,7 @@
 package de.alshikh.haw.tron.app.views.game;
 
-import de.alshikh.haw.tron.app.models.game.data.entities.Game;
-import de.alshikh.haw.tron.app.models.game.data.entities.Player;
+import de.alshikh.haw.tron.app.models.game.data.entities.IGame;
+import de.alshikh.haw.tron.app.models.game.data.entities.IPlayer;
 import de.alshikh.haw.tron.app.views.game.overlayes.StartMenu;
 import de.alshikh.haw.tron.app.views.game.overlayes.WatingMenu;
 import de.alshikh.haw.tron.app.views.view_library.Coordinate;
@@ -34,8 +34,8 @@ public class GameView implements IGameView {
     }
 
     @Override
-    public void showGame(Game game) {
-        for (Player p : Arrays.asList(game.getPlayer(), game.getOpponent())) {
+    public void showGame(IGame game) {
+        for (IPlayer p : Arrays.asList(game.getPlayer(), game.getOpponent())) {
             try {
                 view.draw(p.getBike().getCoordinates(), p.getBike().getColor());
             } catch (IllegalArgumentException e) { // went out of bound

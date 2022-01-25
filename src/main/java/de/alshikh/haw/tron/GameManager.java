@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 public class GameManager extends Application {
 
     public final static String MANAGER_CONFIG_FILE = "manager.properties";
-    public final static boolean DISTRIBUTED = true;
 
     // TODO: limit to only 80% of machine resources
     //  is this enough?
@@ -50,7 +49,7 @@ public class GameManager extends Application {
     }
 
     public Runnable newTronGame() {
-        return DISTRIBUTED ? new DistributedTronGame() : new TronGame(singletonLobbyModel);
+        return Config.DISTRIBUTED ? new DistributedTronGame() : new TronGame(singletonLobbyModel);
     }
 
     @Override

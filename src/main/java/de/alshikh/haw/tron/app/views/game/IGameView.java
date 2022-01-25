@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.views.game;
 
-import de.alshikh.haw.tron.app.models.game.data.entities.Game;
+import de.alshikh.haw.tron.app.models.game.data.entities.IGame;
 import de.alshikh.haw.tron.app.views.view_library.Coordinate;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
@@ -9,7 +9,7 @@ import javafx.scene.Scene;
 
 public interface IGameView {
 
-    void showGame(Game game);
+    void showGame(IGame game);
 
     void highlightCell(Coordinate... cells);
 

@@ -3,7 +3,8 @@ package de.alshikh.haw.tron.app.controllers.game.helpers;
 import de.alshikh.haw.tron.Config;
 import de.alshikh.haw.tron.app.controllers.game.IGameController;
 import de.alshikh.haw.tron.app.models.game.IGameModel;
-import de.alshikh.haw.tron.app.models.game.data.entities.Player;
+import de.alshikh.haw.tron.app.models.game.data.entities.IPlayer;
+import de.alshikh.haw.tron.app.models.game.data.entities.IPlayerUpdate;
 import de.alshikh.haw.tron.app.models.game.data.entities.PlayerUpdate;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -27,8 +28,8 @@ public class GameUpdater implements IGameUpdater {
     private boolean running = false;
     private int updateRetries = 0;
 
-    private PlayerUpdate receivedOpponentUpdate;
-    private final Map<Integer, PlayerUpdate> opponentUpdatesCache = new ConcurrentHashMap<>(); // 2 updates max
+    private IPlayerUpdate receivedOpponentUpdate;
+    private final Map<Integer, IPlayerUpdate> opponentUpdatesCache = new ConcurrentHashMap<>(); // 2 updates max
     private final Timeline gameLoop;
 
     private final IGameController gameController;
@@ -87,7 +88,7 @@ public class GameUpdater implements IGameUpdater {
             return;
 
         if (observable instanceof PlayerUpdate)
-            playerUpdateObserved((PlayerUpdate) observable);
+            playerUpdateObserved((IPlayerUpdate) observable);
 
         else if (observable instanceof IGameModel)
             gameStateChangeObserved((IGameModel) observable);
@@ -96,19 +97,19 @@ public class GameUpdater implements IGameUpdater {
     private void gameStateChangeObserved(IGameModel gameModel) {
         synchronized (UILock) {
             logger.debug("lock: rendering game state");
-            if (gameModel.getGame().ended())
+            if (gameModel.getGame().hasEnded())
                 Platform.runLater(gameController::endGame);
             gameController.getGameView().showGame(gameModel.getGame());
             logger.debug("unlock: rendering game state");
         }
     }
 
-    private void playerUpdateObserved(PlayerUpdate opponentUpdate) {
+    private void playerUpdateObserved(IPlayerUpdate opponentUpdate) {
         logger.debug("received opponent update: " + opponentUpdate);
         opponentUpdatesCache.put(opponentUpdate.getVersion(), opponentUpdate);
         if (getPlayer().getUpdateVersion() > opponentUpdate.getVersion()) {
             logger.debug("resending previous update");
-            es.execute(() -> getPlayer().getUpdate().publishPreviousUpdate());
+            es.execute(() -> getPlayer().publishPreviousUpdate());
         }
     }
 
@@ -118,11 +119,11 @@ public class GameUpdater implements IGameUpdater {
         gameLoop.stop();
     }
 
-    private Player getPlayer() {
+    private IPlayer getPlayer() {
         return gameController.getGameModel().getGame().getPlayer();
     }
 
-    private Player getOpponent() {
+    private IPlayer getOpponent() {
         return gameController.getGameModel().getGame().getOpponent();
     }
 }

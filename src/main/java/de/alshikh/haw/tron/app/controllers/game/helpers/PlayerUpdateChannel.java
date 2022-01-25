@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.controllers.game.helpers;
 
-import de.alshikh.haw.tron.app.models.game.data.entities.Player;
+import de.alshikh.haw.tron.app.models.game.data.entities.IPlayer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
@@ -9,11 +9,11 @@ import java.util.function.Consumer;
 
 public class PlayerUpdateChannel implements IPlayerUpdateChannel {
 
-    private final Player player;
+    private final IPlayer player;
     private final IGameUpdater gameUpdater;
     private final Consumer<String> gameStarter;
 
-    public PlayerUpdateChannel(Player player, IGameUpdater gameUpdater, Consumer<String> gameStarter) {
+    public PlayerUpdateChannel(IPlayer player, IGameUpdater gameUpdater, Consumer<String> gameStarter) {
         this.player = player;
         this.gameUpdater = gameUpdater;
         this.gameStarter = gameStarter;

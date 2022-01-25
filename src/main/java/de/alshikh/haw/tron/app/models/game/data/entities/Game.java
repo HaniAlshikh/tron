@@ -2,65 +2,67 @@ package de.alshikh.haw.tron.app.models.game.data.entities;
 
 import de.alshikh.haw.tron.app.models.game.helpers.CollisionDetector;
 
-public class Game {
-    private Player winner;
+public class Game implements IGame {
+
+    private IPlayer winner;
     private boolean ended;
-    private boolean paused;
 
-    // TODO: generalise to support more than two players
-    private Player player;
-    private Player opponent;
+    private IPlayer player;
+    private IPlayer opponent;
 
-    public void applyOpponentUpdate(PlayerUpdate opponentUpdate) {
+    @Override
+    public void applyOpponentUpdate(IPlayerUpdate opponentUpdate) {
         opponent.applyUpdate(opponentUpdate);
     }
 
+    @Override
     public void movePlayers() {
         player.move();
         opponent.move();
     }
 
+    @Override
     public void checkForCollision() {
         CollisionDetector.check(this);
     }
 
-    public void checkForBreak() {
-        paused = player.pausedGame() || opponent.pausedGame();
+    @Override
+    public IPlayer getWinner() {
+        return winner;
     }
 
-    public boolean ended() {
+    @Override
+    public void setWinner(IPlayer winner) {
+        this.winner = winner;
+    }
+
+    @Override
+    public boolean hasEnded() {
         return ended;
     }
 
+    @Override
     public void setEnded(boolean ended) {
         this.ended = ended;
     }
 
-    public boolean paused() {
-        return paused;
-    }
-
-    public Player getWinner() {
-        return winner;
-    }
-
-    public void setWinner(Player winner) {
-        this.winner = winner;
-    }
-
-    public Player getPlayer() {
+    @Override
+    public IPlayer getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    @Override
+    public void setPlayer(IPlayer player) {
         this.player = player;
     }
 
-    public Player getOpponent() {
+    @Override
+    public IPlayer getOpponent() {
         return opponent;
     }
 
-    public void setOpponent(Player opponent) {
+    @Override
+    public void setOpponent(IPlayer opponent) {
         this.opponent = opponent;
     }
 }

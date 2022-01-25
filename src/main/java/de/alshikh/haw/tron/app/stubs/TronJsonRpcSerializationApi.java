@@ -2,6 +2,7 @@ package de.alshikh.haw.tron.app.stubs;
 
 import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.app.models.game.data.datatypes.Direction;
+import de.alshikh.haw.tron.app.models.game.data.entities.IPlayerUpdate;
 import de.alshikh.haw.tron.app.models.game.data.entities.PlayerUpdate;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.stubs.RemoteRoomsFactoryClient;
@@ -26,7 +27,7 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
     @Override
     public Object serialize(Object obj) {
         if (obj instanceof IRpcAppClientStub) return serializeIRpcAppClientStub((IRpcAppClientStub) obj);
-        if (obj instanceof PlayerUpdate) return serializePlayerUpdate((PlayerUpdate) obj);
+        if (obj instanceof PlayerUpdate) return serializePlayerUpdate((IPlayerUpdate) obj);
         if (obj instanceof DirectoryEntry) return serializeDirectoryServiceEntry((DirectoryEntry) obj);
         if (obj instanceof InetAddress) return serializeInetAddress((InetAddress) obj);
         if (obj instanceof UUID) return serializeUUID((UUID) obj);
@@ -50,10 +51,9 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
                 .put("port", rpcAppClientStub.getRpcClient().getServerAddress().getPort());
     }
 
-    private JSONObject serializePlayerUpdate(PlayerUpdate playerUpdate) {
+    private JSONObject serializePlayerUpdate(IPlayerUpdate playerUpdate) {
         return newSerializedObj(PlayerUpdate.class)
                 .put("movingDirection", playerUpdate.getMovingDirection().name())
-                .put("pauseGame", playerUpdate.pauseGame())
                 .put("dead", playerUpdate.isDead())
                 .put("version", playerUpdate.getVersion());
     }
@@ -138,7 +138,6 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
     private Object deserializePlayerUpdate(JSONObject serializedObj) {
         return new PlayerUpdate(
                 Direction.valueOf(serializedObj.getString("movingDirection")),
-                serializedObj.getBoolean("pauseGame"),
                 serializedObj.getBoolean("dead"),
                 serializedObj.getInt("version")
         );

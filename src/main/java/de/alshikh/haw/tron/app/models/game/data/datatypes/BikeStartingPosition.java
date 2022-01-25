@@ -1,58 +1,23 @@
 package de.alshikh.haw.tron.app.models.game.data.datatypes;
 
-import de.alshikh.haw.tron.app.models.game.data.exceptions.GameFullException;
+import de.alshikh.haw.tron.Config;
 import de.alshikh.haw.tron.app.views.view_library.Coordinate;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
-
 public enum BikeStartingPosition {
-    // only two players are supported for now
     LEFT(Direction.RIGHT), RIGHT(Direction.LEFT);
 
-    boolean taken;
-    int ROWS;
-    int COLUMNS;
-    Direction movingDirection;
-
+    private final Direction movingDirection;
 
     BikeStartingPosition(Direction movingDirection) {
-        this("view.properties", movingDirection);
-    }
-
-    BikeStartingPosition(String configFile, Direction movingDirection) {
-        Properties prop = new Properties();
-        try {
-            prop.load(new FileInputStream(configFile));
-            // TODO: see if this make sense and deal with the error
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.ROWS = Integer.parseInt(prop.getProperty("rows"));
-        this.COLUMNS = Integer.parseInt(prop.getProperty("columns"));
         this.movingDirection = movingDirection;
-    }
-
-    public static BikeStartingPosition random() {
-        for (BikeStartingPosition value : BikeStartingPosition.values()) {
-            if (!value.taken) {
-                return value;
-            }
-        }
-        throw new GameFullException();
     }
 
     public Coordinate getCoordinate() {
         switch (this) {
-            case LEFT: if (!isTaken()) { return new Coordinate(2, ROWS / 2); }
-            case RIGHT: if (!isTaken()) { return new Coordinate( COLUMNS - 2, ROWS / 2); }
-            default: throw new IllegalArgumentException("Position is already taken");
+            case LEFT: return new Coordinate(2, Config.ROWS / 2);
+            case RIGHT: return new Coordinate(Config.COLUMNS - 2, Config.ROWS / 2);
+            default: throw new IllegalArgumentException("Position is not available");
         }
-    }
-
-    public boolean isTaken() {
-        return taken;
     }
 
     public Direction getMovingDirection() {

@@ -13,8 +13,6 @@ module de.alshikh.haw.tron {
     exports de.alshikh.haw.tron.app.models.game.data.entities;
     opens de.alshikh.haw.tron.app.models.game.data.datatypes to javafx.fxml;
     opens de.alshikh.haw.tron.app.models.game.data.entities to javafx.fxml;
-    exports de.alshikh.haw.tron.app.models.game.data.exceptions;
-    opens de.alshikh.haw.tron.app.models.game.data.exceptions to javafx.fxml;
     exports de.alshikh.haw.tron.app.models.game;
     opens de.alshikh.haw.tron.app.models.game to javafx.fxml;
     exports de.alshikh.haw.tron.app.controllers.game.inputhandlers;

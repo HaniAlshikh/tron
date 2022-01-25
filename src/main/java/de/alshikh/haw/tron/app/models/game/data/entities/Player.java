@@ -4,91 +4,103 @@ import javafx.beans.property.StringProperty;
 
 import java.util.UUID;
 
-public class Player {
+public class Player implements IPlayer {
+
     private final UUID id = UUID.randomUUID();
     private final StringProperty name;
-
-    private Bike bike;
-    private PlayerUpdate update;
-    private boolean pauseGame;
+    private IBike bike;
+    private IPlayerUpdate update;
+    private IPlayerUpdate previousUpdate;
     private boolean dead;
-    private int updateVersion;
 
     public Player(StringProperty name) {
         this(name, null);
     }
 
-    public Player(StringProperty name, Bike bike) {
+    public Player(StringProperty name, IBike bike) {
         this.name = name;
         reset(bike);
     }
 
-    public void reset(Bike bike) {
+    @Override
+    public void reset(IBike bike) {
         this.bike = bike;
         this.update = new PlayerUpdate();
-        this.pauseGame = false;
         this.dead = false;
-        this.updateVersion = 0;
     }
 
+    @Override
     public void move() {
         bike.move();
     }
 
+    @Override
     public void createUpdate() {
         bike.lockDirection();
-        resetUpdate();
+        renewUpdate();
     }
 
+    @Override
+    public void renewUpdate() {
+        previousUpdate = update.copy();
+        update.renew(bike.getMovingDirection(), dead);
+    }
+
+    @Override
+    public void applyUpdate(IPlayerUpdate update) {
+        bike.setMovingDirection(update.getMovingDirection());
+        dead = update.isDead();
+        this.update = update;
+    }
+
+    @Override
+    public void publishUpdate() {
+        update.publishUpdate();
+    }
+
+    @Override
+    public void publishPreviousUpdate() {
+        update.publishUpdate(previousUpdate);
+    }
+
+    @Override
     public void die() {
         this.dead = true;
     }
 
-    public void togglePauseGame() {
-        this.pauseGame = !this.pauseGame;
+    @Override
+    public UUID getId() {
+        return id;
     }
 
-    public void resetUpdate() {
-        this.update.update(bike.getMovingDirection(), pauseGame, dead, ++updateVersion);
-    }
-
-    public void applyUpdate(PlayerUpdate update) {
-        bike.setMovingDirection(update.getMovingDirection());
-        pauseGame = update.pauseGame();
-        dead = update.isDead();
-        updateVersion = update.getVersion();
-    }
-
-    public PlayerUpdate getUpdate() {
-        return update;
-    }
-
+    @Override
     public String getName() {
         return name.get();
     }
 
+    @Override
     public StringProperty nameProperty() {
         return name;
     }
 
-    public Bike getBike() {
+    @Override
+    public IBike getBike() {
         return bike;
     }
 
+    @Override
+    public IPlayerUpdate getUpdate() {
+        return update;
+    }
+
+    @Override
+    public int getUpdateVersion() {
+        return update.getVersion();
+    }
+
+    @Override
     public boolean isDead() {
         return dead;
-    }
-
-    public boolean pausedGame() {
-        return pauseGame;
-    }
-
-    public int getUpdateVersion() {
-        return updateVersion;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     @Override
