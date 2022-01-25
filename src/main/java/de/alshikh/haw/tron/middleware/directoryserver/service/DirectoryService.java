@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.directoryserver.service;
 
-import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 
@@ -17,7 +17,7 @@ public class DirectoryService implements IDirectoryService, Observable {
     private final ConcurrentHashMap<UUID, ConcurrentLinkedQueue<InvalidationListener>> serviceListeners;
     private final ConcurrentLinkedQueue<InvalidationListener> directoryListeners;
 
-    private final ConcurrentLinkedQueue<DirectoryEntry> dib; // directory information base
+    private final ConcurrentLinkedQueue<IDirectoryEntry> dib; // directory information base
 
     public DirectoryService(){
         this.serviceListeners = new ConcurrentHashMap<>();
@@ -26,15 +26,15 @@ public class DirectoryService implements IDirectoryService, Observable {
     }
 
     @Override
-    public void register(DirectoryEntry directoryEntry) {
+    public void register(IDirectoryEntry directoryEntry) {
         dib.add(directoryEntry);
         publishServiceUpdate(directoryEntry);
         publishUpdate();
     }
 
     @Override
-    public void unregister(DirectoryEntry directoryEntry) {
-        if (dib.remove(directoryEntry)) { // known service
+    public void unregister(IDirectoryEntry directoryEntry) {
+        if (dib.remove(directoryEntry)) {
             directoryEntry.setReachable(false);
             publishServiceUpdate(directoryEntry);
             publishUpdate();
@@ -47,13 +47,12 @@ public class DirectoryService implements IDirectoryService, Observable {
         serviceListeners.putIfAbsent(serviceId, new ConcurrentLinkedQueue<>());
         serviceListeners.get(serviceId).add(listener);
 
-        // TODO: make serviceRegistry a map as well?
         executor.submit(() -> dib.stream()
                 .filter(s -> s.getServiceId().equals(serviceId))
                 .forEach(listener::invalidated));
     }
 
-    private void publishServiceUpdate(DirectoryEntry directoryEntry) {
+    private void publishServiceUpdate(IDirectoryEntry directoryEntry) {
         directoryEntry.setListeners(serviceListeners.getOrDefault(
                 directoryEntry.getServiceId(), new ConcurrentLinkedQueue<>()));
         directoryEntry.publishUpdate();
@@ -71,7 +70,7 @@ public class DirectoryService implements IDirectoryService, Observable {
         listener.invalidated(this);
     }
 
-    public void publishUpdate() {
+    private void publishUpdate() {
         directoryListeners.forEach(l -> l.invalidated(this));
     }
 
@@ -80,22 +79,12 @@ public class DirectoryService implements IDirectoryService, Observable {
         directoryListeners.remove(listener);
     }
 
-    // lookup a port based on service id and provider ip (for example rpc callback server port)
-    //public int lookup(UUID serviceId, InetAddress serviceProviderAddress) {
-    //    Optional<DirectoryEntry> entry = dib.stream()
-    //            .filter(s -> s.getServiceId().equals(serviceId) &&
-    //                    s.getServiceAddress().getAddress().equals(serviceProviderAddress))
-    //            .findFirst();
-    //
-    //    return entry.map(s -> s.getServiceAddress().getPort()).orElse(-1);
-    //}
+    public ConcurrentLinkedQueue<IDirectoryEntry> getDib() {
+        return dib;
+    }
 
     @Override
     public String toString() {
         return dib.toString();
-    }
-
-    public ConcurrentLinkedQueue<DirectoryEntry> getDib() {
-        return dib;
     }
 }

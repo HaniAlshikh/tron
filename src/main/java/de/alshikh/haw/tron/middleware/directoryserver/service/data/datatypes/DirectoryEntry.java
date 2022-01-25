@@ -1,15 +1,14 @@
 package de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 
 import java.net.InetSocketAddress;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class DirectoryEntry implements Observable {
-    private ConcurrentLinkedQueue<InvalidationListener> listeners;
+public class DirectoryEntry implements IDirectoryEntry {
+    private ConcurrentLinkedQueue<InvalidationListener> listeners = new ConcurrentLinkedQueue<>();
 
     private final UUID providerId;
     private final UUID serviceId;
@@ -21,8 +20,6 @@ public class DirectoryEntry implements Observable {
     }
 
     public DirectoryEntry(UUID providerId, UUID serviceId, InetSocketAddress serviceAddress, boolean reachable) {
-        this.listeners = new ConcurrentLinkedQueue<>();
-
         this.providerId = providerId;
         this.serviceId = serviceId;
         this.serviceAddress = serviceAddress;
@@ -39,6 +36,7 @@ public class DirectoryEntry implements Observable {
         listeners.remove(listener);
     }
 
+    @Override
     public void publishUpdate() {
         listeners.parallelStream().forEach(l -> l.invalidated(this));
     }
@@ -57,34 +55,41 @@ public class DirectoryEntry implements Observable {
         return Objects.hash(providerId, serviceId, serviceAddress);
     }
 
-    public UUID getProviderId() {
-        return providerId;
-    }
-
-    public UUID getServiceId() {
-        return serviceId;
-    }
-
-    public InetSocketAddress getServiceAddress() {
-        return serviceAddress;
-    }
-
-    public boolean isReachable() {
-        return reachable;
-    }
-
+    @Override
     public void setListeners(ConcurrentLinkedQueue<InvalidationListener> listeners) {
         this.listeners = listeners;
     }
 
+    @Override
+    public UUID getProviderId() {
+        return providerId;
+    }
+
+    @Override
+    public UUID getServiceId() {
+        return serviceId;
+    }
+
+    @Override
+    public InetSocketAddress getServiceAddress() {
+        return serviceAddress;
+    }
+
+    @Override
+    public boolean isReachable() {
+        return reachable;
+    }
+
+    @Override
     public void setReachable(boolean reachable) {
         this.reachable = reachable;
     }
 
     @Override
     public String toString() {
-        return "DirectoryServiceEntry{" +
-                "id=" + serviceId +
+        return "DirectoryEntry{" +
+                "providerId=" + providerId +
+                ", serviceId=" + serviceId +
                 ", serviceAddress=" + serviceAddress +
                 ", reachable=" + reachable +
                 '}';

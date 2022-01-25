@@ -8,6 +8,7 @@ import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelServer;
 import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.data.datatypes.RemoteRoom;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
@@ -43,7 +44,7 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
     @Override
     public void invalidated(Observable observable) {
         if (observable instanceof DirectoryEntry) {
-            DirectoryEntry e = (DirectoryEntry) observable;
+            IDirectoryEntry e = (IDirectoryEntry) observable;
             if (isPlayerUpdateChannel(e) && !isOwnUpdateChannel(e)) {
                 Platform.runLater(() -> {
                     if (e.isReachable())
@@ -85,16 +86,16 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
         )));
     };
 
-    private boolean isLocalRoom(DirectoryEntry e) {
+    private boolean isLocalRoom(IDirectoryEntry e) {
         return e.getServiceAddress().getAddress().equals(rpcServer.getRpcReceiver().getServerAddress().getAddress());
     }
 
-    private boolean isPlayerUpdateChannel(DirectoryEntry e) {
+    private boolean isPlayerUpdateChannel(IDirectoryEntry e) {
         return e.getServiceId().equals(PlayerUpdateChannelClient.serviceId);
     }
 
 
-    private boolean isOwnUpdateChannel(DirectoryEntry entry) {
+    private boolean isOwnUpdateChannel(IDirectoryEntry entry) {
         return entry.getServiceAddress().getPort() == rpcServer.getRpcReceiver().getServerAddress().getPort();
     }
 }

@@ -1,15 +1,16 @@
 package de.alshikh.haw.tron.middleware.directoryserver.service;
 
-import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
 import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 
 import java.util.UUID;
 
 // TODO: make it publisher
 public interface IDirectoryService {
-    void register(DirectoryEntry directoryEntry);
+    void register(IDirectoryEntry directoryEntry);
 
-    void unregister(DirectoryEntry directoryEntry);
+    void unregister(IDirectoryEntry directoryEntry);
 
     // TODO: publisher subscriber?
     void addListenerTo(UUID serviceId, InvalidationListener listener);

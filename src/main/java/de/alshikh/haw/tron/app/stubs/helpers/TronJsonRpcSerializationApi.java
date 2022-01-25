@@ -8,6 +8,7 @@ import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelClient;
 import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryClient;
 import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
@@ -31,8 +32,8 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
     @Override
     public Object serialize(Object obj) {
         if (obj instanceof IRpcAppClientStub) return serializeIRpcAppClientStub((IRpcAppClientStub) obj);
-        if (obj instanceof PlayerUpdate) return serializePlayerUpdate((IPlayerUpdate) obj);
-        if (obj instanceof DirectoryEntry) return serializeDirectoryServiceEntry((DirectoryEntry) obj);
+        if (obj instanceof IPlayerUpdate) return serializePlayerUpdate((IPlayerUpdate) obj);
+        if (obj instanceof IDirectoryEntry) return serializeDirectoryServiceEntry((IDirectoryEntry) obj);
         if (obj instanceof InetAddress) return serializeInetAddress((InetAddress) obj);
         if (obj instanceof UUID) return serializeUUID((UUID) obj);
 
@@ -62,7 +63,7 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
                 .put("version", playerUpdate.getVersion());
     }
 
-    private JSONObject serializeDirectoryServiceEntry(DirectoryEntry directoryEntry) {
+    private JSONObject serializeDirectoryServiceEntry(IDirectoryEntry directoryEntry) {
         return newSerializedObj(DirectoryEntry.class)
                 .put("providerId", directoryEntry.getProviderId())
                 .put("serviceId", directoryEntry.getServiceId())
@@ -90,8 +91,8 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
         if (type == Observable.class) return deserializeObservable(serializedObj);
         if (type == InvalidationListener.class) return deserializeInvalidationListener(serializedObj);
         if (type == Object.class) return deserializeObject(obj, serializedObj);
-        if (type == PlayerUpdate.class) return deserializePlayerUpdate(serializedObj);
-        if (type == DirectoryEntry.class) return deserializeDirectoryServiceEntry(serializedObj);
+        if (type == IPlayerUpdate.class) return deserializePlayerUpdate(serializedObj);
+        if (type == IDirectoryEntry.class) return deserializeDirectoryServiceEntry(serializedObj);
         if (type == InetAddress.class) return deserializeInetAddress(serializedObj);
         if (type == UUID.class) return deserializeUuid(serializedObj);
 

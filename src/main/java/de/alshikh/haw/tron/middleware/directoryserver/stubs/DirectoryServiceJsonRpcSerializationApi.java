@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.middleware.directoryserver.stubs;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
+import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.message.json.serialize.JsonRpcSerializationApi;
 import org.json.JSONObject;
 
@@ -29,7 +30,7 @@ public class DirectoryServiceJsonRpcSerializationApi extends JsonRpcSerializatio
     @Override
     public Object serialize(Object obj) {
         if (obj instanceof DirectoryEntry) {
-            DirectoryEntry e = (DirectoryEntry) obj;
+            IDirectoryEntry e = (IDirectoryEntry) obj;
             JSONObject serializedObj = new JSONObject();
             serializedObj.put("type", DirectoryEntry.class.getName());
             serializedObj.put("serviceId", e.getServiceId());

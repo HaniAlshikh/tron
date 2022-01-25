@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 public class DirectoryServer {
 
     public static void main(String[] args) {
-        //DirectoryServiceJsonRpcSerializer jsonRpcSerializer = new DirectoryServiceJsonRpcSerializer();
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializationApi());
 
         DirectoryService directoryService = new DirectoryService();
@@ -39,10 +38,10 @@ public class DirectoryServer {
         //        ));
 
         //directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), UUID.randomUUID(), rpcServer.getSocketAddress()));
-        directoryService.addListener(DirectoryServer::tabilise);
+        directoryService.addListener(DirectoryServer::tableize);
     }
 
-    private static void tabilise(Observable observable) {
+    private static void tableize(Observable observable) {
         System.out.println();
         DirectoryService directoryService = (DirectoryService) observable;
         System.out.format("%-40s%-40s%-32s%-6s\n", "Provider ID", "Service ID", "Service Address", "Is Reachable");
