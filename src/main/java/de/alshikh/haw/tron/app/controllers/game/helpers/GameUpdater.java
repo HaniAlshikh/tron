@@ -25,12 +25,12 @@ public class GameUpdater implements IGameUpdater {
 
     private final Object gameStateLock = new Object();
     private final Object UILock = new Object();
-    private boolean running = false;
-    private int updateRetries = 0;
+    private boolean running;
+    private int updateRetries;
 
-    private IPlayerUpdate receivedOpponentUpdate;
-    private final Map<Integer, IPlayerUpdate> opponentUpdatesCache = new ConcurrentHashMap<>(); // 2 updates max
     private final Timeline gameLoop;
+    private IPlayerUpdate receivedOpponentUpdate;
+    private Map<Integer, IPlayerUpdate> opponentUpdatesCache; // 2 updates max
 
     private final IGameController gameController;
 
@@ -38,13 +38,15 @@ public class GameUpdater implements IGameUpdater {
         this.gameController = gameController;
         this.gameLoop = new Timeline(new KeyFrame(
                 Duration.seconds(1.0 / Config.FRAMES_PER_SECOND),
-                e -> es.submit(this::updateGame)));
+                e -> updateGame()));
         this.gameLoop.setCycleCount(Timeline.INDEFINITE);
     }
 
     @Override
     public void start() {
         running = true;
+        updateRetries = 0;
+        opponentUpdatesCache = new ConcurrentHashMap<>();
         gameLoop.play();
     }
 
