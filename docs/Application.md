@@ -114,36 +114,36 @@ X referees to the component name in the different packages
 
 ###### Game
 
-![Component Diagram](diagrams/application/GameModelClassDiagram.drawio.svg)
+![Game Model Component Diagram](diagrams/application/GameModelClassDiagram.drawio.svg)
 
 ###### Lobby
 
 how to sync rooms between models if we have multiple Models instances?
 (Remote room factory should be also singleton?)
 
-![Component Diagram](diagrams/application/LobbyModelClassDiagram.drawio.svg)
+![Lobby Model Component Diagram](diagrams/application/LobbyModelClassDiagram.drawio.svg)
 
 ##### View
 
 ###### Game
 
-![Component Diagram](diagrams/application/GameViewClassDiagram.drawio.svg)
+![Game View Component Diagram](diagrams/application/GameViewClassDiagram.drawio.svg)
 
 ###### Lobby
 
-![Component Diagram](diagrams/application/LobbyViewClassDiagram.drawio.svg)
+![Lobby View Component Diagram](diagrams/application/LobbyViewClassDiagram.drawio.svg)
 
 #### Controller
 
 ###### Game
 
-TODO
+![Game Controller Component Diagram](diagrams/application/GameControllerClassDiagram.drawio.svg)
 
 ###### Lobby
 
-TODO
+![Lobby Controller Component Diagram](diagrams/application/LobbyControllerClassDiagram.drawio.svg)
 
-## Runtime View 
+## Runtime View
 
 ### UC01: Create Game
 
