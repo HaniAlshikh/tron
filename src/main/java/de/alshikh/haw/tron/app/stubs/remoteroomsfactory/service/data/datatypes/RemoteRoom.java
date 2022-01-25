@@ -14,7 +14,7 @@ public class RemoteRoom extends Room {
         this.createRpcClientHook = createRpcClientHook;
     }
 
-    protected void forwardChannel() {
+    protected void close() {
         hostUpdateChannel.addListener(createRpcClientHook.apply(gustUpdateChannel));
         gustUpdateChannel.addListener(hostUpdateChannel);
     }

@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface IRoom {
     void enter(IPlayerUpdateChannel gustUpdateChannel);
 
-    UUID getUuid();
+    UUID getId();
 
     String getName();
 

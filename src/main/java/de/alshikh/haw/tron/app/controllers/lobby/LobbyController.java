@@ -25,7 +25,7 @@ public final class LobbyController implements ILobbyController {
         RoomsMenuInputHandler roomsMenuInputHandler = new RoomsMenuInputHandler();
         roomsMenuInputHandler.setListItemConsumer(room -> {
             room.enter(guestUpdateChannel);
-            removeRoom(room.getUuid());
+            removeRoom(room.getId());
         });
         lobbyView.showRoomsMenu(roomsMenuInputHandler, lobbyModel.getRoomsList(), cancelBtnHandler);
     }

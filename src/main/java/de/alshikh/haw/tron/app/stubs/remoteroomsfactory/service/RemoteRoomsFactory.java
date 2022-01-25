@@ -62,14 +62,14 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
     public void onChanged(Change<? extends IRoom> change) {
         while (change.next()) {
             change.getAddedSubList().forEach(r -> {
-                if (r.getUuid().equals(playerId)) { // owen room
+                if (r.getId().equals(playerId)) { // owen room
                     rpcServer.register(new PlayerUpdateChannelServer(r.getHostUpdateChannel()));
                     directoryService.register(new DirectoryEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getRpcReceiver().getServerAddress()));
                 }
             });
 
             change.getRemoved().forEach(r -> {
-                if (r.getUuid().equals(playerId)) { // owen room
+                if (r.getId().equals(playerId)) { // owen room
                     directoryService.unregister(new DirectoryEntry(playerId, PlayerUpdateChannelClient.serviceId, rpcServer.getRpcReceiver().getServerAddress()));
                 }
             });

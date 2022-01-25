@@ -5,14 +5,14 @@ import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
 import java.util.UUID;
 
 public class Room implements IRoom {
+    private final UUID id;
+    private final String name;
+
+    protected final IPlayerUpdateChannel hostUpdateChannel;
     protected IPlayerUpdateChannel gustUpdateChannel;
 
-    private final UUID uuid;
-    private final String name;
-    protected final IPlayerUpdateChannel hostUpdateChannel;
-
     public Room(IPlayerUpdateChannel hostUpdateChannel) {
-        this.uuid = hostUpdateChannel.getPlayerId();
+        this.id = hostUpdateChannel.getPlayerId();
         this.name = hostUpdateChannel.getPlayerName();
         this.hostUpdateChannel = hostUpdateChannel;
     }
@@ -20,18 +20,17 @@ public class Room implements IRoom {
     @Override
     public void enter(IPlayerUpdateChannel gustUpdateChannel) {
         this.gustUpdateChannel = gustUpdateChannel;
-        // TODO: state pattern (onFull exchange channels)
-        forwardChannel();
+        close();
     }
 
-    protected void forwardChannel() {
+    protected void close() {
         hostUpdateChannel.addListener(gustUpdateChannel);
         gustUpdateChannel.addListener(hostUpdateChannel);
     }
 
     @Override
-    public UUID getUuid() {
-        return uuid;
+    public UUID getId() {
+        return id;
     }
 
     @Override
