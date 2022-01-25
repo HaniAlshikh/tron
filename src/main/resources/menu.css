@@ -51,3 +51,7 @@
 .list-cell:filled:hover {
     -fx-background-color: #575149;
 }
+
+.progress-indicator {
+    -fx-progress-color: #ffefd5;
+}

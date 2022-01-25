@@ -1,5 +1,6 @@
 package de.alshikh.haw.tron;
 
+import de.alshikh.haw.tron.app.TronGame;
 import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.models.lobby.LobbyModel;
 import de.alshikh.haw.tron.app.views.manager.overlays.ManagerMenu;
@@ -10,6 +11,8 @@ import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class GameManager extends Application {
 
@@ -24,6 +27,8 @@ public class GameManager extends Application {
     //ExecutorService es = Executors.newFixedThreadPool((int)
     //        (Runtime.getRuntime().availableProcessors() * RESOURCES_LIMIT));
 
+    // in the standalone version the model is shared as a the source of truth for rooms
+    // while in the distributed version the directory server is the source of truth
     ILobbyModel singletonLobbyModel = new LobbyModel();
 
     @Override
@@ -43,11 +48,18 @@ public class GameManager extends Application {
         stage.show();
         stage.setX((screenBounds.getWidth() - managerView.getScene().getWidth()) / 2);
         stage.setY(0);
+
         stage.setOnCloseRequest(e -> { Platform.exit(); System.exit(0); });
     }
 
-    public Runnable newTronGame() {
-        return Config.DISTRIBUTED ? new DistributedTronGame() : new TronGame(singletonLobbyModel);
+    public Runnable newTronGame()  {
+        try {
+            ITronView gameView = new TronView(Config.VIEW_PROP);
+            return Config.DISTRIBUTED ?
+                    new DistributedTronGame(gameView) :
+                    new TronGame(gameView, singletonLobbyModel);
+        } catch (IOException e) {e.printStackTrace();}
+        return null;
     }
 
     @Override
@@ -58,5 +70,4 @@ public class GameManager extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 }

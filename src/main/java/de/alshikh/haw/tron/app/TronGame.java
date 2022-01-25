@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron;
+package de.alshikh.haw.tron.app;
 
 import de.alshikh.haw.tron.app.controllers.game.GameController;
 import de.alshikh.haw.tron.app.controllers.game.IGameController;
@@ -12,24 +12,27 @@ import de.alshikh.haw.tron.app.views.game.IGameView;
 import de.alshikh.haw.tron.app.views.lobby.ILobbyView;
 import de.alshikh.haw.tron.app.views.lobby.LobbyView;
 import edu.cads.bai5.vsp.tron.view.ITronView;
-import edu.cads.bai5.vsp.tron.view.TronView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class TronGame implements Runnable {
 
+    private final CompletableFuture<UUID> id = new CompletableFuture<>();
+    private final ITronView baseView;
     private final ILobbyModel lobbyModel;
 
-    public TronGame(ILobbyModel lobbyModel) {
+    public TronGame(ITronView baseView, ILobbyModel lobbyModel) {
+        this.baseView = baseView;
         this.lobbyModel = lobbyModel;
     }
 
     @Override
     public void run() {
         try {
-            ITronView baseView = new TronView(Config.VIEW_PROP);
-
             ILobbyView lobbyView = new LobbyView(baseView);
             ILobbyController lobbyController = new LobbyController(lobbyModel, lobbyView);
 
@@ -37,6 +40,7 @@ public class TronGame implements Runnable {
             IGameView gameView = new GameView(baseView);
             IGameController gameController = new GameController(gameModel, gameView, lobbyController);
 
+            id.complete(gameModel.getPlayer().getId());
             gameController.showStartMenu("Ready?");
 
             Stage stage = new Stage();
@@ -48,5 +52,13 @@ public class TronGame implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ILobbyModel getLobbyModel() {
+        return lobbyModel;
+    }
+
+    public UUID getId() throws ExecutionException, InterruptedException {
+        return id.get();
     }
 }
