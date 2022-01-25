@@ -1,4 +1,6 @@
-package de.alshikh.haw.tron.middleware.rpc.common.data.exceptions;
+package de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.data.execptions;
+
+import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.RpcException;
 
 import java.lang.reflect.Method;
 

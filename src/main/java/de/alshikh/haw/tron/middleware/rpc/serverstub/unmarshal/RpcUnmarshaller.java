@@ -10,6 +10,10 @@ import de.alshikh.haw.tron.middleware.rpc.common.data.exceptions.*;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcCall;
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.data.execptions.ServiceNotFoundRpcException;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.data.execptions.InvalidParamsRpcException;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.data.execptions.InvocationRpcException;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.data.execptions.MethodNotFoundRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
