@@ -13,6 +13,6 @@ public class RpcCallback implements IRpcCallback {
 
     @Override
     public void retrn(UUID requestId, Object result) {
-        rpcCallbackService.setResponse(requestId, result);
+        rpcCallbackService.setResult(requestId, result);
     }
 }

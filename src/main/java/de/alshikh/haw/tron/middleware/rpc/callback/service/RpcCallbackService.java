@@ -12,30 +12,29 @@ import java.util.concurrent.ConcurrentMap;
 public class RpcCallbackService implements IRpcCallbackService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    private final ConcurrentMap<UUID, IRpcCallbackHandler> responseRegistry;
+    private final ConcurrentMap<UUID, IRpcCallbackHandler> handlersRegistry = new ConcurrentHashMap<>();
 
     InetSocketAddress callbackServerAddress;
 
     public RpcCallbackService(InetSocketAddress callbackServerAddress) {
-        responseRegistry = new ConcurrentHashMap<>();
         this.callbackServerAddress = callbackServerAddress;
     }
 
     @Override
     public void register(UUID requestId, IRpcCallbackHandler callback) {
         log.info("registering callback handler for: " + requestId);
-        responseRegistry.put(requestId, callback);
+        handlersRegistry.put(requestId, callback);
     }
 
     @Override
-    public void setResponse(UUID requestId, Object response) {
+    public void setResult(UUID requestId, Object result) {
         log.info("callback received for: " + requestId);
-        IRpcCallbackHandler callbackHandler = responseRegistry.remove(requestId);
+        IRpcCallbackHandler callbackHandler = handlersRegistry.remove(requestId);
         if (callbackHandler == null) {
             log.info("missing callback handler for: " + requestId);
             return;
         }
-        callbackHandler.complete(response);
+        callbackHandler.complete(result);
     }
 
     @Override

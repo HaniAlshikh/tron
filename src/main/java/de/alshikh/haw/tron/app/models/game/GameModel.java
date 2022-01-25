@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameModel implements IGameModel {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
     private final List<InvalidationListener> listeners = new ArrayList<>();
 
     private final IPlayer player;

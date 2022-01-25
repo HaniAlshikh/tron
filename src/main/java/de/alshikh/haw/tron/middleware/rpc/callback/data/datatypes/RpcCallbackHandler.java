@@ -1,5 +1,7 @@
 package de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes;
 
+import de.alshikh.haw.tron.Config;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -14,9 +16,9 @@ public class RpcCallbackHandler implements IRpcCallbackHandler {
     @Override
     public Object getResult() {
         try {
-            return result.get(3, TimeUnit.SECONDS);
+            return result.get(Config.RPC_CALLBACK_TIMEOUT, TimeUnit.SECONDS);
         } catch (Exception e) {
-            return e; // TODO
+            return e;
         }
     }
 

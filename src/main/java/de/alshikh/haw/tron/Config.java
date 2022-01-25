@@ -4,7 +4,7 @@ import java.util.Objects;
 
 // TODO: ConfigManager
 public class Config {
-    public final static boolean DISTRIBUTED = false;
+    public final static boolean DISTRIBUTED = true;
 
     public static final int UPDATE_MAX_RETRIES = 50; // no update -> wait NUMBER_OF_RETRIES / FBS seconds
     public static final int FRAMES_PER_SECOND = 13;
@@ -19,6 +19,8 @@ public class Config {
     public static final String VIEW_PROP = getAbsolutePath("view.properties");
     public static final String MANAGER_PROP = getAbsolutePath("manager.properties");
 
+
+    public static final int RPC_CALLBACK_TIMEOUT = 3; // in seconds
 
 
     public static String getAbsolutePath(String resourcesFile) {

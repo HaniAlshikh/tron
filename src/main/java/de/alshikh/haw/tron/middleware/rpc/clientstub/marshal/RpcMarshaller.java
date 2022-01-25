@@ -47,7 +47,7 @@ public class RpcMarshaller implements IRpcMarshaller {
             log.info("failed to send request: " + request);
             log.debug("sending request error: ", e);
             if (request.isNotification())
-                callbackService.setResponse(request.getId(), e);
+                callbackService.setResult(request.getId(), e);
         }
     }
 
