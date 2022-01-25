@@ -77,7 +77,8 @@ public class DistributedTronGame implements Runnable {
 
     // TODO: how to handle user starting a game while the middleware is booting up
     public void bootUpMiddleware(UUID playerId, ILobbyModel lobbyModel) {
-        IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializationApi());
+        TronJsonRpcSerializationApi tronJsonRpcSerializationApi = new TronJsonRpcSerializationApi();
+        IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(tronJsonRpcSerializationApi);
 
         // rpcServer
         IRPCServerStub rpcServer = new RpcServerStub(rpcMessageApi);
@@ -88,10 +89,8 @@ public class DistributedTronGame implements Runnable {
         IRpcCallbackService rpcCallbackService = new RpcCallbackService(rpcServer.getRpcReceiver().getServerAddress());
         IRpcCallback rpcCallback = new RpcCallback(rpcCallbackService);
         IRpcAppServerStub callbackServer = new RpcCallbackServer(rpcCallback);
+        tronJsonRpcSerializationApi.setRpcCallbackService(rpcCallbackService);
         rpcServer.register(callbackServer);
-
-        // TODO: fix this
-        rpcMessageApi.getRpcSerializer().setR(rpcCallbackService);
 
         // directoryService
         InetSocketAddress directoryServiceAddress = DirectoryDiscoveryClient.discover();

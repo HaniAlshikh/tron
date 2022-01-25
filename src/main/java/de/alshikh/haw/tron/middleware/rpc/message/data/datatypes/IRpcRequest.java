@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.message.data.datatypes;
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -16,7 +16,7 @@ public interface IRpcRequest {
 
     String getMethodName();
 
-    JSONObject getParams();
+    JSONArray getParams();
 
     InetSocketAddress getCallbackAddress();
 }

@@ -9,6 +9,7 @@ import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryClient;
 import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
+import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
@@ -24,6 +25,8 @@ import java.net.UnknownHostException;
 import java.util.UUID;
 
 public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
+
+    private IRpcCallbackService rpcCallbackService;
 
     @Override
     public Object serialize(Object obj) {
@@ -61,7 +64,6 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
 
     private JSONObject serializeDirectoryServiceEntry(DirectoryEntry directoryEntry) {
         return newSerializedObj(DirectoryEntry.class)
-                .put("type", DirectoryEntry.class.getName())
                 .put("providerId", directoryEntry.getProviderId())
                 .put("serviceId", directoryEntry.getServiceId())
                 .put("address", directoryEntry.getServiceAddress().getAddress().getHostAddress())
@@ -116,7 +118,7 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
                 new RpcSender(new InetSocketAddress(
                         serializedObj.getString("ip"),
                         serializedObj.getInt("port"))),
-                rcs))); // TODO
+                rpcCallbackService)));
     }
 
     private Object deserializeRemoteRoomsFactoryClient(JSONObject serializedObj) {
@@ -125,7 +127,7 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
                 new RpcSender(new InetSocketAddress(
                         serializedObj.getString("ip"),
                         serializedObj.getInt("port"))),
-                rcs))); // TODO
+                rpcCallbackService)));
     }
 
     private Object deserializeObject(Object obj, JSONObject serializedObj) {
@@ -169,5 +171,9 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
 
     private boolean isType(Class<?> clazz, JSONObject serializedObj) {
         return serializedObj.getString("type").equals(clazz.getName());
+    }
+
+    public void setRpcCallbackService(IRpcCallbackService rpcCallbackService) {
+        this.rpcCallbackService = rpcCallbackService;
     }
 }

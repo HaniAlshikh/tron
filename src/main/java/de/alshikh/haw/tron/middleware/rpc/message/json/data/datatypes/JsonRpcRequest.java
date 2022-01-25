@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.middleware.rpc.message.json.data.datatypes;
 
 import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
@@ -9,14 +10,13 @@ import java.util.UUID;
 
 public class JsonRpcRequest implements IRpcRequest {
 
-    UUID id;
-    InetSocketAddress callbackAddress;
+    private UUID id;
+    private InetSocketAddress callbackAddress;
+    private UUID serviceId;
+    private String method;
+    private JSONArray params;
 
-    UUID serviceId;
-    String method;
-    JSONObject params;
-
-    JSONObject reqObj;
+    private final JSONObject reqObj;
 
     public JsonRpcRequest(JSONObject reqObj) {
         this.reqObj = reqObj;
@@ -27,12 +27,13 @@ public class JsonRpcRequest implements IRpcRequest {
         String uuid = reqObj.optString("id");
         if (!uuid.isEmpty()) {
             id = UUID.fromString(uuid);
-            callbackAddress = new InetSocketAddress(reqObj.getString("callbackIp"),
+            callbackAddress = new InetSocketAddress(
+                    reqObj.getString("callbackIp"),
                     reqObj.getInt("callbackPort"));
         }
         serviceId = UUID.fromString(reqObj.getString("service"));
         method = reqObj.getString("method");
-        params = reqObj.getJSONObject("params");
+        params = reqObj.getJSONArray("params");
     }
 
     @Override
@@ -66,7 +67,7 @@ public class JsonRpcRequest implements IRpcRequest {
     }
 
     @Override
-    public JSONObject getParams() {
+    public JSONArray getParams() {
         return params;
     }
 
