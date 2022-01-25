@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.app.models.lobby;
 
 import de.alshikh.haw.tron.app.models.lobby.datatypes.IRoom;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
@@ -24,12 +25,12 @@ public class LobbyModel implements ILobbyModel {
 
     @Override
     public void addRoom(IRoom room) {
-        rooms.put(room.getId(), room);
+        Platform.runLater(() -> rooms.put(room.getId(), room));
     }
 
     @Override
     public void removeRoom(UUID uuid) {
-        rooms.remove(uuid);
+        Platform.runLater(() -> rooms.remove(uuid));
     }
 
     @Override
