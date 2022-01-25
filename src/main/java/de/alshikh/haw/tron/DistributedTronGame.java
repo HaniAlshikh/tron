@@ -9,17 +9,15 @@ import de.alshikh.haw.tron.app.models.game.IGameModel;
 import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.models.lobby.LobbyModel;
 import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelServer;
+import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryClient;
+import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryServer;
 import de.alshikh.haw.tron.app.stubs.helpers.TronJsonRpcSerializationApi;
 import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.RemoteRoomsFactory;
-import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryClient;
-import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryServer;
 import de.alshikh.haw.tron.app.views.game.GameView;
 import de.alshikh.haw.tron.app.views.game.IGameView;
 import de.alshikh.haw.tron.app.views.lobby.ILobbyView;
 import de.alshikh.haw.tron.app.views.lobby.LobbyView;
-import de.alshikh.haw.tron.app.views.view_library.ITronView;
-import de.alshikh.haw.tron.app.views.view_library.TronView;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceClient;
 import de.alshikh.haw.tron.middleware.discoveryservice.DirectoryDiscoveryClient;
@@ -37,6 +35,8 @@ import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.IRPCServerStub;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.RpcServerStub;
+import edu.cads.bai5.vsp.tron.view.ITronView;
+import edu.cads.bai5.vsp.tron.view.TronView;
 import javafx.beans.InvalidationListener;
 import javafx.stage.Stage;
 
@@ -46,14 +46,12 @@ import java.util.UUID;
 
 public class DistributedTronGame implements Runnable {
 
-    public final static String VIEW_CONFIG_FILE = "view.properties";
-
     public DistributedTronGame() {}
 
     @Override
     public void run() {
         try {
-            ITronView baseView = new TronView(VIEW_CONFIG_FILE);
+            ITronView baseView = new TronView(Config.VIEW_PROP);
 
             ILobbyModel lobbyModel = new LobbyModel();
             ILobbyView lobbyView = new LobbyView(baseView);

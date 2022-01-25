@@ -1,11 +1,12 @@
 package de.alshikh.haw.tron.app.views.game;
 
+import de.alshikh.haw.tron.Config;
 import de.alshikh.haw.tron.app.models.game.data.entities.IGame;
 import de.alshikh.haw.tron.app.models.game.data.entities.IPlayer;
 import de.alshikh.haw.tron.app.views.game.overlayes.StartMenu;
 import de.alshikh.haw.tron.app.views.game.overlayes.WatingMenu;
-import de.alshikh.haw.tron.app.views.view_library.Coordinate;
-import de.alshikh.haw.tron.app.views.view_library.ITronView;
+import edu.cads.bai5.vsp.tron.view.Coordinate;
+import edu.cads.bai5.vsp.tron.view.ITronView;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,10 +25,10 @@ public class GameView implements IGameView {
     public GameView(ITronView view) throws IOException {
         this.view = view;
 
-        startMenu = new StartMenu("menu.css");
+        startMenu = new StartMenu(Config.MENU_CSS);
         view.registerOverlay("start", startMenu);
 
-        watingMenu = new WatingMenu("menu.css");
+        watingMenu = new WatingMenu(Config.MENU_CSS);
         view.registerOverlay("wait", watingMenu);
 
         view.init();

@@ -1,9 +1,10 @@
 package de.alshikh.haw.tron.app.views.lobby;
 
+import de.alshikh.haw.tron.Config;
 import de.alshikh.haw.tron.app.controllers.lobby.inputhandlers.IRoomsMenuInputHandler;
 import de.alshikh.haw.tron.app.models.lobby.datatypes.IRoom;
 import de.alshikh.haw.tron.app.views.lobby.overlayes.RoomsMenu;
-import de.alshikh.haw.tron.app.views.view_library.ITronView;
+import edu.cads.bai5.vsp.tron.view.ITronView;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,7 +20,7 @@ public class LobbyView implements ILobbyView {
     public LobbyView(ITronView view) throws IOException {
         this.view = view;
 
-        roomsMenu = new RoomsMenu("menu.css");
+        roomsMenu = new RoomsMenu(Config.MENU_CSS);
         view.registerOverlay("rooms", roomsMenu);
 
         view.init();

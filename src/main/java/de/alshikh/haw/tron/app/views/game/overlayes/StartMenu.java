@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.views.game.overlayes;
 
-import de.alshikh.haw.tron.app.views.view_library.ViewUtility;
+import edu.cads.bai5.vsp.tron.view.ViewUtility;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;

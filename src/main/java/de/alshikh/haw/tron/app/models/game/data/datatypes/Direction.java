@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.app.models.game.data.datatypes;
 
-import de.alshikh.haw.tron.app.views.view_library.Coordinate;
+
+import edu.cads.bai5.vsp.tron.view.Coordinate;
 
 public enum Direction {
 	UP, DOWN, LEFT, RIGHT;

@@ -1,5 +1,7 @@
 package de.alshikh.haw.tron;
 
+import java.util.Objects;
+
 // TODO: ConfigManager
 public class Config {
     public final static boolean DISTRIBUTED = false;
@@ -11,4 +13,16 @@ public class Config {
     public static final int HEIGHT = 600;
     public static final int ROWS = 40;
     public static final int COLUMNS = 50;
+
+
+    public static final String MENU_CSS = "menu.css";
+    public static final String VIEW_PROP = getAbsolutePath("view.properties");
+    public static final String MANAGER_PROP = getAbsolutePath("manager.properties");
+
+
+
+    public static String getAbsolutePath(String resourcesFile) {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        return Objects.requireNonNull(classloader.getResource(resourcesFile)).getPath();
+    }
 }

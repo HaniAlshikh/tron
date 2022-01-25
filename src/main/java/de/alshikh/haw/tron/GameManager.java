@@ -3,8 +3,8 @@ package de.alshikh.haw.tron;
 import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.models.lobby.LobbyModel;
 import de.alshikh.haw.tron.app.views.manager.overlays.ManagerMenu;
-import de.alshikh.haw.tron.app.views.view_library.ITronView;
-import de.alshikh.haw.tron.app.views.view_library.TronView;
+import edu.cads.bai5.vsp.tron.view.ITronView;
+import edu.cads.bai5.vsp.tron.view.TronView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
@@ -12,8 +12,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class GameManager extends Application {
-
-    public final static String MANAGER_CONFIG_FILE = "manager.properties";
 
     // TODO: limit to only 80% of machine resources
     //  is this enough?
@@ -30,9 +28,9 @@ public class GameManager extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        ITronView managerView = new TronView(MANAGER_CONFIG_FILE);
+        ITronView managerView = new TronView(Config.MANAGER_PROP);
 
-        ManagerMenu managerMenu = new ManagerMenu("menu.css");
+        ManagerMenu managerMenu = new ManagerMenu(Config.MENU_CSS);
         managerMenu.getBtnNew().setOnAction(e -> Platform.runLater(newTronGame()));
         managerView.registerOverlay("managerMenu", managerMenu);
 

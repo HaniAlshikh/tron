@@ -1,7 +1,7 @@
 package de.alshikh.haw.tron.app.views.game;
 
 import de.alshikh.haw.tron.app.models.game.data.entities.IGame;
-import de.alshikh.haw.tron.app.views.view_library.Coordinate;
+import edu.cads.bai5.vsp.tron.view.Coordinate;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

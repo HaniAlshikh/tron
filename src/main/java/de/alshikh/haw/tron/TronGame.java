@@ -11,15 +11,13 @@ import de.alshikh.haw.tron.app.views.game.GameView;
 import de.alshikh.haw.tron.app.views.game.IGameView;
 import de.alshikh.haw.tron.app.views.lobby.ILobbyView;
 import de.alshikh.haw.tron.app.views.lobby.LobbyView;
-import de.alshikh.haw.tron.app.views.view_library.ITronView;
-import de.alshikh.haw.tron.app.views.view_library.TronView;
+import edu.cads.bai5.vsp.tron.view.ITronView;
+import edu.cads.bai5.vsp.tron.view.TronView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class TronGame implements Runnable {
-
-    public final static String VIEW_CONFIG_FILE = "view.properties";
 
     private final ILobbyModel lobbyModel;
 
@@ -30,7 +28,7 @@ public class TronGame implements Runnable {
     @Override
     public void run() {
         try {
-            ITronView baseView = new TronView(VIEW_CONFIG_FILE);
+            ITronView baseView = new TronView(Config.VIEW_PROP);
 
             ILobbyView lobbyView = new LobbyView(baseView);
             ILobbyController lobbyController = new LobbyController(lobbyModel, lobbyView);

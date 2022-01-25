@@ -30,6 +30,12 @@
             <artifactId>json</artifactId>
             <version>20211205</version>
         </dependency>
+        <dependency>
+            <groupId>edu.cads.bai5.vsp.tron</groupId>
+            <artifactId>view-library</artifactId>
+            <version>0.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -47,8 +53,6 @@
                 <version>0.0.6</version>
                 <executions>
                     <execution>
-                        <!-- Default configuration for running -->
-                        <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>de.alshikh.haw.tron.GameManager</mainClass>
