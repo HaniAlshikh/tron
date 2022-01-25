@@ -1,11 +1,11 @@
-package de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service;
+package de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory;
 
 import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.models.lobby.datatypes.IRoom;
 import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelClient;
 import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelServer;
-import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.data.datatypes.RemoteRoom;
+import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.data.datatypes.RemoteRoom;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;

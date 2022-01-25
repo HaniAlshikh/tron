@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service;
+package de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory;
 
 import javafx.beans.InvalidationListener;
 

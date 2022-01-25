@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.directoryserver;
 
-import de.alshikh.haw.tron.app.stubs.TronJsonRpcSerializationApi;
+import de.alshikh.haw.tron.app.stubs.helpers.TronJsonRpcSerializationApi;
 import de.alshikh.haw.tron.middleware.directoryserver.service.DirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceServer;
 import de.alshikh.haw.tron.middleware.discoveryservice.DirectoryDiscoveryServer;

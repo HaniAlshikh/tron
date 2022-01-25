@@ -1,6 +1,6 @@
-package de.alshikh.haw.tron.app.stubs.remoteroomsfactory.stubs;
+package de.alshikh.haw.tron.app.stubs;
 
-import de.alshikh.haw.tron.app.stubs.remoteroomsfactory.service.IRemoteRoomsFactory;
+import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
 
 import java.lang.reflect.InvocationTargetException;
