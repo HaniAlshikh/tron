@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface IRPCClientStub {
     void invoke(UUID serviceId, Method method, Object... args);
 
-    void invoke(UUID serviceId, boolean bestEffort, Method method, Object... args);
+    void invoke(UUID serviceId, boolean isBestEffort, Method method, Object... args);
 
     void invoke(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, Method method, Object... args);
 

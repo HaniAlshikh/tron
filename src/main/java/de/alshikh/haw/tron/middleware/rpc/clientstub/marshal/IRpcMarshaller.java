@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import java.util.UUID;
 
 public interface IRpcMarshaller {
-    void marshal(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean bestEffort, Method method, Object[] args);
+    void marshal(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean isBestEffort, Method method, Object[] args);
 
     InetSocketAddress getServerAddress();
 }

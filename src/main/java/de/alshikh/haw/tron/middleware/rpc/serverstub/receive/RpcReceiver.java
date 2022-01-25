@@ -1,9 +1,7 @@
 package de.alshikh.haw.tron.middleware.rpc.serverstub.receive;
 
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
+import de.alshikh.haw.tron.Config;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.IRpcUnmarshaller;
-import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.RpcUnmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +13,8 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,10 +23,7 @@ import static de.alshikh.haw.tron.middleware.rpc.serverstub.receive.util.util.ge
 
 public class RpcReceiver implements IRpcReceiver {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
-    // TODO: managed executor service
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-    public static final int MAX_PACKET_SIZE = 1024; // based on request message size TODO: dynamic?
 
     private DatagramChannel udpServer;
     private ServerSocketChannel tcpServer;
@@ -40,8 +33,8 @@ public class RpcReceiver implements IRpcReceiver {
     private final IRpcUnmarshaller rpcUnmarshaller;
     private final CompletableFuture<InetSocketAddress> serverAddress;
 
-    public RpcReceiver(IRpcMessageApi rpcMsgApi, HashMap<UUID, IRpcAppServerStub> serviceRegistry) {
-        this.rpcUnmarshaller = new RpcUnmarshaller(rpcMsgApi, serviceRegistry);
+    public RpcReceiver(IRpcUnmarshaller rpcUnmarshaller) {
+        this.rpcUnmarshaller = rpcUnmarshaller;
         this.serverAddress = new CompletableFuture<>();
     }
 
@@ -85,7 +78,7 @@ public class RpcReceiver implements IRpcReceiver {
 
     private void udpReceive() {
         try {
-            ByteBuffer buffer = ByteBuffer.allocate(MAX_PACKET_SIZE);
+            ByteBuffer buffer = ByteBuffer.allocate(Config.MAX_PACKET_SIZE);
             udpServer.receive(buffer);
             buffer.flip();
             byte[] data = new byte[buffer.remaining()];
@@ -130,7 +123,7 @@ public class RpcReceiver implements IRpcReceiver {
         tcpServer.register(selector, SelectionKey.OP_ACCEPT);
         udpServer.register(selector, SelectionKey.OP_READ);
 
-        log.info("Server Started on port: " + boundedAddress.getPort() + "!");
+        log.info("listening on: " + boundedAddress);
         running = true;
         serverAddress.complete(boundedAddress);
     }

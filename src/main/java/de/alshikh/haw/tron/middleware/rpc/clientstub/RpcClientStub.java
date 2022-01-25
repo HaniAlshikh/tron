@@ -10,7 +10,6 @@ import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.UUID;
 
-// TODO: auto generate stubs
 public class RpcClientStub implements IRPCClientStub {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -26,8 +25,8 @@ public class RpcClientStub implements IRPCClientStub {
     }
 
     @Override
-    public void invoke(UUID serviceId, boolean bestEffort, Method method, Object... args) {
-        invoke(serviceId, null, bestEffort, method, args);
+    public void invoke(UUID serviceId, boolean isBestEffort, Method method, Object... args) {
+        invoke(serviceId, null, isBestEffort, method, args);
     }
 
     @Override
@@ -36,9 +35,9 @@ public class RpcClientStub implements IRPCClientStub {
     }
 
     @Override
-    public void invoke(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean bestEffort, Method method, Object... args) {
+    public void invoke(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean isBestEffort, Method method, Object... args) {
         log.debug("Invoking: " + method.getName() + " with args: " + Arrays.toString(args));
-        rpcMarshaller.marshal(serviceId, rpcCallbackHandler, bestEffort, method, args);
+        rpcMarshaller.marshal(serviceId, rpcCallbackHandler, isBestEffort, method, args);
     }
 
     @Override

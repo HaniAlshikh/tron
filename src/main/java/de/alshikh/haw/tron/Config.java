@@ -21,6 +21,8 @@ public class Config {
 
 
     public static final int RPC_CALLBACK_TIMEOUT = 3; // in seconds
+    // a typical update message is around 254 - 256 bytes
+    public static final int MAX_PACKET_SIZE = 512; // TODO: dynamic
 
 
     public static String getAbsolutePath(String resourcesFile) {

@@ -15,7 +15,7 @@ public class util {
     }
 
     // try when possible to get the ip as InetAddress.getLocalHost()
-    // sometimes returns a loopback for no reason
+    // sometimes returns the loopback
     public static InetAddress getLocalIp() {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();

@@ -60,6 +60,7 @@ public class RpcUnmarshaller implements IRpcUnmarshaller {
         return rpcMsgApi.toRpcCall(rpcRequest);
     }
 
+    // TODO: move call to ServerStub to remove serviceRegistry dependency
     private void call(IRpcCall rpcCall) throws InvocationRpcException, MethodNotFoundRpcException, ServiceNotFoundRpcException {
         try {
             IRpcAppServerStub serviceServerStub = serviceRegistry.get(rpcCall.getServiceId());

@@ -13,7 +13,6 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.UUID;
 
-// TODO: auto generate stubs
 public class RpcMarshaller implements IRpcMarshaller {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
@@ -28,21 +27,21 @@ public class RpcMarshaller implements IRpcMarshaller {
     }
 
     @Override
-    public void marshal(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean bestEffort, Method method, Object[] args) {
+    public void marshal(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean isBestEffort, Method method, Object[] args) {
         boolean isNotification = rpcCallbackHandler == null;
         InetSocketAddress rpcCallbackServerAddress = isNotification ? null : callbackService.getCallbackServerAddress();
 
         IRpcRequest rpcRequest = rpcMessageApi.newRequest(serviceId, isNotification, rpcCallbackServerAddress, method, args);
-        send(rpcRequest, bestEffort);
+        send(rpcRequest, isBestEffort);
 
         if (!isNotification)
             callbackService.register(rpcRequest.getId(), rpcCallbackHandler);
     }
 
-    private void send(IRpcRequest request, boolean bestEffort) {
+    private void send(IRpcRequest request, boolean isBestEffort) {
         try {
             log.debug("sending request: " + request);
-            rpcSender.send(request.getBytes(), bestEffort);
+            rpcSender.send(request.getBytes(), isBestEffort);
         } catch (RpcException e) {
             log.info("failed to send request: " + request);
             log.debug("sending request error: ", e);
