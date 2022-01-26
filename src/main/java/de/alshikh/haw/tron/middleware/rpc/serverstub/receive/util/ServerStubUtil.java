@@ -1,19 +1,12 @@
 package de.alshikh.haw.tron.middleware.rpc.serverstub.receive.util;
 
-import java.io.IOException;
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Enumeration;
 
-public class util {
-    public static int getRandomFreePort() {
-        int port = 9000;
-        while (true) {
-            try (ServerSocket s = new ServerSocket(0, 1, InetAddress.getLocalHost())) {
-                return s.getLocalPort();
-            } catch (IOException ignored) {}
-        }
-    }
-
+public class ServerStubUtil {
     // try when possible to get the ip as InetAddress.getLocalHost()
     // sometimes returns the loopback
     public static InetAddress getLocalIp() {

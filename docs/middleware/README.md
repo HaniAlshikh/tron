@@ -137,6 +137,7 @@ TODO
 
 ##### Server Stub White Box
 
+![Server Stub Class Diagram](diagrams/ServerStubClassDiagram.drawio.svg)
 
 ##### DirectoryServer
 

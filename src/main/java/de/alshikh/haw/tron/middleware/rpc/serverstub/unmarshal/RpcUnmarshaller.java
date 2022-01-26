@@ -11,7 +11,6 @@ import de.alshikh.haw.tron.middleware.rpc.message.data.datatypes.IRpcRequest;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.data.datatypes.IRpcCall;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.data.datatypes.RpcCall;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.data.execptions.InvalidParamsRpcException;
-import de.alshikh.haw.tron.middleware.rpc.serverstub.data.exceptions.ServiceNotFoundRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class RpcUnmarshaller implements IRpcUnmarshaller {
         }
     }
 
-    private IRpcCall toRpcCall(IRpcRequest rpcRequest) throws ServiceNotFoundRpcException, InvalidParamsRpcException {
+    private IRpcCall toRpcCall(IRpcRequest rpcRequest) throws InvalidParamsRpcException {
         UUID serviceId = rpcRequest.getServiceId();
         String methodName = rpcRequest.getMethodName();
         Class<?>[] parameterTypes = new Class[rpcRequest.getParams().length()];

@@ -1,6 +1,7 @@
 package de.alshikh.haw.tron.middleware.rpc.serverstub.receive;
 
 import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.receive.data.exceptions.FailedToReceiveNetworkRpcException;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.IRpcUnmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static de.alshikh.haw.tron.middleware.rpc.serverstub.receive.util.util.getLocalIp;
+import static de.alshikh.haw.tron.middleware.rpc.serverstub.receive.util.ServerStubUtil.getLocalIp;
 
 public class RpcReceiver implements IRpcReceiver {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
@@ -48,7 +49,7 @@ public class RpcReceiver implements IRpcReceiver {
                 selector.close();
                 tcpServer.close();
                 udpServer.close();
-                throw e;
+                throw new FailedToReceiveNetworkRpcException();
             }
         } catch (Exception e) {
             log.info("Fatal error: " + e.getMessage());
