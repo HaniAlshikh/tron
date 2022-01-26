@@ -2,7 +2,6 @@ package de.alshikh.haw.tron.middleware.directoryserver.service;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 
 import java.util.UUID;
 
@@ -12,7 +11,7 @@ public interface IDirectoryService {
 
     void unregister(IDirectoryEntry directoryEntry);
 
-    // TODO: publisher subscriber?
+    // TODO: publisher subscriber
     void addListenerTo(UUID serviceId, InvalidationListener listener);
 
     void removeListenerForm(UUID serviceId, InvalidationListener listener);

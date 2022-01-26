@@ -1,14 +1,18 @@
 # Introduction and Goals
 
-TODO
-
 A distributed system is a collection of autonomous computing elements that appears to its users as a single coherent system.
 
-middleware is the same to a distributed system as what an operating system is to a computer:
+middleware is the same to a distributed system as what an operating system is to a computer is.
 
-our important goals that should be met to make building a distributed system worth the effort. A distributed system should make resources easily accessible; it should hide the fact that resources are distributed across a network; it should be open; and it should be scalable.
+the important goals that should be met are to make building a distributed system worth the effort. 
+
+- A distributed system should make resources easily accessible. 
+- It should hide the fact that resources are distributed across a network.
+- It should be open; and it should be scalable.
 
 ## Requirements Overview
+
+
 
 TODO
 
@@ -118,7 +122,18 @@ TODO
 | Interface | Description |
 |-----------|-------------|
 
+#### Directory Server White Box
+
+![Directory Server Class Diagram](diagrams/DirectoryServerClassDiagram.drawio.svg)
+
+
+#### Discovery Service White Box
+
+![Directory Server Class Diagram](diagrams/DiscoveryServiceClassDiagram.drawio.svg)
+
 ### Level 3
+
+#### RPC White Box
 
 ##### Application Stub White Box
 
@@ -130,6 +145,7 @@ TODO
 
 ##### Message White Box
 
+![Message Class Diagram](diagrams/MessageClassDiagram.drawio.svg)
 
 ##### Callback White Box
 
@@ -138,10 +154,6 @@ TODO
 ##### Server Stub White Box
 
 ![Server Stub Class Diagram](diagrams/ServerStubClassDiagram.drawio.svg)
-
-##### DirectoryServer
-
-Best practise for sharing the port and multicast address
 
 ## Runtime View
 

@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.directoryserver.stubs;
+package de.alshikh.haw.tron.middleware.directoryserver.stub;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class DirectoryServiceCallee implements IRpcCalleeAppStub {
-    public static UUID id = UUID.fromString("08fd9cc9-a1dd-454e-ae22-f3c1329ab93c");
+    public static UUID SERVICE_ID = UUID.fromString("08fd9cc9-a1dd-454e-ae22-f3c1329ab93c");
 
     IDirectoryService directoryService;
 
@@ -24,6 +24,6 @@ public class DirectoryServiceCallee implements IRpcCalleeAppStub {
 
     @Override
     public UUID getServiceId() {
-        return id;
+        return SERVICE_ID;
     }
 }

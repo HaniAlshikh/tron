@@ -10,8 +10,8 @@ import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.IRemoteRoomsFact
 import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.RemoteRoomsFactory;
 import de.alshikh.haw.tron.app.views.manager.overlays.LoadingMenu;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
-import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceCaller;
-import de.alshikh.haw.tron.middleware.discoveryservice.DirectoryDiscoveryClient;
+import de.alshikh.haw.tron.middleware.directoryserver.stub.DirectoryServiceCaller;
+import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryClient;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCallerAppStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;

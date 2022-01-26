@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.directoryserver.stubs;
+package de.alshikh.haw.tron.middleware.directoryserver.stub;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class DirectoryServiceCaller implements IDirectoryService, IRpcCallerAppStub {
-    public static UUID id = UUID.fromString("08fd9cc9-a1dd-454e-ae22-f3c1329ab93c");
+    public static UUID SERVICE_ID = DirectoryServiceCallee.SERVICE_ID;
 
     IRpcClientStub rpcClientStub;
 
@@ -21,25 +21,25 @@ public class DirectoryServiceCaller implements IDirectoryService, IRpcCallerAppS
     @Override
     public void register(IDirectoryEntry directoryEntry) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClientStub.invoke(id, method, directoryEntry);
+        rpcClientStub.invoke(SERVICE_ID, method, directoryEntry);
     }
 
     @Override
     public void unregister(IDirectoryEntry directoryEntry) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClientStub.invoke(id, method, directoryEntry);
+        rpcClientStub.invoke(SERVICE_ID, method, directoryEntry);
     }
 
     @Override
     public void addListenerTo(UUID serviceId, InvalidationListener listener) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClientStub.invoke(id, method, serviceId, listener);
+        rpcClientStub.invoke(DirectoryServiceCaller.SERVICE_ID, method, serviceId, listener);
     }
 
     @Override
     public void removeListenerForm(UUID serviceId, InvalidationListener listener) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClientStub.invoke(id, method, serviceId, listener);
+        rpcClientStub.invoke(DirectoryServiceCaller.SERVICE_ID, method, serviceId, listener);
     }
 
     @Override
@@ -49,6 +49,6 @@ public class DirectoryServiceCaller implements IDirectoryService, IRpcCallerAppS
 
     @Override
     public UUID getServiceId() {
-        return id;
+        return SERVICE_ID;
     }
 }

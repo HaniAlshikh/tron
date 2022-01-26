@@ -2,8 +2,8 @@ package de.alshikh.haw.tron.middleware.directoryserver;
 
 import de.alshikh.haw.tron.app.stubs.helpers.TronJsonRpcSerializationApi;
 import de.alshikh.haw.tron.middleware.directoryserver.service.DirectoryService;
-import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceCallee;
-import de.alshikh.haw.tron.middleware.discoveryservice.DirectoryDiscoveryServer;
+import de.alshikh.haw.tron.middleware.directoryserver.stub.DirectoryServiceCallee;
+import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryServer;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
@@ -19,27 +19,21 @@ import java.util.concurrent.TimeUnit;
 public class DirectoryServer {
 
     public static void main(String[] args) {
+        // Ideally Directory Service Json Rpc Serialization Api is used
+        //IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new DirectoryServiceJsonRpcSerializationApi());
+        // but this for now cover more cases and avoids code duplication
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializationApi());
 
         DirectoryService directoryService = new DirectoryService();
-        IRpcCalleeAppStub directoryServiceServer = new DirectoryServiceCallee(directoryService);
+        IRpcCalleeAppStub directoryServiceCallee = new DirectoryServiceCallee(directoryService);
 
         IRpcServerStub rpcServerStub = new RpcServerStub(new RpcReceiver(new RpcUnmarshaller(rpcMessageApi)));
-        rpcServerStub.register(directoryServiceServer);
+        rpcServerStub.register(directoryServiceCallee);
         new Thread(() -> rpcServerStub.getRpcReceiver().start()).start();
 
         InetSocketAddress serverAddress = rpcServerStub.getRpcReceiver().getServerAddress();
         DirectoryDiscoveryServer.multicast(serverAddress, 2, TimeUnit.SECONDS);
 
-        // TODO: for testing should be removed
-        //InetSocketAddress discoveredAddress = DirectoryDiscoveryClient.discover();
-        //IDirectoryService directoryServiceClient = new DirectoryServiceClient(
-        //        new RpcClientStub(
-        //                discoveredAddress,
-        //                rpcMessageApi
-        //        ));
-
-        //directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), UUID.randomUUID(), rpcServerStub.getSocketAddress()));
         directoryService.addListener(DirectoryServer::tableize);
     }
 

@@ -1,6 +1,7 @@
-package de.alshikh.haw.tron.middleware.discoveryservice;
+package de.alshikh.haw.tron.middleware.directoryserver.discovery;
 
 import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.middleware.discoveryservice.IDiscoveryServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class DirectoryDiscoveryServer implements IDiscoveryServer {
         try {
             multicastGroup = InetAddress.getByName(Config.DISCOVERY_GROUP);
         } catch (UnknownHostException e) {
-            throw new RuntimeException(e); // should not happen but just in case
+            throw new RuntimeException(e);
         }
     }
 

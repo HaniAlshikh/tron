@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.middleware.directoryserver.stubs;
+package de.alshikh.haw.tron.middleware.directoryserver.stub;
 
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
@@ -13,7 +13,7 @@ public class DirectoryServiceJsonRpcSerializationApi extends JsonRpcSerializatio
     public Object deserialize(Object obj, Class<?> type) {
         if (type == DirectoryEntry.class && obj instanceof JSONObject) {
             JSONObject serializedObj = (JSONObject) obj;
-            obj = new DirectoryEntry(
+            return new DirectoryEntry(
                     UUID.fromString(serializedObj.getString("providerId")),
                     UUID.fromString(serializedObj.getString("serviceId")),
                     new InetSocketAddress(
@@ -31,12 +31,11 @@ public class DirectoryServiceJsonRpcSerializationApi extends JsonRpcSerializatio
     public Object serialize(Object obj) {
         if (obj instanceof DirectoryEntry) {
             IDirectoryEntry e = (IDirectoryEntry) obj;
-            JSONObject serializedObj = new JSONObject();
-            serializedObj.put("type", DirectoryEntry.class.getName());
-            serializedObj.put("serviceId", e.getServiceId());
-            serializedObj.put("address", e.getServiceAddress().getAddress().getHostAddress());
-            serializedObj.put("port", e.getServiceAddress().getPort());
-            obj = serializedObj;
+            return new JSONObject()
+                    .put("type", DirectoryEntry.class.getName())
+                    .put("serviceId", e.getServiceId())
+                    .put("address", e.getServiceAddress().getAddress().getHostAddress())
+                    .put("port", e.getServiceAddress().getPort());
         }
 
         return obj;

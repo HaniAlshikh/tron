@@ -23,17 +23,11 @@ import de.alshikh.haw.tron.middleware.rpc.serverstub.receive.RpcReceiver;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.RpcUnmarshaller;
 
 class RPC {
-    // TODO: iterate over the methods and create a client stub
-    // TODO: application stubs: callee/consumer caller/producer and not server client
-    // TODO: UDP packte size (propping to see what possible to send)
-    // TODO: split application stub into two components callee caller
-    // TODO: calculate RTT when implementing UDP ( -><- / 2)
-    // TODO: change discover to lookup
     public static void main(String[] args) {
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new HelloWorldJsonRpcSerializationApi());
 
         IHelloWorld helloWorld = new HelloWorld();
-        // TODO: application server stubs are not really necessary?
+        // TODO: application server stubs are not really necessary (service id are the problem)
         IRpcCalleeAppStub helloWorldServer = new HelloWorldCallee(helloWorld);
 
         IRpcServerStub rpcServerStub = new RpcServerStub(new RpcReceiver(new RpcUnmarshaller(rpcMessageApi)));
@@ -53,7 +47,6 @@ class RPC {
             e.printStackTrace();
         }
 
-        // TODO: are we allowed to use java ProxyInstance to generate application stubs?
         IHelloWorld helloWorldClient = new HelloWorldCaller(
                 new RpcClientStub(new RpcMarshaller(
                         rpcMessageApi,
