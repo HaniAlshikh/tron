@@ -65,13 +65,13 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 
 ### Business Context
 
-![Usecases](diagrams/application/Usecases.drawio.svg)
+![Usecases](diagrams/Usecases.drawio.svg)
 <!-- ![Business Context](images/BusinessContext.drawio.svg) -->
 
 Technical Context
 -----------------
 
-![TechnicalContext](diagrams/application/TechnicalContext.drawio.svg)
+![TechnicalContext](diagrams/TechnicalContext.drawio.svg)
 
 ## Solution Strategy
 
@@ -96,7 +96,7 @@ TODO: Need updating
 
 ### Whitebox Overall System
 
-![Component Diagram](diagrams/application/ComponentDiagram.drawio.svg)
+![Component Diagram](diagrams/ComponentDiagram.drawio.svg)
 
 the MVC pattern is used in the system to be developed. The reason for choosing this pattern is to make a clear division between domain objects and their presentation seen in the GUI.
 
@@ -114,34 +114,34 @@ X referees to the component name in the different packages
 
 ###### Game
 
-![Game Model Component Diagram](diagrams/application/GameModelClassDiagram.drawio.svg)
+![Game Model Component Diagram](diagrams/GameModelClassDiagram.drawio.svg)
 
 ###### Lobby
 
 how to sync rooms between models if we have multiple Models instances?
 (Remote room factory should be also singleton?)
 
-![Lobby Model Component Diagram](diagrams/application/LobbyModelClassDiagram.drawio.svg)
+![Lobby Model Component Diagram](diagrams/LobbyModelClassDiagram.drawio.svg)
 
 ##### View
 
 ###### Game
 
-![Game View Component Diagram](diagrams/application/GameViewClassDiagram.drawio.svg)
+![Game View Component Diagram](diagrams/GameViewClassDiagram.drawio.svg)
 
 ###### Lobby
 
-![Lobby View Component Diagram](diagrams/application/LobbyViewClassDiagram.drawio.svg)
+![Lobby View Component Diagram](diagrams/LobbyViewClassDiagram.drawio.svg)
 
 #### Controller
 
 ###### Game
 
-![Game Controller Component Diagram](diagrams/application/GameControllerClassDiagram.drawio.svg)
+![Game Controller Component Diagram](diagrams/GameControllerClassDiagram.drawio.svg)
 
 ###### Lobby
 
-![Lobby Controller Component Diagram](diagrams/application/LobbyControllerClassDiagram.drawio.svg)
+![Lobby Controller Component Diagram](diagrams/LobbyControllerClassDiagram.drawio.svg)
 
 ## Runtime View
 
@@ -152,11 +152,11 @@ ist das ein oder zwei Sequenzdiagramme?
 ist die Kommunikation zwischen Game und Lobby Controller richtig?  
 macht man alle Räume remote?  
 
-![Component Diagram](diagrams/application/UC01SequenceDiagram.drawio.svg)
+![Component Diagram](diagrams/UC01SequenceDiagram.drawio.svg)
 
 ### UC02: Join Game
 
-![Component Diagram](diagrams/application/UC02SequenceDiagram.drawio.svg)
+![Component Diagram](diagrams/UC02SequenceDiagram.drawio.svg)
 
 ### UC03: Start Game
 
@@ -165,8 +165,8 @@ wie moduliert man das?
 wenn einem Raum beigetreten wird sollten die UpdateChanel instanzen getaucht werden -> Local-instance/remote-stub
 
 
-![Component Diagram](diagrams/application/UC03EnterSequenceDiagram.drawio.svg)
-![Component Diagram](diagrams/application/UC03RoomFullSequenceDiagram.drawio.svg)
+![Component Diagram](diagrams/UC03EnterSequenceDiagram.drawio.svg)
+![Component Diagram](diagrams/UC03RoomFullSequenceDiagram.drawio.svg)
 
 
 ### UC04: Play Game
@@ -174,11 +174,11 @@ wenn einem Raum beigetreten wird sollten die UpdateChanel instanzen getaucht wer
 
 wie zeigt man dass das in der Game-Controller-Komponente läuft? oder State machine?  
 soll man hier update controlling machen? (wenn z.b. nicht der gesuchte Update geschickt wurde)
-![Component Diagram](diagrams/application/UC04PlayerUpdateObservedSequenceDiagram.drawio.svg)
+![Component Diagram](diagrams/UC04PlayerUpdateObservedSequenceDiagram.drawio.svg)
 Darf der LobbyController das Spiel starten?  
 Wenn nein  
 wie kann man unterscheiden zwischen dem ersten update und dem Rest ohne bei jedem Update zu prüfen?
-![Component Diagram](diagrams/application/UC04UpdateGameStateMachineDiagram.drawio.svg)
+![Component Diagram](diagrams/UC04UpdateGameStateMachineDiagram.drawio.svg)
 
 TODO: view update state doesn't depend on model update state both run asynchronously (model pushes the update)  
 TODO: factory pattern  
@@ -215,7 +215,7 @@ TODO: technical context all libraries (log for example)
 
 ## Deployment View
 
-![DeploymentDiagram](diagrams/application/DeploymentDiagram.drawio.svg)
+![DeploymentDiagram](diagrams/DeploymentDiagram.drawio.svg)
 
 [comment]: <> (Infrastructure Level 1 {#_infrastructure_level_1})
 

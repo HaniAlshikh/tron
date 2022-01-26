@@ -64,7 +64,7 @@ TODO
 
 ### Overall System White Box
 
-![Middleware Component Diagram](diagrams/middleware/MiddlewareComponentDiagram.drawio.svg)
+![Middleware Component Diagram](diagrams/MiddlewareComponentDiagram.drawio.svg)
 
 | Component | Description |
 |-----------|-------------|
@@ -88,7 +88,7 @@ TODO
 
 #### RPC White Box
 
-![RPC Component Diagram](diagrams/middleware/RPCComponentDiagram.drawio.svg)
+![RPC Component Diagram](diagrams/RPCComponentDiagram.drawio.svg)
 
 | Component | Description |
 |-----------|-------------|
@@ -122,18 +122,18 @@ TODO
 
 ##### Application Stub White Box
 
-![Application Stub Class Diagram](diagrams/middleware/ApplicationStubClassDiagram.drawio.svg)
+![Application Stub Class Diagram](diagrams/ApplicationStubClassDiagram.drawio.svg)
 
 ##### Client Stub White Box
 
-![Client Stub Class Diagram](diagrams/middleware/ClientStubClassDiagram.drawio.svg)
+![Client Stub Class Diagram](diagrams/ClientStubClassDiagram.drawio.svg)
 
 ##### Message White Box
 
 
 ##### Callback White Box
 
-![Callback Class Diagram](diagrams/middleware/CallbackClassDiagram.drawio.svg)
+![Callback Class Diagram](diagrams/CallbackClassDiagram.drawio.svg)
 
 ##### Server Stub White Box
 

@@ -7,11 +7,11 @@ The Application of course depends on the Middleware, but the Middleware could be
 
 ## Application Documentation
 
-The Documentation for our Game Application as a JavaFX Application with the provided [view-libary](https://git.haw-hamburg.de/bai5-vsp-tron/view-library) can be found [here](docs/Application.md) in our Repository.
+The Documentation for our Game Application as a JavaFX Application with the provided [view-libary](https://git.haw-hamburg.de/bai5-vsp-tron/view-library) can be found [here](docs/application/README.md) in our Repository.
 
 ## Middleware Documentation
 
-The Documentation for the distributed Middleware can be found [here](docs/Middleware.md) in our Repository.
+The Documentation for the distributed Middleware can be found [here](docs/middleware/README.md) in our Repository.
 
 ## Template
 
