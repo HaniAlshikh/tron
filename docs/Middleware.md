@@ -48,6 +48,7 @@ TODO
 
 ### Business Context
 
+TODO: application is the customer
 TODO
 
 Technical Context
@@ -172,6 +173,8 @@ Concurrent sever page 129 -> RpcServer
 
 
 we don't really care about structured naming or "human-readable" names. We mainly distribute rooms which are grouped under the same service id therefore we decided to implement a very simplified directory service (the expensive lookup/search and/or the complex mapping of attributes are not a problem in our usecase).
+
+TODO: lamport is implemented in a indirect way (PlayerUpdate version)
 
 [comment]: <> (Quality Requirements {#section-quality-scenarios})
 
