@@ -15,12 +15,15 @@ A distributed system:
 
 ## Requirements Overview
 
-the middleware assist the development of distributed applications and it is considered as a manager of resources offering its ap- plications to efficiently share and deploy those resources across a network. Next to resource management, it offers services that can also be found in most operating systems. The main difference, is that middleware services are offered in a networked environment
+the middleware assist the development of distributed applications and it is considered as a manager of resources offering its ap- plications to efficiently share and deploy those resources across a network. Next to resource management, it offers services that can also be found in most operating systems. The main difference, is that middleware services are offered in a networked environment.
+
+Due to the time constraint fault tolerance is not a requirement
 
 | ID | Use-Case | Description |
 |----|----------|-------------|
-| UC01 | invoke a function | as a application i want invoke a function that is implemented and executed on a remote computer as if it was locally available. |
-| UC02 | manage services | as a application I want to specify the offered services and discover them |
+| UC01 | offer services | as a application I want to specify and offer my services |
+| UC02 | lookup services | as a application I want to lookup and use the offered services |
+| UC03 | invoke a function | as a application i want invoke a function that is implemented and executed on a remote computer as if it was locally available. |
 
 ## Quality Goals
 
@@ -55,10 +58,11 @@ TODO
 
 ### Business Context
 
+TODO: Update me
+
 ![Usecases](diagrams/UseCases.drawio.svg)
 
-Technical Context
------------------
+### Technical Context
 
 TODO
 
@@ -159,7 +163,39 @@ TODO
 
 ## Runtime View
 
-TODO
+fault tolerance is not a requirement and therefore all sequences describe the best case scenario
+
+### UC01: Offer Services
+
+#### Starting the rpc server
+
+![Start Rpc Server Sequence Diagram Level 1](diagrams/UC01StartRpcServerSequenceDiagramLevel1.drawio.svg)
+
+#### Registering a service
+
+![Register Service Sequence Diagram Level 1](diagrams/UC01RegisterServiceSequenceDiagramLevel1.drawio.svg)
+
+#### Announce a service
+
+##### Discover Directory Server
+
+![Announce Service Sequence Diagram Level 1](diagrams/UC01DiscoverDirectoryServerSequenceDiagramLevel1.drawio.svg)
+
+##### Register a service to be announced
+
+![Announce Service Sequence Diagram Level 1](diagrams/UC01AnnounceServiceSequenceDiagramLevel1.drawio.svg)
+
+### UC02: lookup Services
+
+#### Subscribe to service group
+
+![Subscribe to service group Sequence Diagram Level 1](diagrams/UC02SubscribeToServiceSequenceDiagramLevel1.drawio.svg)
+
+### UC03: invoke a function
+
+![Subscribe to service group Sequence Diagram Level 1](diagrams/UC03InvokeAFunctionSequenceDiagramLevel1.drawio.svg)
+
+
 TODO: when documenting the protocol write how every object is serialized
 
 [comment]: <> (\<Runtime Scenario 1\> {#__runtime_scenario_1})

@@ -13,7 +13,7 @@ public interface IRpcClientStub {
 
     void invoke(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, Method method, Object... args);
 
-    void invoke(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean bestEffort, Method method, Object... args);
+    void invoke(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean isBestEffort, Method method, Object... args);
 
     InetSocketAddress getServerAddress();
 }
