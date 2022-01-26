@@ -22,8 +22,8 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 
 ## Quality Goals
 
-| ID |Goal | Description |
-|----|-----|-------------|
+| ID | Goal | Description |
+|----|------|-------------|
 | QG01 | Server stability | server should not be blocked by the players |
 | QG02 | Fairness | response time should not favour one player over the other |
 
@@ -65,8 +65,7 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 
 ### Business Context
 
-![Usecases](diagrams/Usecases.drawio.svg)
-<!-- ![Business Context](images/BusinessContext.drawio.svg) -->
+![Usecases](diagrams/UseCases.drawio.svg)
 
 Technical Context
 -----------------

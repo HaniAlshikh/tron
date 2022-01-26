@@ -4,39 +4,42 @@ A distributed system is a collection of autonomous computing elements that appea
 
 middleware is the same to a distributed system as what an operating system is to a computer is.
 
-the important goals that should be met are to make building a distributed system worth the effort. 
+the important goals that should be met to make building a distributed system worth the effort are:
 
-- A distributed system should make resources easily accessible. 
-- It should hide the fact that resources are distributed across a network.
-- It should be open; and it should be scalable.
+A distributed system:
+
+- should make resources easily accessible. 
+- should hide the fact that resources are distributed across a network.
+- should be open
+- should be scalable.
 
 ## Requirements Overview
 
+the middleware assist the development of distributed applications and it is considered as a manager of resources offering its ap- plications to efficiently share and deploy those resources across a network. Next to resource management, it offers services that can also be found in most operating systems. The main difference, is that middleware services are offered in a networked environment
 
-
-TODO
-
-Being open
-
-Transparency Description
-Access
-Location Relocation
-Migration Replication Concurrency
-Failure
-Hide differences in data representation and how an object is accessed
-Hide where an object is located
-Hide that an object may be moved to another location while in use
-Hide that an object may move to another location Hide that an object is replicated
-Hide that an object may be shared by several independent users
-Hide the failure and recovery of an object
+| ID | Use-Case | Description |
+|----|----------|-------------|
+| UC01 | invoke a function | as a application i want invoke a function that is implemented and executed on a remote computer as if it was locally available. |
+| UC02 | manage services | as a application I want to specify the offered services and discover them |
 
 ## Quality Goals
 
-TODO
+| ID | Goal | Description |
+|----|------|-------------|
+| QG01 | Access | Hide differences in data representation and how an object is accessed |
+| QG02 | Location | Hide where an object is located |
+| QG03 | Relocation | Hide that an object may be moved to another location while in use |
+| QG04 | Migration | Hide that an object may move to another location |
+| QG05 | Replication | Hide that an object is replicated |
+| QG06 | Concurrency | Hide that an object may be shared by several independent users |
+| QG07 | Failure | Hide the failure and recovery of an object |
+
 
 ## Stakeholders
 
-TODO
+| Role | Expectations |
+|------|--------------|
+| application | adhear to the design principles and avoid common pitfails like: <br> <ul><li>The network is reliable</li><li>The network is secure</li><li>The network is homogeneous</li><li>The topology does not change</li><li>Latency is zero</li><li>Bandwidth is infinite</li><li>Transport cost is zero</li><li>There is one administrator</li></ul> |
 
 ## Architecture Constraints
 
@@ -52,8 +55,7 @@ TODO
 
 ### Business Context
 
-TODO: application is the customer
-TODO
+![Usecases](diagrams/UseCases.drawio.svg)
 
 Technical Context
 -----------------
