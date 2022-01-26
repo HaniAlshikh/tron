@@ -1,21 +1,19 @@
 # Introduction and Goals
 
 A distributed system is a collection of autonomous computing elements that appears to its users as a single coherent system.
-
-middleware is the same to a distributed system as what an operating system is to a computer is.
-
-the important goals that should be met to make building a distributed system worth the effort are:
+The Middleware is the same to a distributed system as what an operating system is to a computer.
+The important goals that should be met to make building a distributed system worth the effort are:
 
 A distributed system:
 
-- should make resources easily accessible. 
+- should make resources easily accessible.
 - should hide the fact that resources are distributed across a network.
 - should be open
 - should be scalable.
 
 ## Requirements Overview
 
-the middleware assist the development of distributed applications and it is considered as a manager of resources offering its ap- plications to efficiently share and deploy those resources across a network. Next to resource management, it offers services that can also be found in most operating systems. The main difference, is that middleware services are offered in a networked environment
+The middleware assist the development of distributed applications and it is considered as a manager of resources offering its ap- plications to efficiently share and deploy those resources across a network. Next to resource management, it offers services that can also be found in most operating systems. The main difference, is that middleware services are offered in a networked environment
 
 | ID | Use-Case | Description |
 |----|----------|-------------|
@@ -34,12 +32,13 @@ the middleware assist the development of distributed applications and it is cons
 | QG06 | Concurrency | Hide that an object may be shared by several independent users |
 | QG07 | Failure | Hide the failure and recovery of an object |
 
-
 ## Stakeholders
 
 | Role | Expectations |
 |------|--------------|
-| application | adhear to the design principles and avoid common pitfails like: <br> <ul><li>The network is reliable</li><li>The network is secure</li><li>The network is homogeneous</li><li>The topology does not change</li><li>Latency is zero</li><li>Bandwidth is infinite</li><li>Transport cost is zero</li><li>There is one administrator</li></ul> |
+| Application | Adhear to the design principles and avoid common pitfails like: <br> <ul><li>The network is reliable</li><li>The network is secure</li><li>The network is homogeneous</li><li>The topology does not change</li><li>Latency is zero</li><li>Bandwidth is infinite</li><li>Transport cost is zero</li><li>There is one administrator</li></ul> |
+| Application Developer | <ul><li>The Middleware should be easy to integrate</li><li>The Middleware should have comprehensive Dokumentation to work with</li></ul> |
+| Middleware Developer | <ul><li>The Middleware should be maintainable</li><li>The Middleware should be expandable</li></ul> |
 
 ## Architecture Constraints
 
@@ -74,21 +73,33 @@ TODO
 
 | Component | Description |
 |-----------|-------------|
+| RPC | Main Component with multiple Sub-Components for Remote Procedure Calls in the Middleware |
+| DirectoryServer | Component which holds all Network relevant information about other participants of the distributed System |
+| DiscoveryService | Component to find new Announcements in the distributed System |
 
 #### RPC Black Box
 
 | Interface | Description |
 |-----------|-------------|
+| IRpcCallerAppStub | Interface to be implemented to offer RPC Methods to be called |
+| IRpcCalleeAppStub | Interface to be implemented call RPC Methods that are offered |
+| IRpcClientStub | Interface for a Client Stub to invoke a Method on a Service and hand it of to the Marshaller |
+| IRpcSerializationApi | Interface to handle the serialization and deserialization of Objects |
+| IRpcCallbackHandler | Interface to handle Callbacks for Methods and provide the designated Function with the result Data |
+| IRpcServerStub | Interface for a Server Stub which handles a list of all Methods it can call |
 
 #### Directory Server Black Box
 
 | Interface | Description |
 |-----------|-------------|
+| IDirectoryService | Interface for a Service to keep track of all discoverd Providers from Discovery |
 
 #### Discovery Server Black Box
 
 | Interface | Description |
 |-----------|-------------|
+| IDiscoveryServer | Interface for a Server broadcasting Announcements through the Network |
+| IDiscoveryClient | Interface for a Client listening for Server Announcements |
 
 ### Level 2
 
@@ -98,31 +109,45 @@ TODO
 
 | Component | Description |
 |-----------|-------------|
+| ApplicationStub | Component for the Application to Interface with the Middleware |
+| ClientStub | All logic related to invoking a RPC Method |
+| Message | Component which houses all Resources to create or read Messages that have been or will be sent |
+| Callback | Handles the Callback of RPC Method Calls |
+| ServerStub | All logic related to actually call the remotely invoked Method |
 
 ##### Application Stub Black Box
 
 | Interface | Description |
 |-----------|-------------|
+| IRpcCallerAppStub | Interface to be implemented to offer RPC Methods to be called |
+| IRpcCalleeAppStub | Interface to be implemented call RPC Methods that are offered |
 
 ##### Client Stub Black Box
 
 | Interface | Description |
 |-----------|-------------|
+| IRpcSender | Interface to send the actual Data over the Network |
+| IRpcClientStub | Interface for a Client Stub to invoke a Method on a Service and hand it of to the Marshaller |
 
 ##### Message Black Box
 
 | Interface | Description |
 |-----------|-------------|
+| IRpcMessageApi | Interface to create and parse Requests in the RPC Context  |
 
 ##### Callback Black Box
 
 | Interface | Description |
 |-----------|-------------|
+| IRpcCallback | Interface to return a result of a Function Call |
+| IRpcCallbackService | Interface for a Service to handle Results of Function Calls and deliver them to the Callbacks |
 
 ##### Server Stub Black Box
 
 | Interface | Description |
 |-----------|-------------|
+| IRpcSender | Interface to send the actual Data over the Network |
+| IRpcServerStub | Interface for a Server Stub which handles a list of all Methods it can call |
 
 #### Directory Server White Box
 

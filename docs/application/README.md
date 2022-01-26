@@ -65,7 +65,7 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 
 ### Business Context
 
-![Usecases](diagrams/UseCases.drawio.svg)
+![Use Cases](diagrams/UseCases.drawio.svg)
 
 Technical Context
 -----------------
