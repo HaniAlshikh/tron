@@ -1,16 +1,16 @@
 package de.alshikh.haw.tron.app;
 
-import de.alshikh.haw.tron.app.controllers.game.GameController;
-import de.alshikh.haw.tron.app.controllers.game.IGameController;
-import de.alshikh.haw.tron.app.controllers.lobby.ILobbyController;
-import de.alshikh.haw.tron.app.controllers.lobby.LobbyController;
-import de.alshikh.haw.tron.app.models.game.GameModel;
-import de.alshikh.haw.tron.app.models.game.IGameModel;
-import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
-import de.alshikh.haw.tron.app.views.game.GameView;
-import de.alshikh.haw.tron.app.views.game.IGameView;
-import de.alshikh.haw.tron.app.views.lobby.ILobbyView;
-import de.alshikh.haw.tron.app.views.lobby.LobbyView;
+import de.alshikh.haw.tron.app.controller.game.GameController;
+import de.alshikh.haw.tron.app.controller.game.IGameController;
+import de.alshikh.haw.tron.app.controller.lobby.ILobbyController;
+import de.alshikh.haw.tron.app.controller.lobby.LobbyController;
+import de.alshikh.haw.tron.app.model.game.GameModel;
+import de.alshikh.haw.tron.app.model.game.IGameModel;
+import de.alshikh.haw.tron.app.model.lobby.ILobbyModel;
+import de.alshikh.haw.tron.app.view.game.GameView;
+import de.alshikh.haw.tron.app.view.game.IGameView;
+import de.alshikh.haw.tron.app.view.lobby.ILobbyView;
+import de.alshikh.haw.tron.app.view.lobby.LobbyView;
 import edu.cads.bai5.vsp.tron.view.ITronView;
 import javafx.stage.Stage;
 

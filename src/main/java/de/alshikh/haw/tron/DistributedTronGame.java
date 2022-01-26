@@ -1,14 +1,14 @@
 package de.alshikh.haw.tron;
 
 import de.alshikh.haw.tron.app.TronGame;
-import de.alshikh.haw.tron.app.models.lobby.LobbyModel;
-import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelServer;
-import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryCallee;
-import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryCaller;
-import de.alshikh.haw.tron.app.stubs.helpers.TronJsonRpcSerializationApi;
-import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.IRemoteRoomsFactory;
-import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.RemoteRoomsFactory;
-import de.alshikh.haw.tron.app.views.manager.overlays.LoadingMenu;
+import de.alshikh.haw.tron.app.model.lobby.LobbyModel;
+import de.alshikh.haw.tron.app.stub.PlayerUpdateChannelCallee;
+import de.alshikh.haw.tron.app.stub.RemoteRoomsFactoryCallee;
+import de.alshikh.haw.tron.app.stub.RemoteRoomsFactoryCaller;
+import de.alshikh.haw.tron.app.stub.helpers.TronJsonRpcSerializationApi;
+import de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory.IRemoteRoomsFactory;
+import de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory.RemoteRoomsFactory;
+import de.alshikh.haw.tron.manager.overlays.LoadingMenu;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stub.DirectoryServiceCaller;
 import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryClient;
@@ -104,6 +104,6 @@ public class DistributedTronGame implements Runnable {
         IRpcCallerAppStub remoteRoomsFactoryClient = new RemoteRoomsFactoryCaller(new RpcClientStub(
                         new RpcMarshaller(rpcMessageApi,
                         new RpcSender(rpcServerStub.getRpcReceiver().getServerAddress()), rpcCallbackService)));
-        dsc.addListenerTo(PlayerUpdateChannelServer.serviceId, (InvalidationListener) remoteRoomsFactoryClient);
+        dsc.addListenerTo(PlayerUpdateChannelCallee.SERVICE_ID, (InvalidationListener) remoteRoomsFactoryClient);
     }
 }

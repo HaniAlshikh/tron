@@ -1,9 +1,9 @@
 package de.alshikh.haw.tron;
 
 import de.alshikh.haw.tron.app.TronGame;
-import de.alshikh.haw.tron.app.models.lobby.ILobbyModel;
-import de.alshikh.haw.tron.app.models.lobby.LobbyModel;
-import de.alshikh.haw.tron.app.views.manager.overlays.ManagerMenu;
+import de.alshikh.haw.tron.app.model.lobby.ILobbyModel;
+import de.alshikh.haw.tron.app.model.lobby.LobbyModel;
+import de.alshikh.haw.tron.manager.overlays.ManagerMenu;
 import edu.cads.bai5.vsp.tron.view.ITronView;
 import edu.cads.bai5.vsp.tron.view.TronView;
 import javafx.application.Application;
