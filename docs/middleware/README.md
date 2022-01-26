@@ -153,10 +153,40 @@ TODO
 
 ![Directory Server Class Diagram](diagrams/DirectoryServerClassDiagram.drawio.svg)
 
+| Component | Description |
+|-----------|-------------|
+| Discovery | Responsible for discovering new Directory Entries  |
+
+##### Stub Black Box
+
+| Interface | Description |
+|-----------|-------------|
+| IRpcCallerAppStub | Interface to be implemented to offer RPC Methods to be called |
+| IRpcCalleeAppStub | Interface to be implemented call RPC Methods that are offered |
+| IDirectoryService | Interface for a Service to keep track of all discoverd Providers from Discovery |
+
+##### Service Black Box
+
+| Interface | Description |
+|-----------|-------------|
+| IDirectoryEntry | Entry which was discoverd and can provide something |
+| IDirectoryService | Interface for a Service to keep track of all discoverd Providers from Discovery |
+
+##### Discovery Black Box
+
+| Interface | Description |
+|-----------|-------------|
+| IDiscoveryServer | Interface for a Server broadcasting Announcements through the Network |
+| IDiscoveryClient | Interface for a Client listening for Server Announcements |
 
 #### Discovery Service White Box
 
 ![Directory Server Class Diagram](diagrams/DiscoveryServiceClassDiagram.drawio.svg)
+
+| Interface | Description |
+|-----------|-------------|
+| IDiscoveryServer | Interface for a Server broadcasting Announcements through the Network |
+| IDiscoveryClient | Interface for a Client listening for Server Announcements |
 
 ### Level 3
 
