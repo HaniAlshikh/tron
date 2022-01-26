@@ -5,8 +5,8 @@ module de.alshikh.haw.tron {
     requires org.json;
     requires view.library;
 
-    exports de.alshikh.haw.tron;
-    opens de.alshikh.haw.tron to javafx.fxml;
+    exports de.alshikh.haw.tron.manager;
+    opens de.alshikh.haw.tron.manager to javafx.fxml;
     exports de.alshikh.haw.tron.app.model.lobby;
     exports de.alshikh.haw.tron.app.model.lobby.datatypes;
     exports de.alshikh.haw.tron.manager.overlays;

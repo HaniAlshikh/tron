@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron;
+package de.alshikh.haw.tron.manager;
 
 import de.alshikh.haw.tron.app.TronGame;
 import de.alshikh.haw.tron.app.model.lobby.LobbyModel;
@@ -9,9 +9,9 @@ import de.alshikh.haw.tron.app.stub.helpers.TronJsonRpcSerializationApi;
 import de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory.RemoteRoomsFactory;
 import de.alshikh.haw.tron.manager.overlays.LoadingMenu;
+import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryClient;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stub.DirectoryServiceCaller;
-import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryClient;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCallerAppStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
@@ -19,9 +19,7 @@ import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallback;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.RpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackCallee;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStubFactory;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.IRpcServerStub;
@@ -71,6 +69,7 @@ public class DistributedTronGame implements Runnable {
                 "Initializing..."));
         TronJsonRpcSerializationApi tronJsonRpcSerializationApi = new TronJsonRpcSerializationApi();
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(tronJsonRpcSerializationApi);
+        RpcClientStubFactory.setRpcMessageApi(rpcMessageApi);
 
         // rpcServerStub
         Platform.runLater(() -> loadingMenu.getProgressTxt().textProperty().setValue(
@@ -84,26 +83,22 @@ public class DistributedTronGame implements Runnable {
         IRpcCallbackService rpcCallbackService = new RpcCallbackService(rpcServerStub.getRpcReceiver().getServerAddress());
         IRpcCallback rpcCallback = new RpcCallback(rpcCallbackService);
         IRpcCalleeAppStub callbackServer = new RpcCallbackCallee(rpcCallback);
-        tronJsonRpcSerializationApi.setRpcCallbackService(rpcCallbackService);
+        RpcClientStubFactory.setRpcCallbackService(rpcCallbackService);
         rpcServerStub.register(callbackServer);
 
         // directoryService
         Platform.runLater(() -> loadingMenu.getProgressTxt().textProperty().setValue(
                 "looking up directory server..."));
         InetSocketAddress directoryServiceAddress = DirectoryDiscoveryClient.discover();
-        IDirectoryService dsc = new DirectoryServiceCaller(new RpcClientStub(
-                new RpcMarshaller(rpcMessageApi,
-                new RpcSender(directoryServiceAddress), rpcCallbackService)));
+        IDirectoryService dsc = new DirectoryServiceCaller(RpcClientStubFactory.getRpcClientStub(directoryServiceAddress));
 
         // remoteRoomsFactory
         Platform.runLater(() -> loadingMenu.getProgressTxt().textProperty().setValue(
                 "binding lobby to directory server..."));
-        IRemoteRoomsFactory remoteRoomsFactory = new RemoteRoomsFactory(tronGame.getId(), tronGame.getLobbyModel(), rpcServerStub, dsc, rpcMessageApi, rpcCallbackService);
+        IRemoteRoomsFactory remoteRoomsFactory = new RemoteRoomsFactory(tronGame.getId(), tronGame.getLobbyModel(), rpcServerStub, dsc);
         IRpcCalleeAppStub remoteRoomsFactoryServer = new RemoteRoomsFactoryCallee(remoteRoomsFactory);
         rpcServerStub.register(remoteRoomsFactoryServer);
-        IRpcCallerAppStub remoteRoomsFactoryClient = new RemoteRoomsFactoryCaller(new RpcClientStub(
-                        new RpcMarshaller(rpcMessageApi,
-                        new RpcSender(rpcServerStub.getRpcReceiver().getServerAddress()), rpcCallbackService)));
+        IRpcCallerAppStub remoteRoomsFactoryClient = new RemoteRoomsFactoryCaller(RpcClientStubFactory.getRpcClientStub(rpcServerStub.getRpcReceiver().getServerAddress()));
         dsc.addListenerTo(PlayerUpdateChannelCallee.SERVICE_ID, (InvalidationListener) remoteRoomsFactoryClient);
     }
 }

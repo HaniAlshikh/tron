@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.view.game;
 
-import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.manager.Config;
 import de.alshikh.haw.tron.app.model.game.data.entities.IGame;
 import de.alshikh.haw.tron.app.model.game.data.entities.IPlayer;
 import de.alshikh.haw.tron.app.view.game.overlayes.StartMenu;

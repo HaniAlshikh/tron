@@ -1,9 +1,10 @@
 package de.alshikh.haw.tron.middleware.directoryserver;
 
 import de.alshikh.haw.tron.app.stub.helpers.TronJsonRpcSerializationApi;
+import de.alshikh.haw.tron.manager.Config;
+import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryServer;
 import de.alshikh.haw.tron.middleware.directoryserver.service.DirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stub.DirectoryServiceCallee;
-import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryServer;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
@@ -19,20 +20,19 @@ import java.util.concurrent.TimeUnit;
 public class DirectoryServer {
 
     public static void main(String[] args) {
+        DirectoryService directoryService = new DirectoryService();
+        IRpcCalleeAppStub directoryServiceCallee = new DirectoryServiceCallee(directoryService);
+
         // Ideally Directory Service Json Rpc Serialization Api is used
         //IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new DirectoryServiceJsonRpcSerializationApi());
         // but this for now cover more cases and avoids code duplication
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializationApi());
-
-        DirectoryService directoryService = new DirectoryService();
-        IRpcCalleeAppStub directoryServiceCallee = new DirectoryServiceCallee(directoryService);
-
         IRpcServerStub rpcServerStub = new RpcServerStub(new RpcReceiver(new RpcUnmarshaller(rpcMessageApi)));
         rpcServerStub.register(directoryServiceCallee);
         new Thread(() -> rpcServerStub.getRpcReceiver().start()).start();
 
         InetSocketAddress serverAddress = rpcServerStub.getRpcReceiver().getServerAddress();
-        DirectoryDiscoveryServer.multicast(serverAddress, 2, TimeUnit.SECONDS);
+        DirectoryDiscoveryServer.multicast(serverAddress, Config.DISCOVERY_PERIOD, TimeUnit.SECONDS);
 
         directoryService.addListener(DirectoryServer::tableize);
     }

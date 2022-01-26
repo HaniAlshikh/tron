@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.serverstub.receive;
 
-import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.manager.Config;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.receive.data.exceptions.FailedToReceiveNetworkRpcException;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.IRpcUnmarshaller;
 import org.slf4j.Logger;

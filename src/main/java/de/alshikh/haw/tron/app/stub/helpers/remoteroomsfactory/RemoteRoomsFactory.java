@@ -3,17 +3,13 @@ package de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory;
 import de.alshikh.haw.tron.app.controller.game.helpers.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.app.model.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.model.lobby.datatypes.IRoom;
-import de.alshikh.haw.tron.app.stub.PlayerUpdateChannelCaller;
 import de.alshikh.haw.tron.app.stub.PlayerUpdateChannelCallee;
+import de.alshikh.haw.tron.app.stub.PlayerUpdateChannelCaller;
 import de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory.data.datatypes.RemoteRoom;
 import de.alshikh.haw.tron.middleware.directoryserver.service.IDirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
-import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
-import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStubFactory;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.IRpcServerStub;
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -27,16 +23,12 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
     private final ILobbyModel lobbyModel;
     private final IRpcServerStub rpcServerStub;
     private final IDirectoryService directoryService;
-    private final IRpcMessageApi rpcMessageApi;
-    private final IRpcCallbackService rpcCallbackService;
 
-    public RemoteRoomsFactory(UUID playerId, ILobbyModel lobbyModel, IRpcServerStub rpcServerStub, IDirectoryService directoryService, IRpcMessageApi rpcMessageApi, IRpcCallbackService rpcCallbackService) {
+    public RemoteRoomsFactory(UUID playerId, ILobbyModel lobbyModel, IRpcServerStub rpcServerStub, IDirectoryService directoryService) {
         this.playerId = playerId;
         this.lobbyModel = lobbyModel;
         this.rpcServerStub = rpcServerStub;
         this.directoryService = directoryService;
-        this.rpcMessageApi = rpcMessageApi;
-        this.rpcCallbackService = rpcCallbackService;
 
         lobbyModel.getRoomsList().addListener((ListChangeListener<IRoom>) this);
     }
@@ -56,11 +48,8 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
     private void newPlayerUpdateChannelObserved(IDirectoryEntry e) {
         if (e.isReachable())
             lobbyModel.addRoom(new RemoteRoom(new PlayerUpdateChannelCaller(
-                    new RpcClientStub(new RpcMarshaller(
-                            rpcMessageApi,
-                            new RpcSender(e.getServiceAddress()),
-                            rpcCallbackService))),
-                    this::PlayerUpdateChannelRpcClientStubFactory));
+                    RpcClientStubFactory.getRpcClientStub(e.getServiceAddress())),
+                    this::playerUpdateChannelAppStubFactory));
         else
             lobbyModel.removeRoom(e.getProviderId());
     }
@@ -83,13 +72,10 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
         }
     }
 
-    private PlayerUpdateChannelCaller PlayerUpdateChannelRpcClientStubFactory(IPlayerUpdateChannel playerUpdateChannel) {
+    private PlayerUpdateChannelCaller playerUpdateChannelAppStubFactory(IPlayerUpdateChannel playerUpdateChannel) {
         rpcServerStub.register(new PlayerUpdateChannelCallee(playerUpdateChannel));
-        return new PlayerUpdateChannelCaller(new RpcClientStub(new RpcMarshaller(
-                rpcMessageApi,
-                new RpcSender(rpcServerStub.getRpcReceiver().getServerAddress()),
-                rpcCallbackService
-        )));
+        return new PlayerUpdateChannelCaller(
+                RpcClientStubFactory.getRpcClientStub(rpcServerStub.getRpcReceiver().getServerAddress()));
     }
 
     private boolean isPlayerUpdateChannel(IDirectoryEntry e) {

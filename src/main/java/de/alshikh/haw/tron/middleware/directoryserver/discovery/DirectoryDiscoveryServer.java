@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.directoryserver.discovery;
 
-import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.manager.Config;
 import de.alshikh.haw.tron.middleware.discoveryservice.IDiscoveryServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

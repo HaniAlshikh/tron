@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.controller.game.helpers;
 
-import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.manager.Config;
 import de.alshikh.haw.tron.app.controller.game.IGameController;
 import de.alshikh.haw.tron.app.model.game.IGameModel;
 import de.alshikh.haw.tron.app.model.game.data.entities.IPlayer;

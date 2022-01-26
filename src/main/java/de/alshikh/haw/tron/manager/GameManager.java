@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron;
+package de.alshikh.haw.tron.manager;
 
 import de.alshikh.haw.tron.app.TronGame;
 import de.alshikh.haw.tron.app.model.lobby.ILobbyModel;

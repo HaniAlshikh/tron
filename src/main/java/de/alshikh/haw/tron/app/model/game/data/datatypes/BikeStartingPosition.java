@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.model.game.data.datatypes;
 
-import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.manager.Config;
 import edu.cads.bai5.vsp.tron.view.Coordinate;
 
 public enum BikeStartingPosition {
