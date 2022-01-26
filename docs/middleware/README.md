@@ -21,9 +21,9 @@ Due to the time constraint fault tolerance is not a requirement
 
 | ID | Use-Case | Description |
 |----|----------|-------------|
-| UC01 | offer services | as a application I want to specify and offer my services |
-| UC02 | lookup services | as a application I want to lookup and use the offered services |
-| UC03 | invoke a function | as a application i want invoke a function that is implemented and executed on a remote computer as if it was locally available. |
+| UC01 | offer services | as an application I want to specify and offer my services |
+| UC02 | lookup services | as an application I want to lookup and use the offered services |
+| UC03 | invoke a function | as an application i want invoke a function that is implemented and executed on a remote computer as if it was locally available. |
 
 ## Quality Goals
 
