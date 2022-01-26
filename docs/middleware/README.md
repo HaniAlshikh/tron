@@ -165,35 +165,52 @@ TODO
 
 fault tolerance is not a requirement and therefore all sequences describe the best case scenario
 
-### UC01: Offer Services
+### Level 1
 
-#### Starting the rpc server
+#### UC01: Offer Services
+
+##### Starting the rpc server
 
 ![Start Rpc Server Sequence Diagram Level 1](diagrams/UC01StartRpcServerSequenceDiagramLevel1.drawio.svg)
 
-#### Registering a service
+##### Registering a service
 
 ![Register Service Sequence Diagram Level 1](diagrams/UC01RegisterServiceSequenceDiagramLevel1.drawio.svg)
 
-#### Announce a service
+##### Announce a service
 
-##### Discover Directory Server
+###### Discover Directory Server
 
 ![Announce Service Sequence Diagram Level 1](diagrams/UC01DiscoverDirectoryServerSequenceDiagramLevel1.drawio.svg)
 
-##### Register a service to be announced
+###### Register a service to be announced
 
 ![Announce Service Sequence Diagram Level 1](diagrams/UC01AnnounceServiceSequenceDiagramLevel1.drawio.svg)
 
-### UC02: lookup Services
+#### UC02: lookup Services
 
-#### Subscribe to service group
+##### Subscribe to service group
 
-![Subscribe to service group Sequence Diagram Level 1](diagrams/UC02SubscribeToServiceSequenceDiagramLevel1.drawio.svg)
+![Subscribe to service group Sequence Diagram Level 1](diagrams/UC02SubscribeToServiceGroupSequenceDiagramLevel1.drawio.svg)
 
-### UC03: invoke a function
+#### UC03: invoke a function
 
 ![Subscribe to service group Sequence Diagram Level 1](diagrams/UC03InvokeAFunctionSequenceDiagramLevel1.drawio.svg)
+
+### Level 2
+
+#### UC01: Offer Services
+
+##### Receiving calls
+
+![Receiving calls Sequence Diagram Level 2](diagrams/UC01ReceivingCallsSequenceDiagramLevel2.drawio.svg)
+
+#### UC03: invoke a function
+
+##### Sending calls
+
+![Sending calls Sequence Diagram Level 2](diagrams/UC03SendingCallsSequenceDiagramLevel2.drawio.svg)
+
 
 
 TODO: when documenting the protocol write how every object is serialized
