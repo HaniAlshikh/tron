@@ -14,7 +14,7 @@ import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.serverstub.IRPCServerStub;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.IRpcServerStub;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.ListChangeListener;
@@ -25,12 +25,12 @@ public class RemoteRoomsFactory implements IRemoteRoomsFactory, ListChangeListen
 
     UUID playerId;
     ILobbyModel lobbyModel;
-    IRPCServerStub rpcServerStub;
+    IRpcServerStub rpcServerStub;
     IDirectoryService directoryService;
     IRpcMessageApi rpcMessageApi;
     IRpcCallbackService rpcCallbackService;
 
-    public RemoteRoomsFactory(UUID playerId, ILobbyModel lobbyModel, IRPCServerStub rpcServerStub, IDirectoryService directoryService, IRpcMessageApi rpcMessageApi, IRpcCallbackService rpcCallbackService) {
+    public RemoteRoomsFactory(UUID playerId, ILobbyModel lobbyModel, IRpcServerStub rpcServerStub, IDirectoryService directoryService, IRpcMessageApi rpcMessageApi, IRpcCallbackService rpcCallbackService) {
         this.playerId = playerId;
         this.lobbyModel = lobbyModel;
         this.rpcServerStub = rpcServerStub;

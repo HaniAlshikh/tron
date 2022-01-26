@@ -62,13 +62,81 @@ TODO
 
 ## Building Block View
 
-### Whitebox Overall System
+### Overall System White Box
 
-![Component Diagram](diagrams/middleware/MiddlewareBlackBoxLayer1.drawio.svg)
+![Middleware Component Diagram](diagrams/middleware/MiddlewareComponentDiagram.drawio.svg)
 
-TODO
+| Component | Description |
+|-----------|-------------|
 
-#### Level 2
+#### RPC Black Box
+
+| Interface | Description |
+|-----------|-------------|
+
+#### Directory Server Black Box
+
+| Interface | Description |
+|-----------|-------------|
+
+#### Discovery Server Black Box
+
+| Interface | Description |
+|-----------|-------------|
+
+### Level 2
+
+#### RPC White Box
+
+![RPC Component Diagram](diagrams/middleware/RPCComponentDiagram.drawio.svg)
+
+| Component | Description |
+|-----------|-------------|
+
+##### Application Stub Black Box
+
+| Interface | Description |
+|-----------|-------------|
+
+##### Client Stub Black Box
+
+| Interface | Description |
+|-----------|-------------|
+
+##### Message Black Box
+
+| Interface | Description |
+|-----------|-------------|
+
+##### Callback Black Box
+
+| Interface | Description |
+|-----------|-------------|
+
+##### Server Stub Black Box
+
+| Interface | Description |
+|-----------|-------------|
+
+### Level 3
+
+##### Application Stub White Box
+
+![Application Stub Class Diagram](diagrams/middleware/ApplicationStubClassDiagram.drawio.svg)
+
+##### Client Stub White Box
+
+![Client Stub Class Diagram](diagrams/middleware/ClientStubClassDiagram.drawio.svg)
+
+##### Message White Box
+
+
+##### Callback White Box
+
+![Callback Class Diagram](diagrams/middleware/CallbackClassDiagram.drawio.svg)
+
+##### Server Stub White Box
+
 
 ##### DirectoryServer
 

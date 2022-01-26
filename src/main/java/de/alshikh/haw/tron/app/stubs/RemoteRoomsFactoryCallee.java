@@ -1,18 +1,18 @@
 package de.alshikh.haw.tron.app.stubs;
 
 import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.IRemoteRoomsFactory;
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
+import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-public class RemoteRoomsFactoryServer implements IRpcAppServerStub {
+public class RemoteRoomsFactoryCallee implements IRpcCalleeAppStub {
     public static UUID serviceId = UUID.fromString("08fd9cc9-a1dd-454e-ae18-f3c1329ab93c");
 
     IRemoteRoomsFactory remoteRoomsFactory;
 
-    public RemoteRoomsFactoryServer(IRemoteRoomsFactory remoteRoomsFactory) {
+    public RemoteRoomsFactoryCallee(IRemoteRoomsFactory remoteRoomsFactory) {
         this.remoteRoomsFactory = remoteRoomsFactory;
     }
 

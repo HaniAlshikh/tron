@@ -2,13 +2,15 @@ package de.alshikh.haw.tron.middleware.directoryserver;
 
 import de.alshikh.haw.tron.app.stubs.helpers.TronJsonRpcSerializationApi;
 import de.alshikh.haw.tron.middleware.directoryserver.service.DirectoryService;
-import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceServer;
+import de.alshikh.haw.tron.middleware.directoryserver.stubs.DirectoryServiceCallee;
 import de.alshikh.haw.tron.middleware.discoveryservice.DirectoryDiscoveryServer;
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
+import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
-import de.alshikh.haw.tron.middleware.rpc.serverstub.IRPCServerStub;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.IRpcServerStub;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.RpcServerStub;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.receive.RpcReceiver;
+import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.RpcUnmarshaller;
 import javafx.beans.Observable;
 
 import java.net.InetSocketAddress;
@@ -20,13 +22,13 @@ public class DirectoryServer {
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializationApi());
 
         DirectoryService directoryService = new DirectoryService();
-        IRpcAppServerStub directoryServiceServer = new DirectoryServiceServer(directoryService);
+        IRpcCalleeAppStub directoryServiceServer = new DirectoryServiceCallee(directoryService);
 
-        IRPCServerStub rpcServer = new RpcServerStub(rpcMessageApi);
-        rpcServer.register(directoryServiceServer);
-        new Thread(() -> rpcServer.getRpcReceiver().start()).start();
+        IRpcServerStub rpcServerStub = new RpcServerStub(new RpcReceiver(new RpcUnmarshaller(rpcMessageApi)));
+        rpcServerStub.register(directoryServiceServer);
+        new Thread(() -> rpcServerStub.getRpcReceiver().start()).start();
 
-        InetSocketAddress serverAddress = rpcServer.getRpcReceiver().getServerAddress();
+        InetSocketAddress serverAddress = rpcServerStub.getRpcReceiver().getServerAddress();
         DirectoryDiscoveryServer.multicast(serverAddress, 2, TimeUnit.SECONDS);
 
         // TODO: for testing should be removed
@@ -37,7 +39,7 @@ public class DirectoryServer {
         //                rpcMessageApi
         //        ));
 
-        //directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), UUID.randomUUID(), rpcServer.getSocketAddress()));
+        //directoryServiceClient.register(new DirectoryServiceEntry(UUID.randomUUID(), UUID.randomUUID(), rpcServerStub.getSocketAddress()));
         directoryService.addListener(DirectoryServer::tableize);
     }
 

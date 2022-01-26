@@ -21,9 +21,9 @@ public class RpcCallbackService implements IRpcCallbackService {
     }
 
     @Override
-    public void register(UUID requestId, IRpcCallbackHandler callback) {
+    public void register(UUID requestId, IRpcCallbackHandler callbackHandler) {
         log.info("registering callback handler for: " + requestId);
-        handlersRegistry.put(requestId, callback);
+        handlersRegistry.put(requestId, callbackHandler);
     }
 
     @Override

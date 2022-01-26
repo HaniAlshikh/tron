@@ -10,7 +10,7 @@ import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class RpcClientStub implements IRPCClientStub {
+public class RpcClientStub implements IRpcClientStub {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private final IRpcMarshaller rpcMarshaller;

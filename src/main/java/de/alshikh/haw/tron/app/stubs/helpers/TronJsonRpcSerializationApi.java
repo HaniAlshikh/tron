@@ -5,11 +5,11 @@ import de.alshikh.haw.tron.app.models.game.data.datatypes.Direction;
 import de.alshikh.haw.tron.app.models.game.data.entities.IPlayerUpdate;
 import de.alshikh.haw.tron.app.models.game.data.entities.PlayerUpdate;
 import de.alshikh.haw.tron.app.stubs.PlayerUpdateChannelClient;
-import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryClient;
+import de.alshikh.haw.tron.app.stubs.RemoteRoomsFactoryCaller;
 import de.alshikh.haw.tron.app.stubs.helpers.remoteroomsfactory.IRemoteRoomsFactory;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.DirectoryEntry;
 import de.alshikh.haw.tron.middleware.directoryserver.service.data.datatypes.IDirectoryEntry;
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppClientStub;
+import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCallerAppStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
@@ -31,7 +31,7 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
 
     @Override
     public Object serialize(Object obj) {
-        if (obj instanceof IRpcAppClientStub) return serializeIRpcAppClientStub((IRpcAppClientStub) obj);
+        if (obj instanceof IRpcCallerAppStub) return serializeIRpcAppClientStub((IRpcCallerAppStub) obj);
         if (obj instanceof IPlayerUpdate) return serializePlayerUpdate((IPlayerUpdate) obj);
         if (obj instanceof IDirectoryEntry) return serializeDirectoryServiceEntry((IDirectoryEntry) obj);
         if (obj instanceof InetAddress) return serializeInetAddress((InetAddress) obj);
@@ -45,15 +45,15 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
                 .put("type", clazz.getName());
     }
 
-    private Object serializeIRpcAppClientStub(IRpcAppClientStub rpcAppClientStub) {
+    private Object serializeIRpcAppClientStub(IRpcCallerAppStub rpcAppClientStub) {
         JSONObject serializedObj = null;
         if (rpcAppClientStub instanceof IPlayerUpdateChannel) serializedObj = newSerializedObj(IPlayerUpdateChannel.class);
         if (rpcAppClientStub instanceof IRemoteRoomsFactory) serializedObj = newSerializedObj(IRemoteRoomsFactory.class);
 
         if (serializedObj == null) return rpcAppClientStub;
         return serializedObj
-                .put("ip", rpcAppClientStub.getRpcClient().getServerAddress().getAddress().getHostAddress())
-                .put("port", rpcAppClientStub.getRpcClient().getServerAddress().getPort());
+                .put("ip", rpcAppClientStub.getRpcClientStub().getServerAddress().getAddress().getHostAddress())
+                .put("port", rpcAppClientStub.getRpcClientStub().getServerAddress().getPort());
     }
 
     private JSONObject serializePlayerUpdate(IPlayerUpdate playerUpdate) {
@@ -123,7 +123,7 @@ public class TronJsonRpcSerializationApi extends JsonRpcSerializationApi {
     }
 
     private Object deserializeRemoteRoomsFactoryClient(JSONObject serializedObj) {
-        return new RemoteRoomsFactoryClient(new RpcClientStub(new RpcMarshaller(
+        return new RemoteRoomsFactoryCaller(new RpcClientStub(new RpcMarshaller(
                 new JsonRpcMessageApi(this),
                 new RpcSender(new InetSocketAddress(
                         serializedObj.getString("ip"),

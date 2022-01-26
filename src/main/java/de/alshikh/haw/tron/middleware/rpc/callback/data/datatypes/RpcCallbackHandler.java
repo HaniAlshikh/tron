@@ -7,11 +7,9 @@ import java.util.concurrent.TimeUnit;
 
 public class RpcCallbackHandler implements IRpcCallbackHandler {
 
-    private final CompletableFuture<Object> result;
+    private final CompletableFuture<Object> result = new CompletableFuture<>();;
 
-    public RpcCallbackHandler() {
-        this.result = new CompletableFuture<>();
-    }
+    public RpcCallbackHandler() {}
 
     @Override
     public Object getResult() {

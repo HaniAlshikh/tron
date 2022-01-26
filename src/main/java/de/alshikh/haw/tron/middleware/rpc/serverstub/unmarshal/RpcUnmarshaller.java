@@ -1,7 +1,7 @@
 package de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal;
 
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallback;
-import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackClient;
+import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackCaller;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
@@ -23,13 +23,12 @@ public class RpcUnmarshaller implements IRpcUnmarshaller {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     private IRpcRequest rpcRequest;
+    private Function<IRpcCall, Object> rpcCallHandler;
 
     private final IRpcMessageApi rpcMsgApi;
-    private final Function<IRpcCall, Object> rpcCallHandler;
 
-    public RpcUnmarshaller(IRpcMessageApi rpcMsgApi, Function<IRpcCall, Object> rpcCallHandler) {
+    public RpcUnmarshaller(IRpcMessageApi rpcMsgApi) {
         this.rpcMsgApi = rpcMsgApi;
-        this.rpcCallHandler = rpcCallHandler;
     }
 
     @Override
@@ -64,7 +63,12 @@ public class RpcUnmarshaller implements IRpcUnmarshaller {
     }
 
     private IRpcCallback newRpcCallback(InetSocketAddress callbackAddress) {
-        return new RpcCallbackClient(new RpcClientStub(new RpcMarshaller(rpcMsgApi, new RpcSender(callbackAddress),
+        return new RpcCallbackCaller(new RpcClientStub(new RpcMarshaller(rpcMsgApi, new RpcSender(callbackAddress),
                 null))); // callback chaining is not supported
+    }
+
+    @Override
+    public void setRpcCallHandler(Function<IRpcCall, Object> rpcCallHandler) {
+        this.rpcCallHandler = rpcCallHandler;
     }
 }

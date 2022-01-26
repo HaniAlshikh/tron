@@ -25,17 +25,17 @@ public class RpcReceiver implements IRpcReceiver {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
+    private final CompletableFuture<InetSocketAddress> serverAddress = new CompletableFuture<>();
+
     private DatagramChannel udpServer;
     private ServerSocketChannel tcpServer;
     private Selector selector;
     private boolean running;
 
     private final IRpcUnmarshaller rpcUnmarshaller;
-    private final CompletableFuture<InetSocketAddress> serverAddress;
 
     public RpcReceiver(IRpcUnmarshaller rpcUnmarshaller) {
         this.rpcUnmarshaller = rpcUnmarshaller;
-        this.serverAddress = new CompletableFuture<>();
     }
 
     @Override
@@ -147,5 +147,10 @@ public class RpcReceiver implements IRpcReceiver {
         } catch (Exception e) { // TODO:
             return null;
         }
+    }
+
+    @Override
+    public IRpcUnmarshaller getRpcUnmarshaller() {
+        return rpcUnmarshaller;
     }
 }

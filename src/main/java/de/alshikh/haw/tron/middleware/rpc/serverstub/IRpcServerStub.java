@@ -1,12 +1,12 @@
 package de.alshikh.haw.tron.middleware.rpc.serverstub;
 
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
+import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.receive.IRpcReceiver;
 
 import java.util.UUID;
 
-public interface IRPCServerStub {
-    void register(IRpcAppServerStub serviceServerStub);
+public interface IRpcServerStub {
+    void register(IRpcCalleeAppStub serviceServerStub);
 
     void unregister(UUID id);
 

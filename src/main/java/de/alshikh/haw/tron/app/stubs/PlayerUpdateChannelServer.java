@@ -1,13 +1,13 @@
 package de.alshikh.haw.tron.app.stubs;
 
 import de.alshikh.haw.tron.app.controllers.game.helpers.IPlayerUpdateChannel;
-import de.alshikh.haw.tron.middleware.rpc.application.stubs.IRpcAppServerStub;
+import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-public class PlayerUpdateChannelServer implements IRpcAppServerStub {
+public class PlayerUpdateChannelServer implements IRpcCalleeAppStub {
     public static UUID serviceId = UUID.fromString("08fd9cc9-a1ff-4542-ae32-f3c1329ab93c");
 
     IPlayerUpdateChannel playerUpdateChannel;
