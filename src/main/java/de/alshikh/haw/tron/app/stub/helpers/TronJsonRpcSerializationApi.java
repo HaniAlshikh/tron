@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.stub.helpers;
 
-import de.alshikh.haw.tron.app.controller.game.helpers.IPlayerUpdateChannel;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.app.model.game.data.datatypes.Direction;
 import de.alshikh.haw.tron.app.model.game.data.entities.IPlayerUpdate;
 import de.alshikh.haw.tron.app.model.game.data.entities.PlayerUpdate;

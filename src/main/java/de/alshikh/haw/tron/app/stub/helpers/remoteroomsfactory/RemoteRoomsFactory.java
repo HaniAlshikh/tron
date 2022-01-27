@@ -1,8 +1,8 @@
 package de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory;
 
-import de.alshikh.haw.tron.app.controller.game.helpers.IPlayerUpdateChannel;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.app.model.lobby.ILobbyModel;
-import de.alshikh.haw.tron.app.model.lobby.datatypes.IRoom;
+import de.alshikh.haw.tron.app.model.lobby.data.entities.IRoom;
 import de.alshikh.haw.tron.app.stub.PlayerUpdateChannelCallee;
 import de.alshikh.haw.tron.app.stub.PlayerUpdateChannelCaller;
 import de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory.data.datatypes.RemoteRoom;

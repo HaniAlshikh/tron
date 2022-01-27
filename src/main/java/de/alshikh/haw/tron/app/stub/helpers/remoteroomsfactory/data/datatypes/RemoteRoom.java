@@ -1,7 +1,7 @@
 package de.alshikh.haw.tron.app.stub.helpers.remoteroomsfactory.data.datatypes;
 
-import de.alshikh.haw.tron.app.controller.game.helpers.IPlayerUpdateChannel;
-import de.alshikh.haw.tron.app.model.lobby.datatypes.Room;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.IPlayerUpdateChannel;
+import de.alshikh.haw.tron.app.model.lobby.data.entities.Room;
 import de.alshikh.haw.tron.app.stub.PlayerUpdateChannelCaller;
 
 import java.util.function.Function;

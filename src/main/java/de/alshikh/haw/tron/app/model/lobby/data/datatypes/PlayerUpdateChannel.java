@@ -1,5 +1,6 @@
-package de.alshikh.haw.tron.app.controller.game.helpers;
+package de.alshikh.haw.tron.app.model.lobby.data.datatypes;
 
+import de.alshikh.haw.tron.app.controller.game.helpers.IGameUpdater;
 import de.alshikh.haw.tron.app.model.game.data.entities.IPlayer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

@@ -2,7 +2,7 @@ package de.alshikh.haw.tron.app.view.lobby;
 
 import de.alshikh.haw.tron.manager.Config;
 import de.alshikh.haw.tron.app.controller.lobby.inputhandlers.IRoomsMenuInputHandler;
-import de.alshikh.haw.tron.app.model.lobby.datatypes.IRoom;
+import de.alshikh.haw.tron.app.model.lobby.data.entities.IRoom;
 import de.alshikh.haw.tron.app.view.lobby.overlayes.RoomsMenu;
 import edu.cads.bai5.vsp.tron.view.ITronView;
 import javafx.collections.ObservableList;

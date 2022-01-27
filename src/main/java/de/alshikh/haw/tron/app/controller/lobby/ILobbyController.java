@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.controller.lobby;
 
-import de.alshikh.haw.tron.app.controller.game.helpers.IPlayerUpdateChannel;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.IPlayerUpdateChannel;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 

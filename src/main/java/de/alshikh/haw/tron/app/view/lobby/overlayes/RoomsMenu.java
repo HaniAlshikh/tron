@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.view.lobby.overlayes;
 
-import de.alshikh.haw.tron.app.model.lobby.datatypes.IRoom;
+import de.alshikh.haw.tron.app.model.lobby.data.entities.IRoom;
 import edu.cads.bai5.vsp.tron.view.ViewUtility;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

@@ -2,8 +2,8 @@ package de.alshikh.haw.tron.app.controller.game;
 
 import de.alshikh.haw.tron.app.controller.game.helpers.GameUpdater;
 import de.alshikh.haw.tron.app.controller.game.helpers.IGameUpdater;
-import de.alshikh.haw.tron.app.controller.game.helpers.IPlayerUpdateChannel;
-import de.alshikh.haw.tron.app.controller.game.helpers.PlayerUpdateChannel;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.IPlayerUpdateChannel;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.PlayerUpdateChannel;
 import de.alshikh.haw.tron.app.controller.game.inputhandlers.GameInputHandler;
 import de.alshikh.haw.tron.app.controller.lobby.ILobbyController;
 import de.alshikh.haw.tron.app.model.game.IGameModel;

@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.app.controller.game.helpers;
+package de.alshikh.haw.tron.app.model.lobby.data.datatypes;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

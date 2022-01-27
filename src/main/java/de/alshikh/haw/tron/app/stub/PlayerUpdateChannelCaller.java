@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.app.stub;
 
-import de.alshikh.haw.tron.app.controller.game.helpers.IPlayerUpdateChannel;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.IPlayerUpdateChannel;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCallerAppStub;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.IRpcCallbackHandler;
 import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallbackHandler;
