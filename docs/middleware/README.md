@@ -295,17 +295,16 @@ this push approach is also helpful when the state of the room changes weather re
 
 ## Design Decisions
 
-#### Architecture
+### DD01: Directory server
 
-centralized component is often used to handle initial requests, for example to redirect a client to a replica server, which, in turn, may be part of a peer-to-peer network as is the case in BitTorrent-based systems. Page 102 -> Directory server
+structured naming or "human-readable" names play no important rule in this system.  RemoteRooms are mainly distribute which are grouped under the same service id therefore implementing a very simplified directory server serves the use-cases of this system (the expensive lookup/search and/or the complex mapping of attributes are not a problem for the system use-cases).
 
-Concurrent sever page 129 -> RpcServer
+> a centralized component is often used to handle initial requests, for example to redirect a client to a replica server, which, in turn, may be part of a peer-to-peer network as is the case in BitTorrent-based systems. Page 102
 
+in this case the directory server serves exactly this purpose and provides the players with the opponent address to initiate the peer to peer "connection"
 
-we don't really care about structured naming or "human-readable" names. We mainly distribute rooms which are grouped under the same service id therefore we decided to implement a very simplified directory service (the expensive lookup/search and/or the complex mapping of attributes are not a problem in our usecase).
+### DD02: Lamport’s logical clocks
 
-TODO: lamport is implemented in a indirect way (PlayerUpdate version)
+> To synchronize logical clocks, Lamport defined a relation called happens- before. The expression a → b is read “event a happens before event b” and means that all processes agree that first event a occurs, then afterward, event b occurs. Page 311
 
-## Glossary
-
-| Term | Definition |
+Lamport’s logical clocks fits the use-cases of this system perfectly and were actually indirectly implemented in the game as the application mostly relays on the observable pattern und need to ensure fairness between players a coordination system using the PlayerUpdate version was implemented in the GameUpdater. This implementation can be considered as a basic implementation of the lamport Lamport’s logical clocks
