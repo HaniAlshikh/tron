@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.serverstub.receive;
 
-import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.manager.Config;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.receive.data.exceptions.FailedToReceiveNetworkRpcException;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.IRpcUnmarshaller;
 import org.slf4j.Logger;
@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.channels.DatagramChannel;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -49,6 +46,7 @@ public class RpcReceiver implements IRpcReceiver {
                 selector.close();
                 tcpServer.close();
                 udpServer.close();
+                log.debug("Network error: " + e);
                 throw new FailedToReceiveNetworkRpcException();
             }
         } catch (Exception e) {
@@ -71,10 +69,14 @@ public class RpcReceiver implements IRpcReceiver {
     }
 
     private void handleRequest(SelectionKey channelKey) {
-        if (channelKey.isReadable() && channelKey.channel() == udpServer)
-            udpReceive();
-        else if (channelKey.isAcceptable() && channelKey.channel() == tcpServer)
-            tcpReceive();
+        try {
+            if (channelKey.isReadable() && channelKey.channel() == udpServer)
+                udpReceive();
+            else if (channelKey.isAcceptable() && channelKey.channel() == tcpServer)
+                tcpReceive();
+        } catch (Exception e) {
+            log.error("Failed to handle request: ", e);
+        }
     }
 
     private void udpReceive() {
@@ -88,17 +90,18 @@ public class RpcReceiver implements IRpcReceiver {
                 log.debug("data received over udp: " + new String(data));
                 unmarshal(data);
             }
-        } catch (IOException e) { // TODO
+        } catch (IOException e) {
             log.error("Failed to receive data:", e);
         }
     }
 
     private void tcpReceive() {
-        try (Socket connection = tcpServer.accept().socket();) {
+        try (Socket connection = tcpServer.accept().socket()) {
             byte[] data = connection.getInputStream().readAllBytes();
             log.debug("data received over tcp: " + new String(data));
             unmarshal(data);
-        }  catch (IOException e) { // TODO
+        } catch (NullPointerException ignored) { // expected behaviour von accept()
+        } catch (IOException e) {
             log.error("Failed to receive data:", e);
         }
     }
@@ -145,8 +148,9 @@ public class RpcReceiver implements IRpcReceiver {
     public InetSocketAddress getServerAddress() {
         try {
             return serverAddress.get();
-        } catch (Exception e) { // TODO:
-            return null;
+        } catch (Exception e) {
+            log.info("Rpc Receiver could not be initialized probably");
+            throw new RuntimeException(e);
         }
     }
 

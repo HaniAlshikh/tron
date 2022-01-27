@@ -1,10 +1,12 @@
 package de.alshikh.haw.tron.middleware.directoryserver;
 
-import de.alshikh.haw.tron.app.stubs.helpers.TronJsonRpcSerializationApi;
+import de.alshikh.haw.tron.app.stub.helpers.TronJsonRpcSerializationApi;
+import de.alshikh.haw.tron.manager.Config;
+import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryServer;
 import de.alshikh.haw.tron.middleware.directoryserver.service.DirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stub.DirectoryServiceCallee;
-import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscoveryServer;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStubFactory;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.IRpcServerStub;
@@ -23,6 +25,7 @@ public class DirectoryServer {
         //IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new DirectoryServiceJsonRpcSerializationApi());
         // but this for now cover more cases and avoids code duplication
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializationApi());
+        RpcClientStubFactory.setRpcMessageApi(rpcMessageApi);
 
         DirectoryService directoryService = new DirectoryService();
         IRpcCalleeAppStub directoryServiceCallee = new DirectoryServiceCallee(directoryService);
@@ -32,7 +35,7 @@ public class DirectoryServer {
         new Thread(() -> rpcServerStub.getRpcReceiver().start()).start();
 
         InetSocketAddress serverAddress = rpcServerStub.getRpcReceiver().getServerAddress();
-        DirectoryDiscoveryServer.multicast(serverAddress, 2, TimeUnit.SECONDS);
+        DirectoryDiscoveryServer.multicast(serverAddress, Config.DISCOVERY_PERIOD, TimeUnit.SECONDS);
 
         directoryService.addListener(DirectoryServer::tableize);
     }
@@ -41,10 +44,8 @@ public class DirectoryServer {
         System.out.println();
         DirectoryService directoryService = (DirectoryService) observable;
         System.out.format("%-40s%-40s%-32s%-6s\n", "Provider ID", "Service ID", "Service Address", "Is Reachable");
-        directoryService.getDib().forEach(s -> {
-            System.out.format("%-40s%-40s%-32s%-6s\n",
-                    s.getProviderId(), s.getServiceId(), s.getServiceAddress(), s.isReachable());
-        });
+        directoryService.getDib().forEach(s -> System.out.format("%-40s%-40s%-32s%-6s\n",
+                s.getProviderId(), s.getServiceId(), s.getServiceAddress(), s.isReachable()));
         System.out.println();
     }
 }

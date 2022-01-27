@@ -6,7 +6,7 @@ import java.net.InetSocketAddress;
 import java.util.UUID;
 
 public interface IRpcCallbackService {
-    void register(UUID requestId, IRpcCallbackHandler callback);
+    void register(UUID requestId, IRpcCallbackHandler rpcCallbackHandler);
 
     void setResult(UUID requestId, Object response);
 

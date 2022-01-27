@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.clientstub.send;
 
-import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.manager.Config;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.send.data.exceptions.FailedToSendNetworkRpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

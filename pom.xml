@@ -55,7 +55,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>de.alshikh.haw.tron.GameManager</mainClass>
+                            <mainClass>de.alshikh.haw.tron.manager.GameManager</mainClass>
                         </configuration>
                     </execution>
                 </executions>

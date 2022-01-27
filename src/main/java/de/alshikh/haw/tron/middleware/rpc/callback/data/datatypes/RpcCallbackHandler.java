@@ -1,6 +1,6 @@
 package de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes;
 
-import de.alshikh.haw.tron.Config;
+import de.alshikh.haw.tron.manager.Config;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;

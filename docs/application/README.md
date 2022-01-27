@@ -1,14 +1,19 @@
 # Introduction and Goals
 
-We want to create a Distributed Tron Game where People can play and enjoy the Game together while being on different Computers.  
+Develop a Distributed Tron Game where people can play the together while being on different machines.  
+
 The Game is a clone of the "Light Cycles Mode" in the original [Tron Video Game](https://en.wikipedia.org/wiki/Tron_(video_game)) from 1982.
 
 ## Requirements Overview
 
 Players of this game can create a room (host) or join one (guest). After joining a room the game will start. Each player controls the game with a keyboard to move his tron.  
-A Tron is a representation of the player and will continuously move forward. It can be moved right and left but not backward.  
+
+A Tron is a representation of the player and will continuously move forward. It can be moved left and right but not backward.  
 When the Tron moves it leaves a trail behind it. The objective is to force the opponent tron into walls or trails, while simultaneously avoiding them.  
+
 If the player restarted or existed the game. The opponent wins and vise versa.
+
+### derived use-cases
 
 | ID | Use-Case | Description |
 |----|----------|-------------|
@@ -59,7 +64,7 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 | OC01 | Documentation | clear representation of the structure in at least 2 hierarchy levels: component diagram, class diagram, deployment diagram (ARC42)
 | OC02 | Project Management | fixed method for project management (proof) |
 | OC03 | Problem Solving | problem-solving strategies must be derived from reference literature or accepted third-party literature |
-| OC04 | Deadline | project musst be delivered by 25.01.2022|
+| OC04 | Deadline | project musst be delivered by 27.01.2022 23:59 UTC|
 
 ## System Scope and Context
 
@@ -74,53 +79,98 @@ Technical Context
 
 ## Solution Strategy
 
-TODO: add use cases ids
-TODO: Error cases
-TODO: Need updating
-
 | Actor | Function | UCID | Semantics | Precondition | Postcondition |
 |-------|-------|----------|-----------|--------------|---------------|
-| Controller | public void showStartMenu() | UC01 | forward the call to the view component with the needed handlers to show the start menu | game ist started | the view component has the needed handlers to generate the ded UI components |
-| View | public void showStartMenu(EventHandler<ActionEvent> startBtnHandler) | UC01 | generates the UI component for the start menu | the needed handlers were received | based on user choice the corresponding handler is led |
-| Controller | private void startGame(GameMode gameMode) | UC01 | setup the game environment with the appropriate handlers to start the game | player has chosen a game mode from the start menu | player can play the chosen e |
-| Model | public void createGame(GameMode gameMode) | UC03 | creates a game environment based on the chosen game mode | a game mode is chosen | a new game environment is created and can be used to start a game |
-| Model | private void updateGame() | UC04 | updates the game state based on player input | game is running in an infinite loop | player inputs are reflected in the game |
-| View | public void showGameUpdate(GameUpdate gameUpdate) | UC04 | present the received game update | game is running in an infinite loop | player inputs are presented in the UI |
-| Model | public boolean isAllowed(Direction currentDirection) | UC05 | checks if player bike direction input is allowed based on current direction | player moved his bike | movement may be applied or ignored |
-| Model | public Coordinate calculateNewPosition(Coordinate currentCoordinate) | UC04 | calculates the new bike coordinates based on the direction and current coordinates  | the new moving direction is allowed | new rdinates can be used to update bike trail |
-| Model | private void checkForCollision(Player player) | UC04 | checks periodically for collisions to eliminate losers | game loop is running | loser is eliminated from the game |
-| Model | private void endGame() | UC07 | stops the game loop to display the winner | only one player or no players are left | winner is displayed and a new game can be started |
+| Game Controller | void showStartMenu(String message) | UC01 | forward the call to the view component with the needed handlers to show the start menu | user clicked new game button in the game manager | the view component has the needed handlers to generate the needed UI components and the player can change his name choose to create or join a game |
+| Game Controller | <ul><li>void createGame()</li><li>void joinGame()</li></ul> | <ul><li>UC01</li><li>UC02</li></ul> | setup the game environment with the appropriate handlers to start the game | player clicked create/join game | player has to wait for someone to join or choose a room to join |
+| Lobby Controller | void createRoom(IPlayerUpdateChannel updateChannel) | UC01 | create a room from the player update channel that was provided by the game controller | player clicked create game | a room was created with the corresponding update channel that can be exchanged with the joiner (guest). The room is also registered by the lobby model and listed for others to join |
+| Game Controller | void startGame(String opponentName) | UC03 | removes the room, resets the view and start the game updater | the guest double clicked a room to join | game updater is listening for updates and players can play the game |
+| Game Controller | void updateGame() | UC04 | updates the game state based on player input while insuring fairness against the opponent and insuring both have the same opportunity to react to updates | game is running in an infinite loop | player inputs are reflected in the game |
+| Game View | void showGame(IGame game) | UC04 | present the current state of the game | game is running in an infinite loop | player inputs are presented in the UI |
+| Game Model | void steer(Direction newDirection) | UC05 | checks if player bike direction input is allowed based on current direction and steer it | player pressed one of the defined keyboard keys to move his bike | movement may be applied or ignored |
+| Game Controller | void endGame(String message) | UC06 | ends the current game and calls void showStartMenu(String message) | player won/lost the current game | player can start a new game or join one |
+| Game Controller | boolean fairPlayInsured() | UC07 | on each tick check if the received update version match with the current player update and if not or no update was received call void endGame(String message) to end the game | the game loop is runniing | the player won the game and can start a new game or join one |
 
 ## Building Block View
 
-### Whitebox Overall System
+### Overall System White Box
 
 ![Component Diagram](diagrams/ComponentDiagram.drawio.svg)
 
-the MVC pattern is used in the system to be developed. The reason for choosing this pattern is to make a clear division between domain objects and their presentation seen in the GUI.
+#### Tron
 
-X referees to the component name in the different packages 
+| Component | Description |
+|-----------|-------------|
+| Manager | the starting point of the system. Handles configuring and starting games |
 
-| stereotype | Component | Interface | Description |
-|------------|-----------|-----------|-------------|
-| Model | X | IXModel | handles the data and state including the logic |
-| View | X | IXView | handles the representation and generate the needed UI components |
-| Controller | X | IXController | enables the interconnection between the view and model so it acts as an intermediary. |
+#### App
+
+X referees to the component name in the model/view/controller packages (for example X Model correspond to Game Model)
+
+| Component | Description |
+|-----------|-------------|
+| X Modle | The central component of the MVC pattern. directly manages the data, logic and rules of the application. |
+| X View | represent the information received from the model through the controller |
+| X Controller | Accepts input and converts it to commands for the model or view |
+| Stub | the fusing layer between the middleware and the application |
+
+##### Model Black Box
+
+| Interface | Description |
+|------------|------------|
+| IXModel | handles the data and state including the logic |
+
+##### View Black Box
+
+| Interface | Description |
+|------------|------------|
+| IXView | handles the representation and generate the needed UI components |
+
+##### Controller Black Box
+
+| Interface | Description |
+|------------|------------|
+| IXController | enables the interconnection between the view and model so it acts as an intermediary. |
+
+##### Stub Black Box
+
+| Interface | Description |
+|------------|------------|
+| IRemoteRoomsFactory | maps the local rooms to remote ones and vise verse |
+
+#### Manager
+
+![Manager Class Diagram](diagrams/ManagerClassDiagram.drawio.svg)
+
+#### Middleware
+
+see [Middleware](../middleware/README.md)
 
 #### Level 2
 
-##### Model
+##### Model White Box
 
 ###### Game
 
 ![Game Model Component Diagram](diagrams/GameModelClassDiagram.drawio.svg)
 
+| Interface | Description |
+|-----------|-------------|
+| IBike | The Bike the Player is riding on, responsible for the Trail and Movement |
+| IPlayer | The representation of a Player in our Game, receives and creates PlayerUpdates |
+| IPlayerUpdate | An Update to an existing Player, could be Alive State or Movement |
+| IGame | The representation of the Game Board which contains the Players and outcome of a match |
+| IGameModel | The abstraction of the Game Board, creates and Consumes Player and Game State Updates |
+
 ###### Lobby
 
-how to sync rooms between models if we have multiple Models instances?
-(Remote room factory should be also singleton?)
-
 ![Lobby Model Component Diagram](diagrams/LobbyModelClassDiagram.drawio.svg)
+
+| Interface | Description |
+|-----------|-------------|
+| IRoom | The representation of a Room the Player can join to start a Game |
+| ILobbyModel | The representation of a Lobby, containing multiple Rooms |
+| IPlayerUpdateChannel | A channel for the two Player Updates in a Room |
 
 ##### View
 
@@ -128,9 +178,17 @@ how to sync rooms between models if we have multiple Models instances?
 
 ![Game View Component Diagram](diagrams/GameViewClassDiagram.drawio.svg)
 
+| Interface | Description |
+|-----------|-------------|
+| IGameView | The View of a Game in Progress, holds Information about the Menus a Player can show |
+
 ###### Lobby
 
 ![Lobby View Component Diagram](diagrams/LobbyViewClassDiagram.drawio.svg)
+
+| Interface | Description |
+|-----------|-------------|
+| ILobbyView | The View of a Lobby, holds Information about the Menu a Player can show |
 
 #### Controller
 
@@ -138,209 +196,163 @@ how to sync rooms between models if we have multiple Models instances?
 
 ![Game Controller Component Diagram](diagrams/GameControllerClassDiagram.drawio.svg)
 
+| Interface | Description |
+|-----------|-------------|
+| IGameUpdater | Handles the Game Updates from the Game Model |
+| IGameController | Holds all relevant Information of a Game, the Ability to create, join or quit a Game, connects all other Game Components |
+| IGameInputHandler | Reacts to KeyEvents and handles those changes for the Controller |
+
 ###### Lobby
 
 ![Lobby Controller Component Diagram](diagrams/LobbyControllerClassDiagram.drawio.svg)
+
+| Interface | Description |
+|-----------|-------------|
+| ILobbyController | Holds all relevant Information of a Lobby, the Ability to create or join Rooms |
+| IRoomsMenuInputHandler | Handles the KeyEvents in a Room such as the Menu |
+
+#### Stub White Box
+
+![Lobby Controller Component Diagram](diagrams/StubClassDiagram.drawio.svg)
 
 ## Runtime View
 
 ### UC01: Create Game
 
-wie macht man es async?  
-ist das ein oder zwei Sequenzdiagramme?  
-ist die Kommunikation zwischen Game und Lobby Controller richtig?  
-macht man alle Räume remote?  
-
-![Component Diagram](diagrams/UC01SequenceDiagram.drawio.svg)
+![Create Game Sequence Diagram](diagrams/UC01CreateGameSequenceDiagram.drawio.svg)
 
 ### UC02: Join Game
 
-![Component Diagram](diagrams/UC02SequenceDiagram.drawio.svg)
+![Join Game Sequence Diagram](diagrams/UC02JoinGameSequenceDiagram.drawio.svg)
+
+#### Join Room
+
+![Join Room Sequence Diagram](diagrams/UC02JoinRoomSequenceDiagram.drawio.svg)
+
+#### Room is Full
+
+![Room is Full Sequence Diagram](diagrams/UC02RoomIsFullSequenceDiagram.drawio.svg)
 
 ### UC03: Start Game
 
-wie moduliert man das?
-
-wenn einem Raum beigetreten wird sollten die UpdateChanel instanzen getaucht werden -> Local-instance/remote-stub
-
-
-![Component Diagram](diagrams/UC03EnterSequenceDiagram.drawio.svg)
-![Component Diagram](diagrams/UC03RoomFullSequenceDiagram.drawio.svg)
-
+![Start Game Sequence Diagram](diagrams/UC03StartGameSequenceDiagram.drawio.svg)
 
 ### UC04: Play Game
 
+#### Player Update Observed
 
-wie zeigt man dass das in der Game-Controller-Komponente läuft? oder State machine?  
-soll man hier update controlling machen? (wenn z.b. nicht der gesuchte Update geschickt wurde)
-![Component Diagram](diagrams/UC04PlayerUpdateObservedSequenceDiagram.drawio.svg)
-Darf der LobbyController das Spiel starten?  
-Wenn nein  
-wie kann man unterscheiden zwischen dem ersten update und dem Rest ohne bei jedem Update zu prüfen?
-![Component Diagram](diagrams/UC04UpdateGameStateMachineDiagram.drawio.svg)
+![Player Update Observed Sequence Diagram](diagrams/UC04PlayerUpdateObservedSequenceDiagram.drawio.svg)
 
-TODO: view update state doesn't depend on model update state both run asynchronously (model pushes the update)  
-TODO: factory pattern  
-TODO: Protocol is Interface and processing instructions  
-TODO: ideally one diagram one arrow  
-TODO: state machine pattern better than dispatcher pattern  
-TODO: state pattern for rooms  
-TODO: use UDP for the game updates (rpc connection best-effort switch)
-TODO: parallels game tick logic (for example no need to wait for the collision detector)
-TODO: all function musst be used in the sequence diagrams otherwise there are not used
-TODO: write done that for example PlayerUpdate is datatype the encapsulate primitive attributes
-TODO: technical context all libraries (log for example)
-[comment]: <> (\<Runtime Scenario 1\> {#__runtime_scenario_1})
+![Start Game Sequence Diagram](diagrams/UC03StartGameSequenceDiagram.drawio.svg)
 
-[comment]: <> (----------------------)
+### UC05: keyboard controls
 
-[comment]: <> (-   *\<insert runtime diagram or textual description of the scenario\>*)
+![keyboard controls Sequence Diagram](diagrams/UC05KeyboardControlsSequenceDiagram.drawio.svg)
 
-[comment]: <> (-   *\<insert description of the notable aspects of the interactions)
+### UC06: Restart Game
 
-[comment]: <> (    between the building block instances depicted in this diagram.\>*)
+![Restart Game Sequence Diagram](diagrams/UC05RestartGameSequenceDiagram.drawio.svg)
 
-[comment]: <> (\<Runtime Scenario 2\> {#__runtime_scenario_2})
+### UC07: Exit Game
 
-[comment]: <> (----------------------)
-
-[comment]: <> (... {#_})
-
-[comment]: <> (---)
-
-[comment]: <> (\<Runtime Scenario n\> {#__runtime_scenario_n})
-
-[comment]: <> (----------------------)
+![Exit Game Sequence Diagram](diagrams/UC07ExitGameStateMachineDiagram.drawio.svg)
 
 ## Deployment View
 
 ![DeploymentDiagram](diagrams/DeploymentDiagram.drawio.svg)
 
-[comment]: <> (Infrastructure Level 1 {#_infrastructure_level_1})
+## Cross-cutting Concepts
 
-[comment]: <> (----------------------)
+### Technical Decisions
 
-[comment]: <> (***\<Overview Diagram\>***)
+#### TD01: limiting the number of Threads
 
-[comment]: <> (Motivation)
+TC11 requires the system to not exceed 80% of resource usage. This is easily achievable by parametrizing the JVM.
 
-[comment]: <> (:   *\<explanation in text form\>*)
+However and to ensure fairness between the different instances of the game java ExecutorService is used throughout the system. this insures a limiting factor on the number of threads created.
 
-[comment]: <> (Quality and/or Performance Features)
+the number of threads per instance can be callculated as follows:
 
-[comment]: <> (:   *\<explanation in text form\>*)
+GameUpdater -> number of available processors  
+RpcServerStub -> number of available processors + 1 for the server thread
 
-[comment]: <> (Mapping of Building Blocks to Infrastructure)
+in the case of 8 processors each instance has a limit of 17 controlled threads
 
-[comment]: <> (:   *\<description of the mapping\>*)
+#### TD02: allowing for a small update cache
 
-[comment]: <> (Infrastructure Level 2 {#_infrastructure_level_2})
+the GameUpdater observes multiple invalidated states coming from different threads this means, while highly unlikely but in case of, for example, two blocked threads that delivers the current and next PlayerUpdate simultaneously ConcurrentHashMap is used to store the received updates and make them available for the next game updating iteration.
 
-[comment]: <> (----------------------)
+OUV: the version of the observed PlayerUpdate with the same version as the currently processed PlayerUpdate
 
-[comment]: <> (### *\<Infrastructure Element 1\>* {#__emphasis_infrastructure_element_1_emphasis})
+the cache can never grow outside two elements as per design current update version + 1 is only created when an update with the same version is observed (OUV) and therefore the maximum case of updates observed occurs when the game updater observes a OUV + 1 while still awaiting the OUV update  
 
-[comment]: <> (*\<diagram + explanation\>*)
+### TD03: game state lock
 
-[comment]: <> (### *\<Infrastructure Element 2\>* {#__emphasis_infrastructure_element_2_emphasis})
+in case updating the state took longer than the tick waiting period, the next update call is blocked
 
-[comment]: <> (*\<diagram + explanation\>*)
+### TD04: ensure fair play
 
-[comment]: <> (...)
+to ensure fair play as described in QG02 it is ensured that both players are observing the same state (matching PlayerUpdate versions).
 
-[comment]: <> (### *\<Infrastructure Element n\>* {#__emphasis_infrastructure_element_n_emphasis})
+It is however possible that the opponent disconnects by for example closing the game therefore a "Fairness limit" is set by waiting UPDATE_MAX_RETRIES / FRAMES_PER_SECOND seconds before endinig the game in favour of the player
 
-[comment]: <> (*\<diagram + explanation\>*)
+### TD05: UI lock
 
-[comment]: <> (Cross-cutting Concepts {#section-concepts})
+the UILock is needed to 
 
-[comment]: <> (======================)
+1. ensure that the player had the chance to observe the new state and act accordingly (even if it's not really possible but at least he can estimate)
 
-[comment]: <> (*\<Concept 1\>* {#__emphasis_concept_1_emphasis})
+2. ensure that the game state doesn't change while the GUI is still updating
 
-[comment]: <> (---------------)
+### TD06: direction locking
 
-[comment]: <> (*\<explanation\>*)
+this allows the player to spam the input keys without really effecting the end result. 
 
-[comment]: <> (*\<Concept 2\>* {#__emphasis_concept_2_emphasis})
+This also helps the player to make a "last minute decision" when for example pressing the wrong key (weather it's possible or not depends on multiple factories one of them is how fast the player fingers are :))
 
-[comment]: <> (---------------)
+### TD07: game instance coupled to player id
 
-[comment]: <> (*\<explanation\>*)
+a game and all it's component are coupled (when needed) to one player per instance and therefore one random id is generated on the start of the instance (new GameModel -> new Player -> random player id)
 
-[comment]: <> (...)
+### TD08: triggering start game event
 
-[comment]: <> (*\<Concept n\>* {#__emphasis_concept_n_emphasis})
+implementing the state pattern for a Room to for example kick off the start game event onFull() was considered and founded to be overkill as the a game can only handle two players TC05 and the Room is carbeged after the UpdateChannels were exchanged (by closing the room). this exchange will trigger the game to start.
 
-[comment]: <> (---------------)
+other consideration were:
 
-[comment]: <> (*\<explanation\>*)
+1. passing the game starter handler to the room itself
+    - The GameController has no reference of the room and therefore can't pass the correct handler reference to start the game
+
+2. triggering a start game event when an update is received
+    - the requires the game updater to start when it's not really necessary and will result in a conditional check on each update that only needed for the first one.
+    
+### TD09: config
+
+it is recognized that this is not the best way/practise to do it but in this case it should be more than enough.
+
+### TD10: singleton game model
+
+in the standalone version the model is shared as a the source of truth for rooms, while in the distributed one the directory server is the source of truth
 
 ## Design Decisions
 
-### Scaling techniques
+Design Decisions are referenced from the referenced literature
+### DD01 local game model
 
-#### Hiding communication latencies
+> reduce the overall communication, for example, by moving part of the computation that is normally done at the server to the client process requesting the service. Page 21 
 
-"reduce the overall communication, for example, by moving part of the computation that is normally done at the server to the client process requesting the service" Page 21
+All computations are done locally on the node, and the end-result is insured based on the PlayerUpdate and it's version, which will always lead to same result unless it was tampered with but security, however, is not a requirement.
 
--> everything is created locally and we only exchange user input
+### DD02 remote rooms factory
 
+> An important goal of distributed systems is to separate applications from underlying platforms by providing a middleware layer. Page 55
 
-#### Partitioning and distribution
+to keep the game as a black box and never make it depends on the the underlying platform the RemoteRoomsFactory was implemented. this way The game can be played locally or in a distributed fashion.
 
-dosn't really fit our usecase? (peer to peer connection no encapsulated services)
+### DD03 peer to peer
 
-#### Replication
+> In horizontal distribution, a client or server may be physically split up into logically equivalent parts, but each part is operating on its own share of the complete data set, thus balancing the load. Page 81
 
-peer to peer not much can be done (maybe directory server can benefits)
+having a local game model (DD01) make a "game server" obsolete, which renders it as a bottleneck that simply transfer game updates between nods. 
 
-#### Replication
-
-a transit system doesn't benefit from this
-
-#### Architecture
-
-"An important goal of distributed systems is to separate applications from underlying platforms by providing a middleware layer." page 55
-
-to reduce the load on the "server" node , that could be any node who starts the directory server -> peer to peer
-
-bottlenecks, single source of fehler, _____ -> decentralized Hierarchically organized peer-to-peer networks architecture (the directory server is centralized and per node (process) only one rpc server for all games -> is it then a hybrid?)
-
-everything is local except for the opponent state (update) -> Page 78 Figure 2.16 (e)
-
-implementing each service by means of a separate server may be a waste of resources. it is often more efficient to have a single superserver Page 129 -> one rpc server per process
-
-[comment]: <> (Quality Requirements {#section-quality-scenarios})
-
-[comment]: <> (====================)
-
-[comment]: <> (Quality Tree {#_quality_tree})
-
-[comment]: <> (------------)
-
-[comment]: <> (Quality Scenarios {#_quality_scenarios})
-
-[comment]: <> (-----------------)
-
-[comment]: <> (Risks and Technical Debts {#section-technical-risks})
-
-[comment]: <> (=========================)
-
-[comment]: <> (Glossary {#section-glossary})
-
-[comment]: <> (========)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
-
-[comment]: <> (| Term                  | Definition                                    |)
-
-[comment]: <> (+=======================+===============================================+)
-
-[comment]: <> (| *\<Term-1\>*          | *\<definition-1\>*                            |)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
-
-[comment]: <> (| *\<Term-2\>*          | *\<definition-2\>*                            |)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
+For the shared data (rooms information) a directory server is to be spawn up anyway. Therefore, to avoid the single point of failure the game is implemented in a peer to peer fashion.

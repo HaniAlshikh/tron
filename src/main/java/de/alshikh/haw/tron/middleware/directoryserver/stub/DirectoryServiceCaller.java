@@ -37,12 +37,6 @@ public class DirectoryServiceCaller implements IDirectoryService, IRpcCallerAppS
     }
 
     @Override
-    public void removeListenerForm(UUID serviceId, InvalidationListener listener) {
-        Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClientStub.invoke(DirectoryServiceCaller.SERVICE_ID, method, serviceId, listener);
-    }
-
-    @Override
     public IRpcClientStub getRpcClientStub() {
         return rpcClientStub;
     }

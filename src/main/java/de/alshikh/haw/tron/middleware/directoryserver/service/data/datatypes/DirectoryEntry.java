@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DirectoryEntry implements IDirectoryEntry {
-    private ConcurrentLinkedQueue<InvalidationListener> listeners = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<InvalidationListener> listeners = new ConcurrentLinkedQueue<>(); // TD01
 
     private final UUID providerId;
     private final UUID serviceId;

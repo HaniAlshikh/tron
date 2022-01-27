@@ -21,9 +21,9 @@ public class RpcCallbackService implements IRpcCallbackService {
     }
 
     @Override
-    public void register(UUID requestId, IRpcCallbackHandler callbackHandler) {
+    public void register(UUID requestId, IRpcCallbackHandler rpcCallbackHandler) {
         log.info("registering callback handler for: " + requestId);
-        handlersRegistry.put(requestId, callbackHandler);
+        handlersRegistry.put(requestId, rpcCallbackHandler);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class RpcCallbackService implements IRpcCallbackService {
         log.info("callback received for: " + requestId);
         IRpcCallbackHandler callbackHandler = handlersRegistry.remove(requestId);
         if (callbackHandler == null) {
-            log.info("missing callback handler for: " + requestId);
+            log.info("no callback handler was found, result will be dropped. Request ID: " + requestId);
             return;
         }
         callbackHandler.complete(result);

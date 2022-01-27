@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class HelloWorldCaller implements IHelloWorld, IRpcCallerAppStub {
-    public static UUID serviceId = UUID.fromString("08fd9cc9-a1ff-454e-ae22-f3c1329ab93c");
+    public static UUID SERVICE_ID = HelloWorldCallee.SERVICE_ID;
 
     IRpcClientStub rpcClientStub;
 
@@ -23,7 +23,7 @@ public class HelloWorldCaller implements IHelloWorld, IRpcCallerAppStub {
     public HelloWorldMessage helloWorld() {
         Method method = new Object(){}.getClass().getEnclosingMethod();
         IRpcCallbackHandler rpcCallbackHandler = new RpcCallbackHandler();
-        rpcClientStub.invoke(serviceId, rpcCallbackHandler, method);
+        rpcClientStub.invoke(SERVICE_ID, rpcCallbackHandler, method);
         Object response = rpcCallbackHandler.getResult();
         if (response instanceof Exception)
             return null;
@@ -34,8 +34,8 @@ public class HelloWorldCaller implements IHelloWorld, IRpcCallerAppStub {
     public HelloWorldMessage helloWorldBestEffort() {
         Method method = new Object(){}.getClass().getEnclosingMethod();
         IRpcCallbackHandler rpcCallbackHandler = new RpcCallbackHandler();
-        rpcClientStub.invoke(serviceId, rpcCallbackHandler, true, method);
-        Object response = rpcCallbackHandler.getResult(); // TODO: bestEffort and callback?
+        rpcClientStub.invoke(SERVICE_ID, rpcCallbackHandler, true, method);
+        Object response = rpcCallbackHandler.getResult();
         if (response instanceof Exception)
             return null;
         return (HelloWorldMessage) response;
@@ -45,7 +45,7 @@ public class HelloWorldCaller implements IHelloWorld, IRpcCallerAppStub {
     public HelloWorldMessage helloWorld(HelloWorldMessage message) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
         IRpcCallbackHandler rpcCallbackHandler = new RpcCallbackHandler();
-        rpcClientStub.invoke(serviceId, rpcCallbackHandler, method, message);
+        rpcClientStub.invoke(SERVICE_ID, rpcCallbackHandler, method, message);
         Object response = rpcCallbackHandler.getResult();
         if (response instanceof Exception)
             return null;
@@ -59,6 +59,6 @@ public class HelloWorldCaller implements IHelloWorld, IRpcCallerAppStub {
 
     @Override
     public UUID getServiceId() {
-        return serviceId;
+        return SERVICE_ID;
     }
 }
