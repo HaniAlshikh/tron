@@ -25,9 +25,9 @@ public class RpcServerStub implements IRpcServerStub {
     }
 
     @Override
-    public void register(IRpcCalleeAppStub serviceServerStub) {
-        log.debug("registering service: " + serviceServerStub.getServiceId());
-        serviceRegistry.put(serviceServerStub.getServiceId(), serviceServerStub);
+    public void register(IRpcCalleeAppStub rpcCalleeAppStub) {
+        log.debug("registering service: " + rpcCalleeAppStub.getServiceId());
+        serviceRegistry.put(rpcCalleeAppStub.getServiceId(), rpcCalleeAppStub);
     }
 
     @Override

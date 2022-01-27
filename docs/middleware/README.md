@@ -39,35 +39,52 @@ Due to the time constraint fault tolerance is not a requirement
 
 | Role | Expectations |
 |------|--------------|
-| Application | Adhear to the design principles and avoid common pitfails like: <br> <ul><li>The network is reliable</li><li>The network is secure</li><li>The network is homogeneous</li><li>The topology does not change</li><li>Latency is zero</li><li>Bandwidth is infinite</li><li>Transport cost is zero</li><li>There is one administrator</li></ul> |
-| Application Developer | <ul><li>The Middleware should be easy to integrate</li><li>The Middleware should have comprehensive Dokumentation to work with</li></ul> |
-| Middleware Developer | <ul><li>The Middleware should be maintainable</li><li>The Middleware should be expandable</li></ul> |
+| Customer | <ul><li>fixed method for project management (proof)</li><li>fixed method for documentation (important: systematic and faithful to the method)</li><li>Protocol definition with error semantics</li><li>clear representation of the structure in at least 2 hierarchy levels: component diagram, class diagram, deployment diagram</li><li>clear representation of the behavior through sequence diagram, activity diagram, state diagram</li><li>problem-solving strategies must be derived from reference literature or accepted third-party literature</li><li>code must match the documentation and documentation must match the code</li><li>Implementation in an object-oriented language</li><li>musst use Dependency-inversion-principle</li><li>The use of frameworks must be approved by the customer</li></ul> |
+| Application | <ul><li>should be easy to integrate</li><li>should have comprehensive Dokumentation to work with</li><li>Adhear to the design principles and avoid common pitfails like: <br> <ul><li>The network is reliable</li><li>The network is secure</li><li>The network is homogeneous</li><li>The topology does not change</li><li>Latency is zero</li><li>Bandwidth is infinite</li><li>Transport cost is zero</li><li>There is one administrator</li></ul></li></ul> |
+| Developer | <ul><li>should be maintainable</li><li>should be expandable</li></ul> |
 
 ## Architecture Constraints
 
 ### Technical Constraints
 
-TODO
+| ID | Constraint | Description |
+|----|------------|-------------|
+| TC01 | Programing language | Implementation in an object-oriented language |
+| TC02 | Implementation | <ul><li>musst use Dependency-inversion-principle</li><li>should be easy to integrate</li><li>should be maintainable</li><li>should be expandable</li></ul> |
+| TC04 | Frameworks | The use of frameworks must be approved by the customer |
 
 ### Organisational constraints
 
-TODO
+| ID | Constraint | Description |
+|----|------------|-------------|
+| OC01 | Documentation | clear representation of the structure in at least 2 hierarchy levels: component diagram, class diagram, deployment diagram (ARC42)
+| OC02 | Project Management | fixed method for project management (proof) |
+| OC03 | Problem Solving | problem-solving strategies must be derived from reference literature or accepted third-party literature |
+| OC04 | Deadline | project musst be delivered by 27.01.2022 23:59 UTC|
 
 ## System Scope and Context
 
 ### Business Context
 
-TODO: Update me
-
 ![Usecases](diagrams/UseCases.drawio.svg)
 
 ### Technical Context
 
-TODO
+![TechnicalContext](diagrams/TechnicalContext.drawio.svg)
 
 ## Solution Strategy
 
-TODO
+| Actor | Function | UCID | Semantics | Precondition | Postcondition |
+|-------|-------|----------|-----------|--------------|---------------|
+| ServerStub | void start() | UC01 | starts the rpc server which setup a udp and tcp server on the same port and start listening for income sockets | | rpc receiver is up and listening on a random port |
+| ServerStub | void receive() | UC01 | accept incoming sockets and forward the data to the rpc unmarshaller | rpc receiver was started | the server thread is blocked until socket connections are made |
+| ServerStub | void register(IRpcCalleeAppStub rpcCalleeAppStub) | UC01 | register a services to be called if a rpc call was made to the same service id | rpc server stub was initialised | application can register services |
+| Discover | static InetSocketAddress discover() | UC01 | start listening on the specified discovery address and port | | the directory server address was discovered and returned |
+| DirectoryServer | void register(IDirectoryEntry directoryEntry) | UC01 | register a service to announce to listeners | the directory server is up and running on a node | the service is registered and will be announced to current listeners |
+| DirectoryServer | void addListenerTo(UUID serviceId, InvalidationListener listener) | UC02 | offers a push approach to lookup all services under the same service id | | all new services with the same service id will be announced to service listeners |
+| ClientStub | void invoke(UUID serviceId, IRpcCallbackHandler rpcCallbackHandler, boolean isBestEffort, Method method, Object... args) | UC03 | forwards the invoked function with application preferences to the rpc marshaller | application called a function on a remote service | rpc marshaller received the function call and started the unmarshalling process |
+| Callback | void register(UUID requestId, IRpcCallbackHandler rpcCallbackHandler) | UC03 | registers a callback handler that will be invoked when the result of the request/invocation was received | rpc callback handler was provided which implies that the application is waiting for a callback | the handler is registered and can be used by a callback |
+| Callback | void retrn(UUID requestId, Object result) | UC03 | sets the invocation result of the rpc call for the callback handler | a handler exists under the same request id otherwise the result is dropped | the callback handler is invoked with the received result |
 
 ## Building Block View
 
@@ -266,93 +283,9 @@ fault tolerance is not a requirement and therefore all sequences describe the be
 
 ![Sending calls Sequence Diagram Level 2](diagrams/UC03SendingCallsSequenceDiagramLevel2.drawio.svg)
 
+## Cross-cutting Concepts
 
-
-TODO: when documenting the protocol write how every object is serialized
-
-[comment]: <> (\<Runtime Scenario 1\> {#__runtime_scenario_1})
-
-[comment]: <> (----------------------)
-
-[comment]: <> (-   *\<insert runtime diagram or textual description of the scenario\>*)
-
-[comment]: <> (-   *\<insert description of the notable aspects of the interactions)
-
-[comment]: <> (    between the building block instances depicted in this diagram.\>*)
-
-[comment]: <> (\<Runtime Scenario 2\> {#__runtime_scenario_2})
-
-[comment]: <> (----------------------)
-
-[comment]: <> (... {#_})
-
-[comment]: <> (---)
-
-[comment]: <> (\<Runtime Scenario n\> {#__runtime_scenario_n})
-
-[comment]: <> (----------------------)
-
-[comment]: <> (## Deployment View)
-
-[comment]: <> (Infrastructure Level 1 {#_infrastructure_level_1})
-
-[comment]: <> (----------------------)
-
-[comment]: <> (***\<Overview Diagram\>***)
-
-[comment]: <> (Motivation)
-
-[comment]: <> (:   *\<explanation in text form\>*)
-
-[comment]: <> (Quality and/or Performance Features)
-
-[comment]: <> (:   *\<explanation in text form\>*)
-
-[comment]: <> (Mapping of Building Blocks to Infrastructure)
-
-[comment]: <> (:   *\<description of the mapping\>*)
-
-[comment]: <> (Infrastructure Level 2 {#_infrastructure_level_2})
-
-[comment]: <> (----------------------)
-
-[comment]: <> (### *\<Infrastructure Element 1\>* {#__emphasis_infrastructure_element_1_emphasis})
-
-[comment]: <> (*\<diagram + explanation\>*)
-
-[comment]: <> (### *\<Infrastructure Element 2\>* {#__emphasis_infrastructure_element_2_emphasis})
-
-[comment]: <> (*\<diagram + explanation\>*)
-
-[comment]: <> (...)
-
-[comment]: <> (### *\<Infrastructure Element n\>* {#__emphasis_infrastructure_element_n_emphasis})
-
-[comment]: <> (*\<diagram + explanation\>*)
-
-[comment]: <> (Cross-cutting Concepts {#section-concepts})
-
-[comment]: <> (======================)
-
-[comment]: <> (*\<Concept 1\>* {#__emphasis_concept_1_emphasis})
-
-[comment]: <> (---------------)
-
-[comment]: <> (*\<explanation\>*)
-
-[comment]: <> (*\<Concept 2\>* {#__emphasis_concept_2_emphasis})
-
-[comment]: <> (---------------)
-
-[comment]: <> (*\<explanation\>*)
-
-[comment]: <> (...)
-
-[comment]: <> (*\<Concept n\>* {#__emphasis_concept_n_emphasis})
-
-[comment]: <> (---------------)
-
-[comment]: <> (*\<explanation\>*)
+### Technical decisions
 
 ## Design Decisions
 
@@ -367,36 +300,6 @@ we don't really care about structured naming or "human-readable" names. We mainl
 
 TODO: lamport is implemented in a indirect way (PlayerUpdate version)
 
-[comment]: <> (Quality Requirements {#section-quality-scenarios})
+## Glossary
 
-[comment]: <> (====================)
-
-[comment]: <> (Quality Tree {#_quality_tree})
-
-[comment]: <> (------------)
-
-[comment]: <> (Quality Scenarios {#_quality_scenarios})
-
-[comment]: <> (-----------------)
-
-[comment]: <> (Risks and Technical Debts {#section-technical-risks})
-
-[comment]: <> (=========================)
-
-[comment]: <> (Glossary {#section-glossary})
-
-[comment]: <> (========)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
-
-[comment]: <> (| Term                  | Definition                                    |)
-
-[comment]: <> (+=======================+===============================================+)
-
-[comment]: <> (| *\<Term-1\>*          | *\<definition-1\>*                            |)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
-
-[comment]: <> (| *\<Term-2\>*          | *\<definition-2\>*                            |)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
+| Term | Definition |
