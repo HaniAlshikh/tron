@@ -23,7 +23,7 @@ A typical message:
       "argument": {
         "AttributeX": "Primitive Value X",
         "AttributeY": "Primitive Value Y",
-        "type": "Argument Typ",
+        "type": "Argument Typ"
       },
       "type": "Parameter Type"
     }

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Properties;
 
-public class Config {
+public class Config { // TD09
     public static boolean DISTRIBUTED = true;
 
     public static int FRAMES_PER_SECOND = 13;

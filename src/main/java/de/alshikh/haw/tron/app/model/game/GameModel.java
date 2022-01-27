@@ -20,7 +20,7 @@ public class GameModel implements IGameModel {
     private IGame game;
 
     public GameModel() {
-        this.player = new Player(new SimpleStringProperty(RandomNameGenerator.get()));
+        this.player = new Player(new SimpleStringProperty(RandomNameGenerator.get())); // TD07
     }
 
     @Override
@@ -69,7 +69,7 @@ public class GameModel implements IGameModel {
     @Override
     public void publishPlayerUpdate() {
         logger.debug("publishing player update: " + player.getUpdate());
-        player.getUpdate().publishUpdate();
+        player.publishUpdate();
     }
 
     @Override

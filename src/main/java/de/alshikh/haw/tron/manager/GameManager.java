@@ -16,20 +16,7 @@ import java.io.IOException;
 
 public class GameManager extends Application {
 
-    // TODO: limit to only 80% of machine resources
-    //  is this enough?
-    //  what to do if all threads are busy?
-    //  - don't allow new games
-    //  - allow new games and accept the lag
-    //      (for example displaying the current game state in the 7th game need to wait for the other 6 games)
-    //  implement ExecutorServiceManager
-    //public final static double RESOURCES_LIMIT = 0.8;
-    //ExecutorService es = Executors.newFixedThreadPool((int)
-    //        (Runtime.getRuntime().availableProcessors() * RESOURCES_LIMIT));
-
-    // in the standalone version the model is shared as a the source of truth for rooms
-    // while in the distributed version the directory server is the source of truth
-    ILobbyModel singletonLobbyModel = new LobbyModel();
+    ILobbyModel singletonLobbyModel = new LobbyModel(); // TD10
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -60,11 +47,6 @@ public class GameManager extends Application {
                     new TronGame(gameView, singletonLobbyModel);
         } catch (IOException e) {e.printStackTrace();}
         return null;
-    }
-
-    @Override
-    public void stop() {
-        //es.shutdownNow(); // TODO
     }
 
     public static void main(String[] args) {

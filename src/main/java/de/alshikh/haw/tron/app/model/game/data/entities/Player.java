@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class Player implements IPlayer {
 
-    private final UUID id = UUID.randomUUID();
+    private final UUID id = UUID.randomUUID(); // TD07
     private final StringProperty name;
     private IBike bike;
     private IPlayerUpdate update;

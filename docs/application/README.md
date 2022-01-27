@@ -202,11 +202,76 @@ see [Middleware](docs/middleware/README.md)
 
 ## Cross-cutting Concepts
 
-### Technical decisions
+### Technical Decisions
 
-#### Updating the view
+#### TD01: limiting the number of Threads
 
-while playing the view is updated syncronsily
+TC11 requires the system to not exceed 80% of resource usage. This is easily achievable by parametrizing the JVM.
+
+However and to ensure fairness between the different instances of the game java ExecutorService is used throughout the system. this insures a limiting factor on the number of threads created.
+
+the number of threads per instance can be callculated as follows:
+
+GameUpdater -> number of available processors
+RpcServerStub -> number of available processors + 1 for the server thread
+
+in case of 8 processors each instance has a limit of 17 controlled threads
+
+#### TD02: allowing for a small update cache
+
+the GameUpdater observes multiple invalidated states coming from different threads this means, while highly unlikely but in case of for example two blocked threads that delivers the current and next PlayerUpdate ConcurrentHashMap is used to store the received updates and make them available for the next game updating iteration.
+
+OUV: the version of the observed PlayerUpdate with the same version as the currently processed PlayerUpdate
+
+the cache can never grow outside two elements as per design current update version + 1 is only created when an update with the same version is observed (OUV) and therefore the maximum case of updates observered occures when the game updater observes a OUV + 1 when still awaiting the OUV  
+
+### TD03: game state lock
+
+in case updating the state took longer than the tick waiting period the next update call is blocked
+
+### TD04: ensure fair play
+
+to ensure fair play as described in QG02 it is ensured that both players are observing the same state (matching PlayerUpdate versions).
+
+It is however possible that the opponent disconnects by for example closing the game therefore a "Fairness limit" is set by waiting UPDATE_MAX_RETRIES / FRAMES_PER_SECOND seconds before endinig the game in favour of the player
+
+### TD05: UI lock
+
+the UILock is needed to 
+
+1. ensure that the player had the chance to observe the new state and act accordingly (even if it's not really possible but at least he can estimate)
+
+2. ensure that the game state doesn't change while the GUI is still updating
+
+### TD06: direction locking
+
+this allows the player to spam the input keys without really effecting the end result. 
+
+This also helps the player to make a "last minute decision" when for example pressing the wrong key (weather it's possible or not depends on multiple factories one of them is how fast the player fingers are :))
+
+### TD07: game instance <-> player id
+
+a game and all it's component are coupled (when needed) to one player per instance and therefore one random id is generated on the start of the instance (new GameModel -> new Player -> random player id)
+
+### TD08: triggering start game event
+
+implementing the state pattern for a Room to for example kick off the start game event onFull() was considered and founded to be overkill as the a game can only handle two players TC05 and the Room is carbeged after the UpdateChannels were exchanged (by closing the room). this exchange will trigger the game to start.
+
+other consideration were:
+
+1. passing the game starter handler to the room it self
+    - The GameController has no reference of the room and therefore can't pass the correct handler reference to start the game
+
+2. triggering a start game event when an update is received
+    - the requires the game updater to start when it's not really necessary and will result in a conditional check on each update that only needed for the first one.
+    
+### TD09: Config
+
+it is recognized that this is not the best way/practise to do it but in this case it should be more than enough.
+
+### TD10: Config
+
+in the standalone version the model is shared as a the source of truth for rooms, while in the distributed one the directory server is the source of truth
 
 ## Design Decisions
 

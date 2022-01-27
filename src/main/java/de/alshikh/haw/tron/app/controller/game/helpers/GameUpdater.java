@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 
 public class GameUpdater implements IGameUpdater {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-    private final ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final ExecutorService es = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); // TD01
 
     private final Object gameStateLock = new Object();
     private final Object UILock = new Object();
@@ -30,7 +30,7 @@ public class GameUpdater implements IGameUpdater {
 
     private final Timeline gameLoop;
     private IPlayerUpdate receivedOpponentUpdate;
-    private Map<Integer, IPlayerUpdate> opponentUpdatesCache; // 2 updates max
+    private Map<Integer, IPlayerUpdate> opponentUpdatesCache; // TD02
 
     private final IGameController gameController;
 
@@ -52,15 +52,13 @@ public class GameUpdater implements IGameUpdater {
 
     @Override
     public void updateGame() {
-        synchronized (gameStateLock) { // in case updating the state took longer than the tick
+        synchronized (gameStateLock) { // TD03
             logger.debug("lock: update game state");
-            if (!fairPlayInsured()) return;
+            if (!fairPlayInsured()) return; // TD04
             logger.debug("consuming opponent update: " + receivedOpponentUpdate);
             logger.debug("it took " + updateRetries + " retries to get the update");
             updateRetries = 0;
-            // the UILock is needed to insure that the player had the chance to observe the new state
-            // and act accordingly (even if it's not really possible but at least he can estimate)
-            synchronized (UILock) {
+            synchronized (UILock) { // TD05
                 updateGameState();
             }
             logger.debug("unlock: update game state");
@@ -72,8 +70,6 @@ public class GameUpdater implements IGameUpdater {
         gameController.getGameModel().createNewPlayerUpdate();
     }
 
-    // the opponent didn't exceed the "Fairness limit"
-    // and both players are observing the same state (matching update versions)
     private boolean fairPlayInsured() {
         receivedOpponentUpdate = opponentUpdatesCache.remove(getPlayer().getUpdateVersion());
         if (receivedOpponentUpdate == null) {

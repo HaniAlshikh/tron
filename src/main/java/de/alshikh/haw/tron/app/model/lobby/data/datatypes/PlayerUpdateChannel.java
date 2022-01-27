@@ -17,7 +17,7 @@ public class PlayerUpdateChannel implements IPlayerUpdateChannel {
     public PlayerUpdateChannel(IPlayer player, IGameUpdater gameUpdater, Consumer<String> gameStarter) {
         this.player = player;
         this.gameUpdater = gameUpdater;
-        this.gameStarter = gameStarter;
+        this.gameStarter = gameStarter; // TD08
     }
 
     @Override

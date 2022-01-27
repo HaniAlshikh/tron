@@ -28,7 +28,7 @@ public class Bike implements IBike {
     }
 
     @Override
-    public void lockDirection() {
+    public void lockDirection() { // TD06
         if (steeringDirection.isAllowed(movingDirection))
             this.movingDirection = Direction.valueOf(steeringDirection.name());
     }
