@@ -14,3 +14,44 @@
 .button:pressed {
     -fx-background-color: #575149;
 }
+
+.text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: #ffefd5;
+    -fx-border-width: 2px;
+    -fx-font: bold 16px "Sans";
+    -fx-text-fill: #ffefd5;
+    -fx-prompt-text-fill: #ffefd5;
+    -fx-highlight-fill: #575149;
+    -fx-highlight-text-fill: #ffefd5;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #ffefd5;
+    -fx-border-width: 2px;
+}
+
+.list-view.placeholder.label {
+    -fx-font: bold 8px "Sans";
+    -fx-text-fill: #575149;
+}
+
+.list-cell {
+    -fx-font: 14px "Sans";
+    -fx-text-fill: #ffefd5;
+    -fx-background-color: transparent;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: #ffefd5;
+    -fx-text-fill: #575149;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #575149;
+}
+
+.progress-indicator {
+    -fx-progress-color: #ffefd5;
+}
