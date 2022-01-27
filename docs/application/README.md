@@ -13,6 +13,8 @@ When the Tron moves it leaves a trail behind it. The objective is to force the o
 
 If the player restarted or existed the game. The opponent wins and vise versa.
 
+### derived use-cases
+
 | ID | Use-Case | Description |
 |----|----------|-------------|
 | UC01 | create game | as a host I want to create a room to host a game |
@@ -79,27 +81,31 @@ Technical Context
 
 | Actor | Function | UCID | Semantics | Precondition | Postcondition |
 |-------|-------|----------|-----------|--------------|---------------|
-| Game Controller | void showStartMenu(String message) | UC01 | forward the call to the view component with the needed handlers to show the start menu | game has started | the view component has the needed handlers to generate the needed UI components and the player can change his name choose to create or join a game |
+| Game Controller | void showStartMenu(String message) | UC01 | forward the call to the view component with the needed handlers to show the start menu | user clicked new game button in the game manager | the view component has the needed handlers to generate the needed UI components and the player can change his name choose to create or join a game |
 | Game Controller | <ul><li>void createGame()</li><li>void joinGame()</li></ul> | <ul><li>UC01</li><li>UC02</li></ul> | setup the game environment with the appropriate handlers to start the game | player clicked create/join game | player has to wait for someone to join or choose a room to join |
 | Lobby Controller | void createRoom(IPlayerUpdateChannel updateChannel) | UC01 | create a room from the player update channel that was provided by the game controller | player clicked create game | a room was created with the corresponding update channel that can be exchanged with the joiner (guest). The room is also registered by the lobby model and listed for others to join |
-| Game Controller | void startGame(String opponentName) | UC03 | removes the room, resets the view and start the game updater | the guest double clicked a room to join | game updater is listening for updates and player can play the game |
+| Game Controller | void startGame(String opponentName) | UC03 | removes the room, resets the view and start the game updater | the guest double clicked a room to join | game updater is listening for updates and players can play the game |
 | Game Controller | void updateGame() | UC04 | updates the game state based on player input while insuring fairness against the opponent and insuring both have the same opportunity to react to updates | game is running in an infinite loop | player inputs are reflected in the game |
 | Game View | void showGame(IGame game) | UC04 | present the current state of the game | game is running in an infinite loop | player inputs are presented in the UI |
 | Game Model | void steer(Direction newDirection) | UC05 | checks if player bike direction input is allowed based on current direction and steer it | player pressed one of the defined keyboard keys to move his bike | movement may be applied or ignored |
 | Game Controller | void endGame(String message) | UC06 | ends the current game and calls void showStartMenu(String message) | player won/lost the current game | player can start a new game or join one |
-| Game Controller | boolean fairPlayInsured() | UC07 | on each tick check if the received update version match with the current player update and if not or no update was received call void endGame(String message) to end the game | the game loop is runniing |
+| Game Controller | boolean fairPlayInsured() | UC07 | on each tick check if the received update version match with the current player update and if not or no update was received call void endGame(String message) to end the game | the game loop is runniing | the player won the game and can start a new game or join one |
 
 ## Building Block View
 
-### Whitebox Overall System
+### Overall System White Box
 
 ![Component Diagram](diagrams/ComponentDiagram.drawio.svg)
 
+#### Tron
+
+| Component | Description |
+|-----------|-------------|
+| Manager | the starting point of the system. Handles configuring and starting games |
+
 #### App
 
-the MVC pattern is used in the system to be developed. The reason for choosing this pattern is to make a clear division between domain objects and their presentation seen in the GUI.
-
-X referees to the component name in the model/view/controller packages (for example X Model corresponde to Game Mdel)
+X referees to the component name in the model/view/controller packages (for example X Model correspond to Game Model)
 
 | Component | Description |
 |-----------|-------------|
@@ -108,11 +114,29 @@ X referees to the component name in the model/view/controller packages (for exam
 | X Controller | Accepts input and converts it to commands for the model or view |
 | Stub | the fusing layer between the middleware and the application |
 
- Component | Interface | Description |
-|------------|-----------|-----------|-------------|
-| Model | X | IXModel | handles the data and state including the logic |
-| View | X | IXView | handles the representation and generate the needed UI components |
-| Controller | X | IXController | enables the interconnection between the view and model so it acts as an intermediary. |
+##### Model Black Box
+
+| Interface | Description |
+|------------|------------|
+| IXModel | handles the data and state including the logic |
+
+##### View Black Box
+
+| Interface | Description |
+|------------|------------|
+| IXView | handles the representation and generate the needed UI components |
+
+##### Controller Black Box
+
+| Interface | Description |
+|------------|------------|
+| IXController | enables the interconnection between the view and model so it acts as an intermediary. |
+
+##### Stub Black Box
+
+| Interface | Description |
+|------------|------------|
+| IRemoteRoomsFactory | maps the local rooms to remote ones and vise verse |
 
 #### Manager
 
@@ -124,7 +148,7 @@ see [Middleware](../middleware/README.md)
 
 #### Level 2
 
-##### Model
+##### Model White Box
 
 ###### Game
 
@@ -134,7 +158,7 @@ see [Middleware](../middleware/README.md)
 
 ![Lobby Model Component Diagram](diagrams/LobbyModelClassDiagram.drawio.svg)
 
-##### View
+##### View White Box
 
 ###### Game
 
@@ -144,7 +168,7 @@ see [Middleware](../middleware/README.md)
 
 ![Lobby View Component Diagram](diagrams/LobbyViewClassDiagram.drawio.svg)
 
-#### Controller
+#### Controller White Box
 
 ###### Game
 
@@ -153,6 +177,10 @@ see [Middleware](../middleware/README.md)
 ###### Lobby
 
 ![Lobby Controller Component Diagram](diagrams/LobbyControllerClassDiagram.drawio.svg)
+
+#### Stub White Box
+
+![Lobby Controller Component Diagram](diagrams/StubClassDiagram.drawio.svg)
 
 ## Runtime View
 
@@ -212,22 +240,22 @@ However and to ensure fairness between the different instances of the game java 
 
 the number of threads per instance can be callculated as follows:
 
-GameUpdater -> number of available processors
+GameUpdater -> number of available processors  
 RpcServerStub -> number of available processors + 1 for the server thread
 
-in case of 8 processors each instance has a limit of 17 controlled threads
+in the case of 8 processors each instance has a limit of 17 controlled threads
 
 #### TD02: allowing for a small update cache
 
-the GameUpdater observes multiple invalidated states coming from different threads this means, while highly unlikely but in case of for example two blocked threads that delivers the current and next PlayerUpdate ConcurrentHashMap is used to store the received updates and make them available for the next game updating iteration.
+the GameUpdater observes multiple invalidated states coming from different threads this means, while highly unlikely but in case of, for example, two blocked threads that delivers the current and next PlayerUpdate simultaneously ConcurrentHashMap is used to store the received updates and make them available for the next game updating iteration.
 
 OUV: the version of the observed PlayerUpdate with the same version as the currently processed PlayerUpdate
 
-the cache can never grow outside two elements as per design current update version + 1 is only created when an update with the same version is observed (OUV) and therefore the maximum case of updates observered occures when the game updater observes a OUV + 1 when still awaiting the OUV  
+the cache can never grow outside two elements as per design current update version + 1 is only created when an update with the same version is observed (OUV) and therefore the maximum case of updates observed occurs when the game updater observes a OUV + 1 while still awaiting the OUV update  
 
 ### TD03: game state lock
 
-in case updating the state took longer than the tick waiting period the next update call is blocked
+in case updating the state took longer than the tick waiting period, the next update call is blocked
 
 ### TD04: ensure fair play
 
@@ -249,7 +277,7 @@ this allows the player to spam the input keys without really effecting the end r
 
 This also helps the player to make a "last minute decision" when for example pressing the wrong key (weather it's possible or not depends on multiple factories one of them is how fast the player fingers are :))
 
-### TD07: game instance <-> player id
+### TD07: game instance coupled to player id
 
 a game and all it's component are coupled (when needed) to one player per instance and therefore one random id is generated on the start of the instance (new GameModel -> new Player -> random player id)
 
@@ -259,38 +287,34 @@ implementing the state pattern for a Room to for example kick off the start game
 
 other consideration were:
 
-1. passing the game starter handler to the room it self
+1. passing the game starter handler to the room itself
     - The GameController has no reference of the room and therefore can't pass the correct handler reference to start the game
 
 2. triggering a start game event when an update is received
     - the requires the game updater to start when it's not really necessary and will result in a conditional check on each update that only needed for the first one.
     
-### TD09: Config
+### TD09: config
 
 it is recognized that this is not the best way/practise to do it but in this case it should be more than enough.
 
-### TD10: Config
+### TD10: singleton game model
 
 in the standalone version the model is shared as a the source of truth for rooms, while in the distributed one the directory server is the source of truth
 
 ## Design Decisions
 
-Design Decisions can be referenced from the referenced literature
-
-| ID | Decision |
-| DD01 | peer to peer model |
-
+Design Decisions are referenced from the referenced literature
 ### DD01 local game model
 
 > reduce the overall communication, for example, by moving part of the computation that is normally done at the server to the client process requesting the service. Page 21 
 
-Therefore all computations are done locally on the node, and the end result is insured based on the PlayerUpdate and it's version, which will always lead to same result unless it was tampered with but security, however, is not a requirement.
+All computations are done locally on the node, and the end-result is insured based on the PlayerUpdate and it's version, which will always lead to same result unless it was tampered with but security, however, is not a requirement.
 
 ### DD02 remote rooms factory
 
 > An important goal of distributed systems is to separate applications from underlying platforms by providing a middleware layer. Page 55
 
-to keep the game as a black box and never make it depends on the the underlying platform the RemoteRoomsFactory was implemented. this way The game can be played in normally or in a distributed fashion. 
+to keep the game as a black box and never make it depends on the the underlying platform the RemoteRoomsFactory was implemented. this way The game can be played locally or in a distributed fashion.
 
 ### DD03 peer to peer
 
@@ -298,4 +322,4 @@ to keep the game as a black box and never make it depends on the the underlying 
 
 having a local game model (DD01) make a "game server" obsolete, which renders it as a bottleneck that simply transfer game updates between nods. 
 
-For the shared data (rooms information) a directory server is to be spawn up anyway. Therefore, to avoid the single point of failure the game is implemented in a peer to peer fashion
+For the shared data (rooms information) a directory server is to be spawn up anyway. Therefore, to avoid the single point of failure the game is implemented in a peer to peer fashion.
