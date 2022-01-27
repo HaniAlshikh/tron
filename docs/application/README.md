@@ -1,13 +1,16 @@
 # Introduction and Goals
 
-We want to create a Distributed Tron Game where People can play and enjoy the Game together while being on different Computers.  
+Develop a Distributed Tron Game where people can play the together while being on different machines.  
+
 The Game is a clone of the "Light Cycles Mode" in the original [Tron Video Game](https://en.wikipedia.org/wiki/Tron_(video_game)) from 1982.
 
 ## Requirements Overview
 
 Players of this game can create a room (host) or join one (guest). After joining a room the game will start. Each player controls the game with a keyboard to move his tron.  
-A Tron is a representation of the player and will continuously move forward. It can be moved right and left but not backward.  
+
+A Tron is a representation of the player and will continuously move forward. It can be moved left and right but not backward.  
 When the Tron moves it leaves a trail behind it. The objective is to force the opponent tron into walls or trails, while simultaneously avoiding them.  
+
 If the player restarted or existed the game. The opponent wins and vise versa.
 
 | ID | Use-Case | Description |
@@ -59,7 +62,7 @@ If the player restarted or existed the game. The opponent wins and vise versa.
 | OC01 | Documentation | clear representation of the structure in at least 2 hierarchy levels: component diagram, class diagram, deployment diagram (ARC42)
 | OC02 | Project Management | fixed method for project management (proof) |
 | OC03 | Problem Solving | problem-solving strategies must be derived from reference literature or accepted third-party literature |
-| OC04 | Deadline | project musst be delivered by 25.01.2022|
+| OC04 | Deadline | project musst be delivered by 27.01.2022 23:59 UTC|
 
 ## System Scope and Context
 
@@ -72,24 +75,19 @@ Technical Context
 
 ![TechnicalContext](diagrams/TechnicalContext.drawio.svg)
 
-## Solution Strategy
-
-TODO: add use cases ids
-TODO: Error cases
-TODO: Need updating
+## g
 
 | Actor | Function | UCID | Semantics | Precondition | Postcondition |
 |-------|-------|----------|-----------|--------------|---------------|
-| Controller | public void showStartMenu() | UC01 | forward the call to the view component with the needed handlers to show the start menu | game ist started | the view component has the needed handlers to generate the ded UI components |
-| View | public void showStartMenu(EventHandler<ActionEvent> startBtnHandler) | UC01 | generates the UI component for the start menu | the needed handlers were received | based on user choice the corresponding handler is led |
-| Controller | private void startGame(GameMode gameMode) | UC01 | setup the game environment with the appropriate handlers to start the game | player has chosen a game mode from the start menu | player can play the chosen e |
-| Model | public void createGame(GameMode gameMode) | UC03 | creates a game environment based on the chosen game mode | a game mode is chosen | a new game environment is created and can be used to start a game |
-| Model | private void updateGame() | UC04 | updates the game state based on player input | game is running in an infinite loop | player inputs are reflected in the game |
-| View | public void showGameUpdate(GameUpdate gameUpdate) | UC04 | present the received game update | game is running in an infinite loop | player inputs are presented in the UI |
-| Model | public boolean isAllowed(Direction currentDirection) | UC05 | checks if player bike direction input is allowed based on current direction | player moved his bike | movement may be applied or ignored |
-| Model | public Coordinate calculateNewPosition(Coordinate currentCoordinate) | UC04 | calculates the new bike coordinates based on the direction and current coordinates  | the new moving direction is allowed | new rdinates can be used to update bike trail |
-| Model | private void checkForCollision(Player player) | UC04 | checks periodically for collisions to eliminate losers | game loop is running | loser is eliminated from the game |
-| Model | private void endGame() | UC07 | stops the game loop to display the winner | only one player or no players are left | winner is displayed and a new game can be started |
+| Game Controller | void showStartMenu(String message) | UC01 | forward the call to the view component with the needed handlers to show the start menu | game has started | the view component has the needed handlers to generate the needed UI components and the player can change his name choose to create or join a game |
+| Game Controller | <ul><li>void createGame()</li><li>void joinGame()</li></ul> | <ul><li>UC01</li><li>UC02</li></ul> | setup the game environment with the appropriate handlers to start the game | player clicked create/join game | player has to wait for someone to join or choose a room to join |
+| Lobby Controller | void createRoom(IPlayerUpdateChannel updateChannel) | UC01 | create a room from the player update channel that was provided by the game controller | player clicked create game | a room was created with the corresponding update channel that can be exchanged with the joiner (guest). The room is also registered by the lobby model and listed for others to join |
+| Game Controller | void startGame(String opponentName) | UC03 | removes the room, resets the view and start the game updater | the guest double clicked a room to join | game updater is listening for updates and player can play the game |
+| Game Controller | void updateGame() | UC04 | updates the game state based on player input while insuring fairness against the opponent and insuring both have the same opportunity to react to updates | game is running in an infinite loop | player inputs are reflected in the game |
+| Game View | void showGame(IGame game) | UC04 | present the current state of the game | game is running in an infinite loop | player inputs are presented in the UI |
+| Game Model | void steer(Direction newDirection) | UC05 | checks if player bike direction input is allowed based on current direction and steer it | player pressed one of the defined keyboard keys to move his bike | movement may be applied or ignored |
+| Game Controller | void endGame(String message) | UC06 | ends the current game and calls void showStartMenu(String message) | player won/lost the current game | player can start a new game or join one |
+| Game Controller | boolean fairPlayInsured() | UC07 | on each tick check if the received update version match with the current player update and if not or no update was received call void endGame(String message) to end the game | the game loop is runniing |
 
 ## Building Block View
 
@@ -97,15 +95,32 @@ TODO: Need updating
 
 ![Component Diagram](diagrams/ComponentDiagram.drawio.svg)
 
+#### App
+
 the MVC pattern is used in the system to be developed. The reason for choosing this pattern is to make a clear division between domain objects and their presentation seen in the GUI.
 
-X referees to the component name in the different packages 
+X referees to the component name in the model/view/controller packages (for example X Model corresponde to Game Mdel)
 
-| stereotype | Component | Interface | Description |
+| Component | Description |
+|-----------|-------------|
+| X Modle | The central component of the MVC pattern. directly manages the data, logic and rules of the application. |
+| X View | represent the information received from the model through the controller |
+| X Controller | Accepts input and converts it to commands for the model or view |
+| Stub | the fusing layer between the middleware and the application |
+
+ Component | Interface | Description |
 |------------|-----------|-----------|-------------|
 | Model | X | IXModel | handles the data and state including the logic |
 | View | X | IXView | handles the representation and generate the needed UI components |
 | Controller | X | IXController | enables the interconnection between the view and model so it acts as an intermediary. |
+
+#### Manager
+
+TODO
+
+#### Middleware
+
+see [Middleware](docs/middleware/README.md)
 
 #### Level 2
 
@@ -116,9 +131,6 @@ X referees to the component name in the different packages
 ![Game Model Component Diagram](diagrams/GameModelClassDiagram.drawio.svg)
 
 ###### Lobby
-
-how to sync rooms between models if we have multiple Models instances?
-(Remote room factory should be also singleton?)
 
 ![Lobby Model Component Diagram](diagrams/LobbyModelClassDiagram.drawio.svg)
 
@@ -187,7 +199,6 @@ how to sync rooms between models if we have multiple Models instances?
 ## Deployment View
 
 ![DeploymentDiagram](diagrams/DeploymentDiagram.drawio.svg)
-
 
 ## Cross-cutting Concepts
 
