@@ -67,7 +67,7 @@ public final class GameController implements IGameController {
     @Override
     public void startGame(String opponentName) {
         lobbyController.removeRoom(gameModel.getPlayer().getId());
-        gameModel.getGame().getOpponent().nameProperty().setValue(opponentName);
+        gameModel.setOpponentName(opponentName);
         gameView.reset();
         gameUpdater.start();
     }

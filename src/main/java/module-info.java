@@ -14,4 +14,7 @@ module de.alshikh.haw.tron {
     exports de.alshikh.haw.tron.app.model.lobby.data.entities;
     exports de.alshikh.haw.tron.app.model.lobby.data.datatypes;
     exports de.alshikh.haw.tron.app.model.game.data.entities;
+    exports de.alshikh.haw.tron.app.controller.game;
+    exports de.alshikh.haw.tron.app.model.game.data.datatypes;
+    exports de.alshikh.haw.tron.app.view.game;
 }

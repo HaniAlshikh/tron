@@ -39,6 +39,11 @@ public class GameModel implements IGameModel {
         );
     }
 
+    @Override
+    public void setOpponentName(String opponentName) {
+        game.getOpponent().nameProperty().setValue(opponentName);
+    }
+
     private void setupGame(IBike playerBike, IBike opponentBike) {
         player.reset(playerBike);
         player.renewUpdate();
@@ -58,6 +63,11 @@ public class GameModel implements IGameModel {
     @Override
     public void createNewPlayerUpdate() {
         player.createUpdate();
+        publishPlayerUpdate();
+    }
+
+    @Override
+    public void publishPlayerUpdate() {
         logger.debug("publishing player update: " + player.getUpdate());
         player.getUpdate().publishUpdate();
     }

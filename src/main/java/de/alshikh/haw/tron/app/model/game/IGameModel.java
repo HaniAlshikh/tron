@@ -10,9 +10,13 @@ public interface IGameModel extends Observable {
 
     void joinGame();
 
+    void setOpponentName(String opponentName);
+
     void updateGameState(IPlayerUpdate opponentUpdate);
 
     void createNewPlayerUpdate();
+
+    void publishPlayerUpdate();
 
     void publishGameStateUpdate();
 

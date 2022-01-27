@@ -146,135 +146,56 @@ how to sync rooms between models if we have multiple Models instances?
 
 ### UC01: Create Game
 
-wie macht man es async?  
-ist das ein oder zwei Sequenzdiagramme?  
-ist die Kommunikation zwischen Game und Lobby Controller richtig?  
-macht man alle Räume remote?  
-
-![Component Diagram](diagrams/UC01SequenceDiagram.drawio.svg)
+![Create Game Sequence Diagram](diagrams/UC01CreateGameSequenceDiagram.drawio.svg)
 
 ### UC02: Join Game
 
-![Component Diagram](diagrams/UC02SequenceDiagram.drawio.svg)
+![Join Game Sequence Diagram](diagrams/UC02JoinGameSequenceDiagram.drawio.svg)
+
+#### Join Room
+
+![Join Room Sequence Diagram](diagrams/UC02JoinRoomSequenceDiagram.drawio.svg)
+
+#### Room is Full
+
+![Room is Full Sequence Diagram](diagrams/UC02RoomIsFullSequenceDiagram.drawio.svg)
 
 ### UC03: Start Game
 
-wie moduliert man das?
-
-wenn einem Raum beigetreten wird sollten die UpdateChanel instanzen getaucht werden -> Local-instance/remote-stub
-
-
-![Component Diagram](diagrams/UC03EnterSequenceDiagram.drawio.svg)
-![Component Diagram](diagrams/UC03RoomFullSequenceDiagram.drawio.svg)
-
+![Start Game Sequence Diagram](diagrams/UC03StartGameSequenceDiagram.drawio.svg)
 
 ### UC04: Play Game
 
+#### Player Update Observed
 
-wie zeigt man dass das in der Game-Controller-Komponente läuft? oder State machine?  
-soll man hier update controlling machen? (wenn z.b. nicht der gesuchte Update geschickt wurde)
-![Component Diagram](diagrams/UC04PlayerUpdateObservedSequenceDiagram.drawio.svg)
-Darf der LobbyController das Spiel starten?  
-Wenn nein  
-wie kann man unterscheiden zwischen dem ersten update und dem Rest ohne bei jedem Update zu prüfen?
-![Component Diagram](diagrams/UC04UpdateGameStateMachineDiagram.drawio.svg)
+![Player Update Observed Sequence Diagram](diagrams/UC04PlayerUpdateObservedSequenceDiagram.drawio.svg)
 
-TODO: view update state doesn't depend on model update state both run asynchronously (model pushes the update)  
-TODO: factory pattern  
-TODO: Protocol is Interface and processing instructions  
-TODO: ideally one diagram one arrow  
-TODO: state machine pattern better than dispatcher pattern  
-TODO: state pattern for rooms  
-TODO: use UDP for the game updates (rpc connection best-effort switch)
-TODO: parallels game tick logic (for example no need to wait for the collision detector)
-TODO: all function musst be used in the sequence diagrams otherwise there are not used
-TODO: write done that for example PlayerUpdate is datatype the encapsulate primitive attributes
-TODO: technical context all libraries (log for example)
-[comment]: <> (\<Runtime Scenario 1\> {#__runtime_scenario_1})
+![Start Game Sequence Diagram](diagrams/UC03StartGameSequenceDiagram.drawio.svg)
 
-[comment]: <> (----------------------)
+### UC05: keyboard controls
 
-[comment]: <> (-   *\<insert runtime diagram or textual description of the scenario\>*)
+![keyboard controls Sequence Diagram](diagrams/UC05KeyboardControlsSequenceDiagram.drawio.svg)
 
-[comment]: <> (-   *\<insert description of the notable aspects of the interactions)
+### UC06: Restart Game
 
-[comment]: <> (    between the building block instances depicted in this diagram.\>*)
+![Restart Game Sequence Diagram](diagrams/UC05RestartGameSequenceDiagram.drawio.svg)
 
-[comment]: <> (\<Runtime Scenario 2\> {#__runtime_scenario_2})
+### UC07: Exit Game
 
-[comment]: <> (----------------------)
-
-[comment]: <> (... {#_})
-
-[comment]: <> (---)
-
-[comment]: <> (\<Runtime Scenario n\> {#__runtime_scenario_n})
-
-[comment]: <> (----------------------)
+![Exit Game Sequence Diagram](diagrams/UC07ExitGameStateMachineDiagram.drawio.svg)
 
 ## Deployment View
 
 ![DeploymentDiagram](diagrams/DeploymentDiagram.drawio.svg)
 
-[comment]: <> (Infrastructure Level 1 {#_infrastructure_level_1})
 
-[comment]: <> (----------------------)
+## Cross-cutting Concepts
 
-[comment]: <> (***\<Overview Diagram\>***)
+### Technical decisions
 
-[comment]: <> (Motivation)
+#### Updating the view
 
-[comment]: <> (:   *\<explanation in text form\>*)
-
-[comment]: <> (Quality and/or Performance Features)
-
-[comment]: <> (:   *\<explanation in text form\>*)
-
-[comment]: <> (Mapping of Building Blocks to Infrastructure)
-
-[comment]: <> (:   *\<description of the mapping\>*)
-
-[comment]: <> (Infrastructure Level 2 {#_infrastructure_level_2})
-
-[comment]: <> (----------------------)
-
-[comment]: <> (### *\<Infrastructure Element 1\>* {#__emphasis_infrastructure_element_1_emphasis})
-
-[comment]: <> (*\<diagram + explanation\>*)
-
-[comment]: <> (### *\<Infrastructure Element 2\>* {#__emphasis_infrastructure_element_2_emphasis})
-
-[comment]: <> (*\<diagram + explanation\>*)
-
-[comment]: <> (...)
-
-[comment]: <> (### *\<Infrastructure Element n\>* {#__emphasis_infrastructure_element_n_emphasis})
-
-[comment]: <> (*\<diagram + explanation\>*)
-
-[comment]: <> (Cross-cutting Concepts {#section-concepts})
-
-[comment]: <> (======================)
-
-[comment]: <> (*\<Concept 1\>* {#__emphasis_concept_1_emphasis})
-
-[comment]: <> (---------------)
-
-[comment]: <> (*\<explanation\>*)
-
-[comment]: <> (*\<Concept 2\>* {#__emphasis_concept_2_emphasis})
-
-[comment]: <> (---------------)
-
-[comment]: <> (*\<explanation\>*)
-
-[comment]: <> (...)
-
-[comment]: <> (*\<Concept n\>* {#__emphasis_concept_n_emphasis})
-
-[comment]: <> (---------------)
-
-[comment]: <> (*\<explanation\>*)
+while playing the view is updated syncronsily
 
 ## Design Decisions
 
@@ -311,36 +232,6 @@ everything is local except for the opponent state (update) -> Page 78 Figure 2.1
 
 implementing each service by means of a separate server may be a waste of resources. it is often more efficient to have a single superserver Page 129 -> one rpc server per process
 
-[comment]: <> (Quality Requirements {#section-quality-scenarios})
+## Glossary
 
-[comment]: <> (====================)
-
-[comment]: <> (Quality Tree {#_quality_tree})
-
-[comment]: <> (------------)
-
-[comment]: <> (Quality Scenarios {#_quality_scenarios})
-
-[comment]: <> (-----------------)
-
-[comment]: <> (Risks and Technical Debts {#section-technical-risks})
-
-[comment]: <> (=========================)
-
-[comment]: <> (Glossary {#section-glossary})
-
-[comment]: <> (========)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
-
-[comment]: <> (| Term                  | Definition                                    |)
-
-[comment]: <> (+=======================+===============================================+)
-
-[comment]: <> (| *\<Term-1\>*          | *\<definition-1\>*                            |)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
-
-[comment]: <> (| *\<Term-2\>*          | *\<definition-2\>*                            |)
-
-[comment]: <> (+-----------------------+-----------------------------------------------+)
+| Term | Definition |

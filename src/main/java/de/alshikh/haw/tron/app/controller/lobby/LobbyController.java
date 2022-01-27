@@ -36,7 +36,7 @@ public final class LobbyController implements ILobbyController {
     }
 
     @Override
-    public void removeRoom(UUID uuid) {
-        lobbyModel.removeRoom(uuid);
+    public void removeRoom(UUID roomId) {
+        lobbyModel.removeRoom(roomId);
     }
 }

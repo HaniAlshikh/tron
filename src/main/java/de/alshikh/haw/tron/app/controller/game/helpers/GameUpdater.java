@@ -61,11 +61,15 @@ public class GameUpdater implements IGameUpdater {
             // the UILock is needed to insure that the player had the chance to observe the new state
             // and act accordingly (even if it's not really possible but at least he can estimate)
             synchronized (UILock) {
-                gameController.getGameModel().updateGameState(receivedOpponentUpdate);
-                gameController.getGameModel().createNewPlayerUpdate();
+                updateGameState();
             }
             logger.debug("unlock: update game state");
         }
+    }
+
+    private void updateGameState() {
+        gameController.getGameModel().updateGameState(receivedOpponentUpdate);
+        gameController.getGameModel().createNewPlayerUpdate();
     }
 
     // the opponent didn't exceed the "Fairness limit"
@@ -78,7 +82,7 @@ public class GameUpdater implements IGameUpdater {
                         "You won because " + getOpponent().getName() + " stopped responding"));
             updateRetries++;
             logger.debug("resending update");
-            es.execute(() -> getPlayer().getUpdate().publishUpdate());
+            es.execute(() -> gameController.getGameModel().publishPlayerUpdate());
             return false;
         }
         return true;

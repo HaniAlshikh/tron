@@ -11,5 +11,5 @@ public interface ILobbyController {
 
     void createRoom(IPlayerUpdateChannel updateChannel);
 
-    void removeRoom(UUID uuid);
+    void removeRoom(UUID roomId);
 }
