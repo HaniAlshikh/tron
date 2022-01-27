@@ -154,29 +154,62 @@ see [Middleware](../middleware/README.md)
 
 ![Game Model Component Diagram](diagrams/GameModelClassDiagram.drawio.svg)
 
+| Interface | Description |
+|-----------|-------------|
+| IBike | The Bike the Player is riding on, responsible for the Trail and Movement |
+| IPlayer | The representation of a Player in our Game, receives and creates PlayerUpdates |
+| IPlayerUpdate | An Update to an existing Player, could be Alive State or Movement |
+| IGame | The representation of the Game Board which contains the Players and outcome of a match |
+| IGameModel | The abstraction of the Game Board, creates and Consumes Player and Game State Updates |
+
 ###### Lobby
 
 ![Lobby Model Component Diagram](diagrams/LobbyModelClassDiagram.drawio.svg)
 
-##### View White Box
+| Interface | Description |
+|-----------|-------------|
+| IRoom | The representation of a Room the Player can join to start a Game |
+| ILobbyModel | The representation of a Lobby, containing multiple Rooms |
+| IPlayerUpdateChannel | A channel for the two Player Updates in a Room |
+
+##### View
 
 ###### Game
 
 ![Game View Component Diagram](diagrams/GameViewClassDiagram.drawio.svg)
 
+| Interface | Description |
+|-----------|-------------|
+| IGameView | The View of a Game in Progress, holds Information about the Menus a Player can show |
+
 ###### Lobby
 
 ![Lobby View Component Diagram](diagrams/LobbyViewClassDiagram.drawio.svg)
 
-#### Controller White Box
+| Interface | Description |
+|-----------|-------------|
+| ILobbyView | The View of a Lobby, holds Information about the Menu a Player can show |
+
+#### Controller
 
 ###### Game
 
 ![Game Controller Component Diagram](diagrams/GameControllerClassDiagram.drawio.svg)
 
+| Interface | Description |
+|-----------|-------------|
+| IGameUpdater | Handles the Game Updates from the Game Model |
+| IGameController | Holds all relevant Information of a Game, the Ability to create, join or quit a Game, connects all other Game Components |
+| IGameInputHandler | Reacts to KeyEvents and handles those changes for the Controller |
+
 ###### Lobby
 
 ![Lobby Controller Component Diagram](diagrams/LobbyControllerClassDiagram.drawio.svg)
+
+| Interface | Description |
+|-----------|-------------|
+| ILobbyController | Holds all relevant Information of a Lobby, the Ability to create or join Rooms |
+| IRoomsMenuInputHandler | Handles the KeyEvents in a Room such as the Menu |
 
 #### Stub White Box
 
