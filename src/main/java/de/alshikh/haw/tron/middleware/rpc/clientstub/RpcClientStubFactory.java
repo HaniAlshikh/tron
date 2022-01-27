@@ -4,10 +4,14 @@ import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
 import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
 public class RpcClientStubFactory {
+    private static final Logger log = LoggerFactory.getLogger(RpcClientStubFactory.class.getSimpleName());
+
     private static IRpcMessageApi rpcMessageApi;
     private static IRpcCallbackService rpcCallbackService;
 
@@ -21,10 +25,13 @@ public class RpcClientStubFactory {
     }
 
     private static void insureInitialization() {
-        if (rpcMessageApi == null || rpcCallbackService == null) {
+        if (rpcMessageApi == null) {
             throw new RuntimeException(new InstantiationException(
-                    "the message api and/or the callback service were instantiated"
+                    "no the message api was provided"
             ));
+        }
+        if (rpcCallbackService == null) {
+            log.warn("no rpc callback service was provided"); // some services accept no callbacks
         }
     }
 

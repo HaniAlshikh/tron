@@ -2,11 +2,11 @@ package de.alshikh.haw.tron.app.controller.game;
 
 import de.alshikh.haw.tron.app.controller.game.helpers.GameUpdater;
 import de.alshikh.haw.tron.app.controller.game.helpers.IGameUpdater;
-import de.alshikh.haw.tron.app.model.lobby.data.datatypes.IPlayerUpdateChannel;
-import de.alshikh.haw.tron.app.model.lobby.data.datatypes.PlayerUpdateChannel;
 import de.alshikh.haw.tron.app.controller.game.inputhandlers.GameInputHandler;
 import de.alshikh.haw.tron.app.controller.lobby.ILobbyController;
 import de.alshikh.haw.tron.app.model.game.IGameModel;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.IPlayerUpdateChannel;
+import de.alshikh.haw.tron.app.model.lobby.data.datatypes.PlayerUpdateChannel;
 import de.alshikh.haw.tron.app.view.game.IGameView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +28,7 @@ public final class GameController implements IGameController {
 
         this.gameUpdater = new GameUpdater(this);
         this.playerUpdateChannel = new PlayerUpdateChannel(gameModel.getPlayer(), gameUpdater, this::startGame);
+        this.gameView.getScene().setOnKeyPressed(new GameInputHandler(gameModel.getPlayer()));
         this.gameModel.addListener(gameUpdater); // on model update update the view
     }
 
@@ -68,7 +69,6 @@ public final class GameController implements IGameController {
         lobbyController.removeRoom(gameModel.getPlayer().getId());
         gameModel.getGame().getOpponent().nameProperty().setValue(opponentName);
         gameView.reset();
-        gameView.getScene().setOnKeyPressed(new GameInputHandler(gameModel.getPlayer()));
         gameUpdater.start();
     }
 

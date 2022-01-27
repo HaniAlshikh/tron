@@ -6,6 +6,7 @@ import de.alshikh.haw.tron.middleware.directoryserver.discovery.DirectoryDiscove
 import de.alshikh.haw.tron.middleware.directoryserver.service.DirectoryService;
 import de.alshikh.haw.tron.middleware.directoryserver.stub.DirectoryServiceCallee;
 import de.alshikh.haw.tron.middleware.rpc.applicationstub.IRpcCalleeAppStub;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStubFactory;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.IRpcServerStub;
@@ -20,13 +21,15 @@ import java.util.concurrent.TimeUnit;
 public class DirectoryServer {
 
     public static void main(String[] args) {
-        DirectoryService directoryService = new DirectoryService();
-        IRpcCalleeAppStub directoryServiceCallee = new DirectoryServiceCallee(directoryService);
-
         // Ideally Directory Service Json Rpc Serialization Api is used
         //IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new DirectoryServiceJsonRpcSerializationApi());
         // but this for now cover more cases and avoids code duplication
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new TronJsonRpcSerializationApi());
+        RpcClientStubFactory.setRpcMessageApi(rpcMessageApi);
+
+        DirectoryService directoryService = new DirectoryService();
+        IRpcCalleeAppStub directoryServiceCallee = new DirectoryServiceCallee(directoryService);
+
         IRpcServerStub rpcServerStub = new RpcServerStub(new RpcReceiver(new RpcUnmarshaller(rpcMessageApi)));
         rpcServerStub.register(directoryServiceCallee);
         new Thread(() -> rpcServerStub.getRpcReceiver().start()).start();
