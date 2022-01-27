@@ -10,12 +10,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// TODO: maybe lookup method (not really needed (rpc callback might be a use case))
 public class DirectoryService implements IDirectoryService, Observable {
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    private final ConcurrentHashMap<UUID, ConcurrentLinkedQueue<InvalidationListener>> serviceListeners;
-    private final ConcurrentLinkedQueue<InvalidationListener> directoryListeners;
+    private final ConcurrentHashMap<UUID, ConcurrentLinkedQueue<InvalidationListener>> serviceListeners; // TD01
+    private final ConcurrentLinkedQueue<InvalidationListener> directoryListeners; // TD01
 
     private final ConcurrentLinkedQueue<IDirectoryEntry> dib; // directory information base
 
@@ -41,7 +40,6 @@ public class DirectoryService implements IDirectoryService, Observable {
         }
     }
 
-    // TODO: publisher subscriber?
     @Override
     public void addListenerTo(UUID serviceId, InvalidationListener listener) {
         serviceListeners.putIfAbsent(serviceId, new ConcurrentLinkedQueue<>());
@@ -56,12 +54,6 @@ public class DirectoryService implements IDirectoryService, Observable {
         directoryEntry.setListeners(serviceListeners.getOrDefault(
                 directoryEntry.getServiceId(), new ConcurrentLinkedQueue<>()));
         directoryEntry.publishUpdate();
-    }
-
-    @Override
-    public void removeListenerForm(UUID serviceId, InvalidationListener listener) {
-        if (serviceListeners.containsKey(serviceId))
-            serviceListeners.get(serviceId).remove(listener);
     }
 
     @Override

@@ -21,13 +21,11 @@ public class HelloWorldJsonRpcSerializationApi extends JsonRpcSerializationApi {
             }
         }
 
-        if (type == HelloWorldMessage.class) {
-            obj = new HelloWorldMessage(serializedObj.getString("message"));
-        }
+        if (type == HelloWorldMessage.class)
+            return new HelloWorldMessage(serializedObj.getString("message"));
 
-        if (type == UUID.class) {
+        if (type == UUID.class)
             return UUID.fromString(serializedObj.getString("uuid"));
-        }
 
         return obj;
     }
@@ -36,18 +34,16 @@ public class HelloWorldJsonRpcSerializationApi extends JsonRpcSerializationApi {
     public Object serialize(Object obj) {
         if (obj instanceof HelloWorldMessage) {
             HelloWorldMessage message = (HelloWorldMessage) obj;
-            JSONObject serializedObj = new JSONObject();
-            serializedObj.put("type", HelloWorldMessage.class.getName());
-            serializedObj.put("message", message.getMessage());
-            return serializedObj;
+            return new JSONObject()
+                    .put("type", HelloWorldMessage.class.getName())
+                    .put("message", message.getMessage());
         }
 
         if (obj instanceof UUID) {
             UUID uuid = (UUID) obj;
-            JSONObject serializedObj = new JSONObject();
-            serializedObj.put("type", UUID.class.getName());
-            serializedObj.put("uuid", uuid.toString());
-            return serializedObj;
+            return new JSONObject()
+                    .put("type", UUID.class.getName())
+                    .put("uuid", uuid.toString());
         }
 
         return obj;

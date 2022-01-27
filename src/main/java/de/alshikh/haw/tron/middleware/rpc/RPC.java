@@ -12,9 +12,7 @@ import de.alshikh.haw.tron.middleware.rpc.callback.data.datatypes.RpcCallback;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.IRpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.callback.service.RpcCallbackService;
 import de.alshikh.haw.tron.middleware.rpc.callback.stubs.RpcCallbackCallee;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStub;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.marshal.RpcMarshaller;
-import de.alshikh.haw.tron.middleware.rpc.clientstub.send.RpcSender;
+import de.alshikh.haw.tron.middleware.rpc.clientstub.RpcClientStubFactory;
 import de.alshikh.haw.tron.middleware.rpc.message.IRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.message.json.JsonRpcMessageApi;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.IRpcServerStub;
@@ -22,37 +20,28 @@ import de.alshikh.haw.tron.middleware.rpc.serverstub.RpcServerStub;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.receive.RpcReceiver;
 import de.alshikh.haw.tron.middleware.rpc.serverstub.unmarshal.RpcUnmarshaller;
 
+// POC on a hello world service
 class RPC {
     public static void main(String[] args) {
         IRpcMessageApi rpcMessageApi = new JsonRpcMessageApi(new HelloWorldJsonRpcSerializationApi());
+        RpcClientStubFactory.setRpcMessageApi(rpcMessageApi);
 
         IHelloWorld helloWorld = new HelloWorld();
-        // TODO: application server stubs are not really necessary (service id are the problem)
-        IRpcCalleeAppStub helloWorldServer = new HelloWorldCallee(helloWorld);
+        IRpcCalleeAppStub helloWorldSCallee = new HelloWorldCallee(helloWorld);
 
+        // rpc server stub
         IRpcServerStub rpcServerStub = new RpcServerStub(new RpcReceiver(new RpcUnmarshaller(rpcMessageApi)));
-        rpcServerStub.register(helloWorldServer);
+        rpcServerStub.register(helloWorldSCallee);
         new Thread(() -> rpcServerStub.getRpcReceiver().start()).start();
 
-        // callback server
+        // callback
         IRpcCallbackService rpcCallbackService = new RpcCallbackService(rpcServerStub.getRpcReceiver().getServerAddress());
+        RpcClientStubFactory.setRpcCallbackService(rpcCallbackService);
         IRpcCallback rpcCallback = new RpcCallback(rpcCallbackService);
         IRpcCalleeAppStub callbackServer = new RpcCallbackCallee(rpcCallback);
         rpcServerStub.register(callbackServer);
 
-        // delay until the server starts
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        IHelloWorld helloWorldClient = new HelloWorldCaller(
-                new RpcClientStub(new RpcMarshaller(
-                        rpcMessageApi,
-                        new RpcSender(rpcServerStub.getRpcReceiver().getServerAddress()),
-                        rpcCallbackService
-                        )));
+        IHelloWorld helloWorldClient = new HelloWorldCaller(RpcClientStubFactory.getRpcClientStub(rpcServerStub.getRpcReceiver().getServerAddress()));
 
         System.out.println(helloWorldClient.helloWorld());
         System.out.println(helloWorldClient.helloWorldBestEffort());

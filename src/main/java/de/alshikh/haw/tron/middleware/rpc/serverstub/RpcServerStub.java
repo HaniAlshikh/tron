@@ -16,7 +16,7 @@ import java.util.UUID;
 public class RpcServerStub implements IRpcServerStub {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    private final HashMap<UUID, IRpcCalleeAppStub> serviceRegistry = new HashMap<>();;
+    private final HashMap<UUID, IRpcCalleeAppStub> serviceRegistry = new HashMap<>();
     private final IRpcReceiver rpcReceiver;
 
     public RpcServerStub(IRpcReceiver rpcReceiver) {

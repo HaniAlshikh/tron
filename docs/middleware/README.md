@@ -287,6 +287,12 @@ fault tolerance is not a requirement and therefore all sequences describe the be
 
 ### Technical decisions
 
+#### TD01: observable directory service/entry
+
+in this case the directory service is mainly used as a source of truth for the remote game rooms, therefore implementing it to be observable offer the system a quick and easy way to get the new rooms available without actively pulling or refreshing.
+
+this push approach is also helpful when the state of the room changes weather removed or full which in both cases changes the service reachability and pushes the update immediately to be reflected on all listing nodes
+
 ## Design Decisions
 
 #### Architecture

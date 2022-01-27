@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class RpcCallbackCaller implements IRpcCallback, IRpcCallerAppStub {
-    public static UUID serviceId = UUID.fromString("08fd9cc9-a1fd-454e-ae21-f3c1329ab93c");
+    public static UUID SERVICE_ID = RpcCallbackCallee.SERVICE_ID;
 
     IRpcClientStub rpcClientStub;
 
@@ -19,7 +19,7 @@ public class RpcCallbackCaller implements IRpcCallback, IRpcCallerAppStub {
     @Override
     public void retrn(UUID requestId, Object result) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        rpcClientStub.invoke(serviceId, method, requestId, result);
+        rpcClientStub.invoke(SERVICE_ID, method, requestId, result);
     }
 
     @Override
@@ -29,6 +29,6 @@ public class RpcCallbackCaller implements IRpcCallback, IRpcCallerAppStub {
 
     @Override
     public UUID getServiceId() {
-        return serviceId;
+        return SERVICE_ID;
     }
 }

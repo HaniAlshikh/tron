@@ -44,10 +44,8 @@ public class DirectoryServer {
         System.out.println();
         DirectoryService directoryService = (DirectoryService) observable;
         System.out.format("%-40s%-40s%-32s%-6s\n", "Provider ID", "Service ID", "Service Address", "Is Reachable");
-        directoryService.getDib().forEach(s -> {
-            System.out.format("%-40s%-40s%-32s%-6s\n",
-                    s.getProviderId(), s.getServiceId(), s.getServiceAddress(), s.isReachable());
-        });
+        directoryService.getDib().forEach(s -> System.out.format("%-40s%-40s%-32s%-6s\n",
+                s.getProviderId(), s.getServiceId(), s.getServiceAddress(), s.isReachable()));
         System.out.println();
     }
 }

@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class HelloWorldCallee implements IRpcCalleeAppStub {
-    public static UUID id = UUID.fromString("08fd9cc9-a1ff-454e-ae22-f3c1329ab93c");
+    public static UUID SERVICE_ID = UUID.fromString("08fd9cc9-a1ff-454e-ae22-f3c1329ab93c");
 
     IHelloWorld helloWorldService;
 
@@ -24,6 +24,6 @@ public class HelloWorldCallee implements IRpcCalleeAppStub {
 
     @Override
     public UUID getServiceId() {
-        return id;
+        return SERVICE_ID;
     }
 }

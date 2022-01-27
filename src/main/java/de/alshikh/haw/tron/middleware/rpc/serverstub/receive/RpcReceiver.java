@@ -90,7 +90,7 @@ public class RpcReceiver implements IRpcReceiver {
                 log.debug("data received over udp: " + new String(data));
                 unmarshal(data);
             }
-        } catch (IOException e) { // TODO
+        } catch (IOException e) {
             log.error("Failed to receive data:", e);
         }
     }
@@ -148,8 +148,9 @@ public class RpcReceiver implements IRpcReceiver {
     public InetSocketAddress getServerAddress() {
         try {
             return serverAddress.get();
-        } catch (Exception e) { // TODO:
-            return null;
+        } catch (Exception e) {
+            log.info("Rpc Receiver could not be initialized probably");
+            throw new RuntimeException(e);
         }
     }
 
