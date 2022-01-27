@@ -1,6 +1,5 @@
 package de.alshikh.haw.tron.manager;
 
-import de.alshikh.haw.tron.app.TronGame;
 import de.alshikh.haw.tron.app.model.lobby.ILobbyModel;
 import de.alshikh.haw.tron.app.model.lobby.LobbyModel;
 import de.alshikh.haw.tron.manager.overlays.ManagerMenu;

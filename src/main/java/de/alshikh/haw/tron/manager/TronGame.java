@@ -1,4 +1,4 @@
-package de.alshikh.haw.tron.app;
+package de.alshikh.haw.tron.manager;
 
 import de.alshikh.haw.tron.app.controller.game.GameController;
 import de.alshikh.haw.tron.app.controller.game.IGameController;

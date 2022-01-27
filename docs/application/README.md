@@ -75,7 +75,7 @@ Technical Context
 
 ![TechnicalContext](diagrams/TechnicalContext.drawio.svg)
 
-## g
+## Solution Strategy
 
 | Actor | Function | UCID | Semantics | Precondition | Postcondition |
 |-------|-------|----------|-----------|--------------|---------------|
@@ -116,11 +116,11 @@ X referees to the component name in the model/view/controller packages (for exam
 
 #### Manager
 
-TODO
+![Manager Class Diagram](diagrams/ManagerClassDiagram.drawio.svg)
 
 #### Middleware
 
-see [Middleware](docs/middleware/README.md)
+see [Middleware](../middleware/README.md)
 
 #### Level 2
 
@@ -275,39 +275,27 @@ in the standalone version the model is shared as a the source of truth for rooms
 
 ## Design Decisions
 
-### Scaling techniques
+Design Decisions can be referenced from the referenced literature
 
-#### Hiding communication latencies
+| ID | Decision |
+| DD01 | peer to peer model |
 
-"reduce the overall communication, for example, by moving part of the computation that is normally done at the server to the client process requesting the service" Page 21
+### DD01 local game model
 
--> everything is created locally and we only exchange user input
+> reduce the overall communication, for example, by moving part of the computation that is normally done at the server to the client process requesting the service. Page 21 
 
+Therefore all computations are done locally on the node, and the end result is insured based on the PlayerUpdate and it's version, which will always lead to same result unless it was tampered with but security, however, is not a requirement.
 
-#### Partitioning and distribution
+### DD02 remote rooms factory
 
-dosn't really fit our usecase? (peer to peer connection no encapsulated services)
+> An important goal of distributed systems is to separate applications from underlying platforms by providing a middleware layer. Page 55
 
-#### Replication
+to keep the game as a black box and never make it depends on the the underlying platform the RemoteRoomsFactory was implemented. this way The game can be played in normally or in a distributed fashion. 
 
-peer to peer not much can be done (maybe directory server can benefits)
+### DD03 peer to peer
 
-#### Replication
+> In horizontal distribution, a client or server may be physically split up into logically equivalent parts, but each part is operating on its own share of the complete data set, thus balancing the load. Page 81
 
-a transit system doesn't benefit from this
+having a local game model (DD01) make a "game server" obsolete, which renders it as a bottleneck that simply transfer game updates between nods. 
 
-#### Architecture
-
-"An important goal of distributed systems is to separate applications from underlying platforms by providing a middleware layer." page 55
-
-to reduce the load on the "server" node , that could be any node who starts the directory server -> peer to peer
-
-bottlenecks, single source of fehler, _____ -> decentralized Hierarchically organized peer-to-peer networks architecture (the directory server is centralized and per node (process) only one rpc server for all games -> is it then a hybrid?)
-
-everything is local except for the opponent state (update) -> Page 78 Figure 2.16 (e)
-
-implementing each service by means of a separate server may be a waste of resources. it is often more efficient to have a single superserver Page 129 -> one rpc server per process
-
-## Glossary
-
-| Term | Definition |
+For the shared data (rooms information) a directory server is to be spawn up anyway. Therefore, to avoid the single point of failure the game is implemented in a peer to peer fashion
