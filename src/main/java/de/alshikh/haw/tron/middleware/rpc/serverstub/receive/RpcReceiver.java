@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -58,12 +60,11 @@ public class RpcReceiver implements IRpcReceiver {
     private void receive() throws IOException {
         while (running) {
             selector.select();
-            Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            Iterator<SelectionKey> iter = selectedKeys.iterator();
-            while (iter.hasNext()) {
-                SelectionKey channelKey = iter.next();
-                iter.remove();
-                executor.submit(() -> handleRequest(channelKey));
+            Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
+            while (selectedKeys.hasNext()) {
+                SelectionKey channelKey = selectedKeys.next();
+                selectedKeys.remove();
+                handleRequest(channelKey);
             }
         }
     }
@@ -86,10 +87,8 @@ public class RpcReceiver implements IRpcReceiver {
             buffer.flip();
             byte[] data = new byte[buffer.remaining()];
             buffer.get(data);
-            if (data.length > 0) {
-                log.debug("data received over udp: " + new String(data));
-                unmarshal(data);
-            }
+            log.debug("data received over udp: " + new String(data));
+            unmarshal(data);
         } catch (IOException e) {
             log.error("Failed to receive data:", e);
         }
@@ -100,21 +99,19 @@ public class RpcReceiver implements IRpcReceiver {
             byte[] data = connection.getInputStream().readAllBytes();
             log.debug("data received over tcp: " + new String(data));
             unmarshal(data);
-        } catch (NullPointerException ignored) { // expected behaviour von accept()
         } catch (IOException e) {
             log.error("Failed to receive data:", e);
         }
     }
 
     private void unmarshal(byte[] request) {
-        rpcUnmarshaller.unmarshal(request);
+        executor.submit(() -> rpcUnmarshaller.unmarshal(request));
     }
 
     private void init() throws IOException {
         tcpServer = ServerSocketChannel.open();
         tcpServer.socket().bind(new InetSocketAddress(getLocalIp(), 0));
 
-        // in case of random port
         InetSocketAddress boundedAddress = (InetSocketAddress) tcpServer.socket().getLocalSocketAddress();
 
         udpServer = DatagramChannel.open();
@@ -123,7 +120,7 @@ public class RpcReceiver implements IRpcReceiver {
         tcpServer.configureBlocking(false);
         udpServer.configureBlocking(false);
 
-        selector = Selector.open(); // to block while waiting
+        selector = Selector.open();
         tcpServer.register(selector, SelectionKey.OP_ACCEPT);
         udpServer.register(selector, SelectionKey.OP_READ);
 
@@ -134,7 +131,6 @@ public class RpcReceiver implements IRpcReceiver {
 
     @Override
     public void stop() {
-        // TODO
         running = false;
         executor.shutdown();
     }

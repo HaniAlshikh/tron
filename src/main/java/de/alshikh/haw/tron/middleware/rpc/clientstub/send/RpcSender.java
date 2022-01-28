@@ -49,7 +49,6 @@ public class RpcSender implements IRpcSender {
         try (Socket connection = new Socket()) {
             connection.connect(serverAddress);
             connection.getOutputStream().write(data);
-            connection.shutdownOutput();
         } catch (IOException e) {
             log.debug("sending request error:", e);
             throw new FailedToSendNetworkRpcException();
