@@ -31,7 +31,7 @@ public class Config { // TD09
 
     public static int RPC_CALLBACK_TIMEOUT = 3; // in seconds
     // a typical update message is around 254 - 256 bytes
-    public static int MAX_PACKET_SIZE = 512; // TODO: dynamic
+    public static int MAX_PACKET_SIZE = 512;
 
     private static final Logger log = LoggerFactory.getLogger(Config.class.getSimpleName());
     static {

@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-// TODO: ipv6?
 public class DirectoryDiscoveryServer implements IDiscoveryServer {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
